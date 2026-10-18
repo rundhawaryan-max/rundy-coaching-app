@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#0f0f11"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>My Coaching — Elite Coach</title>
+<link rel="manifest" href="/manifest.webmanifest"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png"/>
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/>
+<meta name="apple-mobile-web-app-title" content="Rundy"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f11;--bg2:#17171a;--bg3:#1f1f24;--bg4:#27272d;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --text:#f0f0f2;--text2:#9191a0;--text3:#5f5f70;
+  --accent:#c8f065;--adim:rgba(200,240,101,0.12);
+  --red:#ff5c5c;--rdim:rgba(255,92,92,0.15);
+  --blue:#5b9cf6;--bdim:rgba(91,156,246,0.12);
+  --amber:#f5a524;--ambdim:rgba(245,165,36,0.12);
+  --green:#4ade80;--gdim:rgba(74,222,128,0.12);
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5}
+body{min-height:100vh;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 13px;font-size:14px;width:100%;outline:none;transition:border .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:4px}
+
+#shell{max-width:600px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+#topbar{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--bg);z-index:10}
+.tb-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tb-name{font-weight:700;font-size:15px}
+.tb-sub{font-size:11px;color:var(--text3)}
+
+#tabbar{display:flex;border-bottom:1px solid var(--border);position:sticky;top:73px;background:var(--bg);z-index:9;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+#tabbar::-webkit-scrollbar{display:none}
+.tb-btn{flex:1;padding:13px 8px;text-align:center;font-size:12px;color:var(--text3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;font-weight:500;min-width:64px;position:relative}
+.tb-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tb-btn .unread-dot{position:absolute;top:9px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red)}
+
+#content{flex:1;padding:20px;padding-bottom:40px}
+
+.note-bubble{position:relative;background:var(--adim);border:1px solid var(--accent);border-radius:18px;padding:14px 16px 14px 48px;margin:0 0 22px;font-size:14px;line-height:1.45;color:var(--text);white-space:pre-line}.note-bubble::before{content:"💬";position:absolute;left:15px;top:12px;font-size:20px}.note-bubble::after{content:"";position:absolute;left:28px;bottom:-9px;width:16px;height:16px;background:#252a1b;border-right:1px solid var(--accent);border-bottom:1px solid var(--accent);transform:rotate(45deg)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
+.card-title{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:12px}
+.big-stat{font-size:30px;font-weight:700;color:var(--accent);letter-spacing:-1px;margin-bottom:4px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.macro-bars{display:flex;gap:8px;margin-top:12px}
+.macro-bar{flex:1;background:var(--bg3);border-radius:9px;padding:10px;text-align:center}
+.macro-bar-val{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.macro-bar-label{font-size:10px;color:var(--text3);margin-top:2px}
+
+.badge{border-radius:6px;padding:3px 9px;font-size:11px;font-weight:500;display:inline-block}
+.badge-green{background:var(--gdim);color:var(--green)}
+.badge-blue{background:var(--bdim);color:var(--blue)}
+.badge-amber{background:var(--ambdim);color:var(--amber)}
+.badge-gray{background:rgba(255,255,255,0.06);color:var(--text2)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;padding:13px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid;width:100%}
+.btn-primary{background:var(--accent);color:#0f0f11;border-color:var(--accent)}
+.btn-ghost{background:var(--bg3);color:var(--text);border-color:var(--border)}
+.btn-filled{background:var(--adim);color:var(--accent);border-color:transparent}
+.btn-sm{width:auto;padding:8px 14px;font-size:12px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:default}
+
+.workout-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.workout-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.ex-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--border)}
+.ex-name{font-size:13px;font-weight:600}
+.ex-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.ex-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s;cursor:pointer}
+.ex-check.done{background:var(--accent);border-color:var(--accent);color:#0f0f11}
+
+.meal-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.food-row{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--border);font-size:13px}
+.food-name{font-weight:500}
+.food-macro{color:var(--text3);font-size:12px}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.slider-row{display:flex;align-items:center;gap:12px}
+.slider-val{font-weight:700;color:var(--accent);min-width:38px;text-align:right}
+.prep-group{margin-bottom:16px;border:1px solid var(--border);border-radius:10px;padding:0 12px}
+.prep-group summary{cursor:pointer;padding:11px 0;font-size:13px;color:var(--text2);font-weight:500;list-style:none}
+.prep-group summary::-webkit-details-marker{display:none}
+.prep-group summary::before{content:'+ ';color:var(--accent);font-weight:700}
+.prep-group[open] summary::before{content:'– '}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;padding:9px 4px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600}
+.seg button.sel{background:var(--adim);border-color:var(--accent);color:var(--accent)}
+
+.bubble{max-width:78%;border-radius:16px;padding:10px 14px;font-size:14px;line-height:1.5}
+.bubble-coach{background:var(--bg3);border-radius:16px 16px 16px 4px;align-self:flex-start}
+.bubble-client{background:var(--accent);color:#0f0f11;border-radius:16px 16px 4px 16px;align-self:flex-end}
+.bubble-time{font-size:10px;opacity:.55;margin-top:4px}
+#msg-thread{display:flex;flex-direction:column;gap:10px;padding-bottom:calc(90px + env(safe-area-inset-bottom));min-height:200px}
+#msg-input-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);padding:12px 20px calc(12px + env(safe-area-inset-bottom));max-width:600px;margin:0 auto;display:flex;gap:10px}
+.msg-day{text-align:center;font-size:11px;color:var(--text3);margin:8px 0 2px;font-weight:500}
+
+.chart-box canvas{display:block;width:100%}
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:30px;margin-bottom:10px}
+.empty-msg{font-size:13px;line-height:1.6}
+
+#loading,#errorscreen{display:flex;height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--text3);text-align:center;padding:24px}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Progress photos */
+.photo-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.photo-slot{position:relative;aspect-ratio:3/4;border:1px dashed var(--border2);border-radius:12px;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;color:var(--text2);overflow:hidden;cursor:pointer}
+.photo-slot input{display:none}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-slot .ps-plus{font-size:22px;color:var(--accent)}
+.ps-label,.pt-label{position:absolute;left:0;right:0;bottom:0;padding:5px;background:rgba(0,0,0,.55);font-size:11px;font-weight:600;color:#fff;text-align:center}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.photo-thumb{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:var(--bg3);cursor:pointer}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pose-chips{display:flex;gap:6px;margin-bottom:12px}
+.pose-chip{padding:6px 12px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);font-size:12px;color:var(--text2)}
+.pose-chip.active{background:var(--adim);border-color:var(--accent);color:var(--accent);font-weight:600}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));gap:14px}
+#lightbox img{max-width:100%;max-height:72vh;border-radius:12px}
+.sync-code{display:flex;gap:8px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 8px 8px 12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;word-break:break-all}
+.sync-code span{flex:1}
+/* Installed as a home-screen app: keep the header clear of the notch / home bar */
+@media (display-mode: standalone){
+  #topbar{padding-top:calc(18px + env(safe-area-inset-top))}
+  #tabbar{top:calc(73px + env(safe-area-inset-top))}
+  #content{padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+}
+
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0f0f11;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:toastIn .25s ease}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div style="width:40px;height:40px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px">⚡</div>
+  <div class="spinner"></div>
+  <span style="font-size:13px">Loading your plan…</span>
+</div>
+
+<div id="errorscreen" style="display:none">
+  <div style="font-size:32px">🔒</div>
+  <h2 style="font-size:16px;font-weight:600">Link not recognized</h2>
+  <p style="font-size:13px;max-width:300px">This link may be incorrect or expired. Please check with your coach for your personal link.</p>
+  <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px">
+    <input id="token-input" placeholder="Paste your link or code" autocomplete="off" autocapitalize="off"/>
+    <button class="btn btn-primary" id="token-submit">Open my plan</button>
+  </div>
+</div>
+
+<div id="shell" style="display:none">
+  <div id="topbar">
+    <div class="tb-icon">⚡</div>
+    <div>
+      <div class="tb-name" id="client-name-header">—</div>
+      <div class="tb-sub">Your coaching plan</div>
+    </div>
+  </div>
+  <div id="tabbar">
+    <button class="tb-btn active" data-tab="home">Home</button>
+    <button class="tb-btn" data-tab="goals">Goals</button>
+    <button class="tb-btn" data-tab="workout">Workout</button>
+    <button class="tb-btn" data-tab="progress">Progress</button>
+    <button class="tb-btn" data-tab="nutrition">Nutrition</button>
+    <button class="tb-btn" data-tab="supplements">Supplements</button>
+    <button class="tb-btn" data-tab="steps">Steps</button>
+    <button class="tb-btn" data-tab="checkin">Check-in</button>
+    <button class="tb-btn" data-tab="photos">Photos</button>
+    <button class="tb-btn" data-tab="messages">Messages</button>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+const SB_URL='https://emrtizvqzjkfrpgyrljn.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtcnRpenZxemprZnJwZ3lybGpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTA0NjAsImV4cCI6MjA5NzMyNjQ2MH0.n11s1EOwPRBP934TY4sZrMWuh-A7aUGLh3VZ0yZOtww';
+
+async function sbFetch(path, opts={}) {
+  const url = SB_URL + '/rest/v1/' + path;
+  const headers = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': opts.prefer || 'return=representation' };
+  let r;
+  try {
+    r = await fetch(url, { method: opts.method||'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  } catch(e) {
+    console.error('SB network error', e);
+    if ((opts.method||'GET') !== 'GET') toast('No connection — try again');
+    return null;
+  }
+  if (!r.ok) {
+    console.error('SB error', r.status, await r.text());
+    if ((opts.method||'GET') !== 'GET') toast('Couldn’t save — try again');
+    return null;
+  }
+  if (r.status === 204) return true;
+  return r.json();
+}
+const sb = {
+  async select(table, params='') { return await sbFetch(table + '?' + params + (params?'&':'') + 'apikey=' + SB_KEY) || []; },
+  async insert(table, body) { return await sbFetch(table, { method:'POST', body, prefer:'return=representation' }); },
+  async update(table, body, match) { return await sbFetch(table + '?' + match, { method:'PATCH', body, prefer:'return=representation' }); },
+  async delete(table, match) { return await sbFetch(table + '?' + match, { method:'DELETE', prefer:'return=minimal' }); }
+};
+
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// Local-timezone YYYY-MM-DD (toISOString is UTC and rolls to tomorrow in the evening)
+const localDate = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today = () => localDate(new Date());
+const fmt12 = ts => new Date(ts).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+
+// Returns array of 7 date strings (YYYY-MM-DD) for Monday through Sunday of the current week
+function getWeekDates() {
+  const now = new Date();
+  const dow = now.getDay(); // 0=Sun, 1=Mon...6=Sat
+  const mondayOffset = dow === 0 ? -6 : 1 - dow;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + mondayOffset);
+  const dates = [];
+  for (let i=0;i<7;i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate()+i);
+    dates.push(localDate(d));
+  }
+  return dates;
+}
+const DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DEFAULT_WATER_GOAL_LITERS = 4; // used when a client has no per-client target set
+// Per-client daily water target (clients.water_goal_l), falling back to the default above.
+const waterGoal = () => Number(CLIENT && CLIENT.water_goal_l) || DEFAULT_WATER_GOAL_LITERS;
+// Weights are stored as-entered in the weight_kg column but shown to clients in lbs.
+const UNIT = 'lbs';
+const fmtW = n => (+Number(n).toFixed(2));
+
+let CLIENT = null;
+let DATA = { checkIns:[], macros:[], programs:[], workouts:[], exercises:{}, mealPlans:[], meals:[], mealsByPlan:{}, foods:{}, messages:[], dailySteps:[], cardioProtocols:[], cardioSessions:[], exerciseLogs:[], exerciseNames:{}, checklistCompletions:[], supplements:[], dailyLogs:[], photos:[] };
+let ACTIVE_MEAL_PLAN = 0; // index of the meal plan the client is currently viewing
+let TAB = 'home';
+let completedSets = {}; // local-only workout checkboxes for today
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2200);
+}
+
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  // Remember the token so the installed home-screen app stays signed in even if it opens without ?t=
+  const token = params.get('t') || lsGet('rc_token');
+  if (!token) return showError();
+
+  const clients = await sb.select('clients', 'access_token=eq.'+encodeURIComponent(token));
+  if (!clients || !clients.length) { lsSet('rc_token', null); return showError(); }
+  CLIENT = clients[0];
+  lsSet('rc_token', token);
+  if (!params.get('t')) history.replaceState(null, '', '?t='+encodeURIComponent(token));
+
+  // Load all related data in parallel
+  const [checkIns, macros, programs, mealPlans, messages, dailySteps] = await Promise.all([
+    sb.select('check_ins','client_id=eq.'+CLIENT.id+'&order=date.desc'),
+    sb.select('macros','client_id=eq.'+CLIENT.id+'&order=effective_date.desc'),
+    sb.select('programs','client_id=eq.'+CLIENT.id+'&order=created_at.desc'),
+    sb.select('meal_plans','client_id=eq.'+CLIENT.id+'&order=created_at.desc'),
+    sb.select('messages','client_id=eq.'+CLIENT.id+'&order=created_at.asc'),
+    sb.select('daily_steps','client_id=eq.'+CLIENT.id+'&order=date.desc&limit=30'),
+  ]);
+  DATA.checkIns = checkIns||[]; DATA.macros = macros||[]; DATA.programs = programs||[];
+  DATA.mealPlans = mealPlans||[]; DATA.messages = messages||[]; DATA.dailySteps = dailySteps||[];
+
+  // Load workouts for most recent program
+  if (DATA.programs.length) {
+    const ws = await sb.select('workouts','program_id=eq.'+DATA.programs[0].id+'&order=order_index');
+    DATA.workouts = ws||[];
+    await Promise.all(DATA.workouts.map(async w=>{
+      DATA.exercises[w.id] = await sb.select('exercises','workout_id=eq.'+w.id+'&order=order_index') || [];
+    }));
+  }
+  // Load this client's exercise weight logs (recent history)
+  const exLogs = await sb.select('exercise_logs','client_id=eq.'+CLIENT.id+'&order=date.desc&limit=500');
+  DATA.exerciseLogs = exLogs||[];
+  // Build exercise-name lookup for the Progress tab. Exercises from the current program are
+  // already loaded; fetch names for any logged exercise from an older program.
+  DATA.exerciseNames = {};
+  Object.values(DATA.exercises).forEach(arr => (arr||[]).forEach(e => { DATA.exerciseNames[e.id] = e.name; }));
+  const missingIds = [...new Set(DATA.exerciseLogs.map(l=>l.exercise_id).filter(id => id && !DATA.exerciseNames[id]))];
+  if (missingIds.length) {
+    const rows = await sb.select('exercises','id=in.('+missingIds.join(',')+')');
+    (rows||[]).forEach(e => { DATA.exerciseNames[e.id] = e.name; });
+  }
+  // Load assigned supplements
+  const supps = await sb.select('supplements','client_id=eq.'+CLIENT.id+'&order=order_index');
+  DATA.supplements = supps||[];
+  // Load this week's checklist completions
+  const weekDates = getWeekDates();
+  const checklistRows = await sb.select('checklist_completions','client_id=eq.'+CLIENT.id+'&date=gte.'+weekDates[0]+'&date=lte.'+weekDates[6]);
+  DATA.checklistCompletions = checklistRows||[];
+  // Load recent daily subjective logs (J3 daily check-in)
+  const dLogs = await sb.select('daily_logs','client_id=eq.'+CLIENT.id+'&order=date.desc&limit=14');
+  DATA.dailyLogs = dLogs||[];
+  // Progress photo rows (the images themselves load on the Photos tab via signed URLs)
+  const photos = await sb.select('progress_photos','client_id=eq.'+CLIENT.id+'&order=taken_at.desc,created_at.desc');
+  DATA.photos = photos||[];
+  // Load most recent cardio protocol + sessions
+  const cardioProtos = await sb.select('cardio_protocols','client_id=eq.'+CLIENT.id+'&order=created_at.desc');
+  DATA.cardioProtocols = cardioProtos||[];
+  if (DATA.cardioProtocols.length) {
+    const cs = await sb.select('cardio_sessions','protocol_id=eq.'+DATA.cardioProtocols[0].id+'&order=order_index');
+    DATA.cardioSessions = cs||[];
+  }
+  // Load meals for ALL meal plans (supports multiple day options, e.g. Day A / Day B)
+  if (DATA.mealPlans.length) {
+    DATA.mealsByPlan = {};
+    await Promise.all(DATA.mealPlans.map(async plan => {
+      const ms = await sb.select('meals','meal_plan_id=eq.'+plan.id+'&order=order_index') || [];
+      DATA.mealsByPlan[plan.id] = ms;
+      await Promise.all(ms.map(async m=>{
+        DATA.foods[m.id] = await sb.select('meal_foods','meal_id=eq.'+m.id+'&order=order_index') || [];
+      }));
+    }));
+    // keep DATA.meals pointing at the first plan for any legacy references
+    DATA.meals = DATA.mealsByPlan[DATA.mealPlans[0].id] || [];
+  }
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('shell').style.display='flex';
+  document.getElementById('client-name-header').textContent = CLIENT.name.split(' ')[0] + "'s Plan";
+
+  // show an unread dot on the Messages tab until it's opened
+  const unreadCoachMsgs = DATA.messages.filter(m=>!m.read&&m.sender==='coach');
+  if (unreadCoachMsgs.length) setUnreadDot(true);
+
+  document.querySelectorAll('.tb-btn').forEach(b=>{
+    b.onclick = () => { TAB=b.dataset.tab; document.querySelectorAll('.tb-btn').forEach(x=>x.classList.toggle('active',x===b)); render(); };
+  });
+
+  // poll for new messages so coach replies show up without a reload
+  setInterval(pollMessages, 15000);
+
+  render();
+}
+
+function setUnreadDot(on) {
+  const btn = document.querySelector('.tb-btn[data-tab=messages]');
+  if (!btn) return;
+  const existing = btn.querySelector('.unread-dot');
+  if (on && !existing) btn.insertAdjacentHTML('beforeend','<span class="unread-dot"></span>');
+  if (!on && existing) existing.remove();
+}
+
+let pollingMsgs = false;
+async function pollMessages() {
+  if (!CLIENT || pollingMsgs) return;
+  pollingMsgs = true;
+  try {
+    const msgs = await sb.select('messages','client_id=eq.'+CLIENT.id+'&order=created_at.asc');
+    if (msgs && msgs.length && (msgs.length !== DATA.messages.length || (msgs[msgs.length-1]||{}).id !== (DATA.messages[DATA.messages.length-1]||{}).id)) {
+      const hadNewFromCoach = msgs.length > DATA.messages.length && msgs.slice(DATA.messages.length).some(m=>m.sender==='coach');
+      DATA.messages = msgs;
+      if (TAB==='messages') {
+        markCoachMessagesRead();
+        const inp = document.getElementById('msg-input');
+        const draft = inp ? inp.value : '';
+        const hadFocus = inp && document.activeElement === inp;
+        render();
+        const inp2 = document.getElementById('msg-input');
+        if (inp2) { inp2.value = draft; if (hadFocus) inp2.focus(); }
+        window.scrollTo(0, document.body.scrollHeight);
+      } else if (hadNewFromCoach) {
+        setUnreadDot(true);
+      }
+    }
+  } finally { pollingMsgs = false; }
+}
+
+function markCoachMessagesRead() {
+  const unread = DATA.messages.filter(m=>!m.read&&m.sender==='coach');
+  if (unread.length) {
+    sb.update('messages',{read:true},'client_id=eq.'+CLIENT.id+'&sender=eq.coach&read=eq.false');
+    unread.forEach(m=>m.read=true);
+  }
+  setUnreadDot(false);
+}
+
+function showError() {
+  document.getElementById('loading').style.display='none';
+  document.getElementById('errorscreen').style.display='flex';
+}
+
+function render() {
+  const el = document.getElementById('content');
+  if (TAB==='home') el.innerHTML = renderInstallCard() + renderHome();
+  else if (TAB==='goals') el.innerHTML = renderGoals();
+  else if (TAB==='workout') el.innerHTML = renderWorkout();
+  else if (TAB==='progress') el.innerHTML = renderProgress();
+  else if (TAB==='nutrition') el.innerHTML = renderNutrition();
+  else if (TAB==='supplements') el.innerHTML = renderSupplements();
+  else if (TAB==='steps') el.innerHTML = renderSteps();
+  else if (TAB==='checkin') el.innerHTML = renderPhotoNudge() + renderCheckin();
+  else if (TAB==='photos') el.innerHTML = renderPhotos();
+  else if (TAB==='messages') { el.innerHTML = renderMessages(); attachMessageHandlers(); markCoachMessagesRead(); window.scrollTo(0, document.body.scrollHeight); }
+  if (TAB==='goals') attachGoalsHandlers();
+  if (TAB==='workout') attachWorkoutHandlers();
+  if (TAB==='supplements') attachSupplementsHandlers();
+  if (TAB==='steps') attachStepsHandlers();
+  if (TAB==='checkin') attachCheckinHandlers();
+  if (TAB==='home') { attachDailyHandlers(); attachInstallHandlers(); }
+  if (TAB==='photos') attachPhotosHandlers();
+  if (TAB==='nutrition') attachNutritionHandlers();
+  if (TAB==='progress') drawExerciseSparklines();
+}
+
+// ── HOME ──────────────────────────────────────────────────────────
+// ── WEEKLY GOALS / CHECKLIST ────────────────────────────────────────
+function isCompleted(type, id, date) {
+  return DATA.checklistCompletions.some(c=>c.item_type===type&&c.item_id===id&&c.date===date&&c.completed);
+}
+
+function renderGoals() {
+  const weekDates = getWeekDates();
+  const todayStr = today();
+  const stepGoal = CLIENT.step_goal || 8000;
+
+  return DAY_NAMES.map((dayName,i)=>{
+    const date = weekDates[i];
+    const isToday = date === todayStr;
+    const workoutsToday = DATA.workouts.filter(w=>w.day_of_week===dayName);
+    const cardioToday = DATA.cardioSessions.filter(s=>s.day_of_week===dayName);
+    const mealsToday = DATA.mealPlans.slice(0,1); // current meal plan applies daily
+    const suppsToday = DATA.supplements; // supplements apply daily
+    const stepsEntry = DATA.dailySteps.find(s=>s.date===date);
+    const stepsHit = stepsEntry && stepsEntry.steps >= stepGoal;
+
+    const items = [
+      ...workoutsToday.map(w=>({type:'workout',id:w.id,label:w.name,icon:'🏋️',sub:(DATA.exercises[w.id]||[]).length+' exercises',manual:true})),
+      ...cardioToday.map(s=>({type:'cardio',id:s.id,label:s.name,icon:'🏃',sub:s.duration_minutes+' min · '+s.modality,manual:true})),
+      ...mealsToday.map(m=>({type:'meal',id:m.id,
+        label: DATA.mealPlans.length>1 ? 'Follow meal plan' : m.name,
+        icon:'🥗',
+        sub: DATA.mealPlans.length>1 ? DATA.mealPlans.length+' options — pick one' : (m.day_label||'Meal plan'),
+        manual:true})),
+      ...suppsToday.map(s=>({type:'supplement',id:s.id,label:s.name,icon:'💊',sub:s.dosage||s.timing||'Supplement',manual:true})),
+      {type:'water',id:'water-'+date,label:'Drink '+waterGoal()+'L water',icon:'💧',sub:waterGoal()+' litres today',manual:true},
+      {type:'steps_display',id:'steps-'+date,label:'Hit '+stepGoal.toLocaleString()+' steps',icon:'👟',sub:stepsEntry?stepsEntry.steps.toLocaleString()+' logged':'Not logged yet',manual:false,autoHit:stepsHit},
+    ];
+
+    if (!items.length) return '';
+
+    const allDone = items.every(it=>it.manual ? isCompleted(it.type,it.id,date) : it.autoHit);
+
+    return `<div class="card" style="${isToday?'border-color:var(--accent)':''}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:700;font-size:14px;${isToday?'color:var(--accent)':''}">${esc(dayName)}</span>
+          ${isToday?badge('green','Today'):''}
+        </div>
+        ${allDone?badge('green','All done ✓'):''}
+      </div>
+      ${items.map(it=>{
+        const done = it.manual ? isCompleted(it.type,it.id,date) : it.autoHit;
+        const clickable = it.manual ? `style="cursor:pointer" data-goal-type="${it.type}" data-goal-id="${esc(it.id)}" data-goal-date="${date}"` : `style="cursor:${isToday?'pointer':'default'}" ${isToday?'onclick="document.querySelector(\'[data-tab=steps]\').click()"':''}`;
+        return `<div class="ex-row" ${clickable}>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:16px">${it.icon}</span>
+            <div>
+              <div class="ex-name" style="${done?'text-decoration:line-through;color:var(--text3)':''}">${esc(it.label)}</div>
+              <div class="ex-meta">${esc(it.sub)}</div>
+            </div>
+          </div>
+          <div class="ex-check${done?' done':''}">${done?'✓':''}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function attachGoalsHandlers() {
+  document.querySelectorAll('[data-goal-type]').forEach(row=>{
+    row.onclick = async () => {
+      const type = row.dataset.goalType;
+      const id = row.dataset.goalId;
+      const date = row.dataset.goalDate;
+      const existing = DATA.checklistCompletions.find(c=>c.item_type===type&&c.item_id===id&&c.date===date);
+      if (existing) {
+        // toggle off — delete the completion row
+        const ok = await sb.delete('checklist_completions','id=eq.'+existing.id);
+        if (ok) DATA.checklistCompletions = DATA.checklistCompletions.filter(c=>c.id!==existing.id);
+      } else {
+        const data = await sb.insert('checklist_completions', { client_id: CLIENT.id, date, item_type: type, item_id: id, completed: true });
+        if (data && data[0]) DATA.checklistCompletions.push(data[0]);
+      }
+      render();
+    };
+  });
+}
+
+// ── DAILY SUBJECTIVE CHECK-IN (J3) ─────────────────────────────────
+function renderDailyCard() {
+  const t = DATA.dailyLogs.find(d=>d.date===today());
+  const desire = t && t.desire_to_train!=null ? t.desire_to_train : null;
+  const refreshedYes = t && t.refreshed===true;
+  const refreshedNo = t && t.refreshed===false;
+  // last known weight: most recent daily log with a weight, else most recent weekly check-in
+  const lastW = (DATA.dailyLogs.find(d=>d.date!==today() && d.weight_kg!=null)||{}).weight_kg
+             ?? (DATA.checkIns.find(c=>c.weight_kg!=null)||{}).weight_kg ?? null;
+  const seg = (val,sel,extra='') => `<button data-seg="${extra}" data-val="${val}" class="${sel?'sel':''}">${val}</button>`;
+  return `<div class="card" id="daily-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+      <div class="card-title" style="margin-bottom:0">Today's daily check-in</div>
+      ${t?badge('green','Logged ✓'):''}
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">30 seconds — helps your coach read your week.</div>
+
+    <div class="field"><label>Morning weight (${UNIT}) — optional</label>
+      <input id="d-weight" type="number" step=".1" inputmode="decimal"
+             placeholder="${lastW!=null?'Last: '+fmtW(lastW)+' '+UNIT:'weigh in first thing, after bathroom'}"
+             value="${t&&t.weight_kg!=null?fmtW(t.weight_kg):''}"/>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">Same time daily — first thing, before food or water.</div></div>
+    <div class="field"><label>Woke up feeling rested?</label>
+      <div class="seg" id="d-refreshed">
+        <button data-val="yes" class="${refreshedYes?'sel':''}">Yes</button>
+        <button data-val="no" class="${refreshedNo?'sel':''}">No</button>
+      </div>
+    </div>
+    <div class="field"><label>Desire to train today</label>
+      <div class="seg" id="d-desire">${[1,2,3,4,5].map(n=>seg(n,desire===n)).join('')}</div>
+    </div>
+    <div class="field"><label>Any digestive issues? (bloating, reflux… & which meal)</label>
+      <input id="d-dig" type="text" placeholder="e.g. bloated after meal 2 — optional" value="${t&&t.digestive_issue?esc(t.digestive_issue):''}"/></div>
+    <div class="field"><label>Any untracked food? (what it was)</label>
+      <input id="d-food" type="text" placeholder="e.g. handful of nuts — optional" value="${t&&t.untracked_food?esc(t.untracked_food):''}"/></div>
+    <button class="btn btn-primary" id="d-submit">${t?'Update today':'Log today'}</button>
+  </div>`;
+}
+function attachDailyHandlers() {
+  // segmented toggles (single-select per group)
+  document.querySelectorAll('#d-refreshed button, #d-desire button').forEach(b=>{
+    b.onclick = () => { b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); };
+  });
+  const btn = document.getElementById('d-submit');
+  if (!btn) return;
+  btn.onclick = async () => {
+    const refEl = document.querySelector('#d-refreshed button.sel');
+    const desEl = document.querySelector('#d-desire button.sel');
+    const wRaw = (document.getElementById('d-weight').value||'').trim();
+    const body = {
+      client_id: CLIENT.id, date: today(),
+      weight_kg: wRaw==='' ? null : Number(wRaw),
+      refreshed: refEl ? refEl.dataset.val==='yes' : null,
+      desire_to_train: desEl ? +desEl.dataset.val : null,
+      digestive_issue: document.getElementById('d-dig').value || null,
+      untracked_food: document.getElementById('d-food').value || null
+    };
+    btn.disabled = true;
+    const existing = DATA.dailyLogs.find(d=>d.date===body.date);
+    if (existing) {
+      const data = await sb.update('daily_logs', body, 'id=eq.'+existing.id);
+      if (data && data[0]) { Object.assign(existing, data[0]); toast('Daily check-in updated ✓'); render(); } else btn.disabled=false;
+    } else {
+      const data = await sb.insert('daily_logs', body);
+      if (data && data[0]) { DATA.dailyLogs.unshift(data[0]); toast('Daily check-in logged ✓'); render(); } else btn.disabled=false;
+    }
+  };
+}
+
+function renderSpecialNote() {
+  return CLIENT && CLIENT.special_note ? `<div class="note-bubble">${esc(CLIENT.special_note)}</div>` : '';
+}
+
+function renderHome() {
+  const latestCI = DATA.checkIns[0];
+  const latestM = DATA.macros[0];
+  const first = DATA.checkIns[DATA.checkIns.length-1];
+  const delta = (latestCI&&first&&latestCI!==first) ? (Number(latestCI.weight_kg)-Number(first.weight_kg)).toFixed(1) : null;
+
+  return `
+    ${renderSpecialNote()}
+    ${renderDailyCard()}
+    <div class="card">
+      <div class="card-title">Current macros</div>
+      ${latestM ? `
+        <div class="big-stat">${esc(latestM.calories)} kcal</div>
+        <div class="macro-bars">
+          <div class="macro-bar"><div class="macro-bar-val" style="color:var(--blue)">${esc(latestM.protein_g)}g</div><div class="macro-bar-label">Protein</div></div>
+          <div class="macro-bar"><div class="macro-bar-val" style="color:var(--accent)">${esc(latestM.carbs_g)}g</div><div class="macro-bar-label">Carbs</div></div>
+          <div class="macro-bar"><div class="macro-bar-val" style="color:var(--amber)">${esc(latestM.fat_g)}g</div><div class="macro-bar-label">Fat</div></div>
+        </div>
+        ${latestM.notes?`<div style="font-size:12px;color:var(--text2);margin-top:12px">${esc(latestM.notes)}</div>`:''}
+      ` : `<div style="color:var(--text3);font-size:13px">Your coach hasn't set macros yet.</div>`}
+    </div>
+
+    <div class="stat-row" style="margin-bottom:14px">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Latest weight</div>
+        <div class="big-stat" style="color:var(--blue)">${latestCI?esc(latestCI.weight_kg)+' lbs':'—'}</div>
+        <div style="font-size:11px;color:var(--text3)">${latestCI?esc(latestCI.date):'No check-ins yet'}</div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Change</div>
+        <div class="big-stat" style="color:${delta&&delta<0?'var(--green)':'var(--amber)'}">${delta!==null?(delta>0?'+':'')+delta+' lbs':'—'}</div>
+        <div style="font-size:11px;color:var(--text3)">since you started</div>
+      </div>
+    </div>
+
+    <div class="card" style="cursor:pointer" onclick="document.querySelector('[data-tab=goals]').click()">
+      <div class="card-title">Today's goals</div>
+      ${(()=>{
+        const todayName = DAY_NAMES[(new Date().getDay()+6)%7];
+        const todayDate = today();
+        const wToday = DATA.workouts.filter(w=>w.day_of_week===todayName);
+        const cToday = DATA.cardioSessions.filter(s=>s.day_of_week===todayName);
+        const mToday = DATA.mealPlans.slice(0,1);
+        const sToday = DATA.supplements;
+        const stepGoal = CLIENT.step_goal || 8000;
+        const stepsEntry = DATA.dailySteps.find(s=>s.date===todayDate);
+        const stepsHit = stepsEntry && stepsEntry.steps >= stepGoal;
+        const total = wToday.length + cToday.length + mToday.length + sToday.length + 2; // +2 for water & steps
+        const manualDone = [...wToday.map(w=>({t:'workout',id:w.id})),...cToday.map(s=>({t:'cardio',id:s.id})),...mToday.map(m=>({t:'meal',id:m.id})),...sToday.map(s=>({t:'supplement',id:s.id}))]
+          .filter(it=>isCompleted(it.t,it.id,todayDate)).length;
+        const waterDone = isCompleted('water','water-'+todayDate,todayDate) ? 1 : 0;
+        const done = manualDone + waterDone + (stepsHit?1:0);
+        return `<div class="big-stat" style="color:var(--accent)">${done}/${total}</div><div style="font-size:11px;color:var(--text3)">tap to view checklist →</div>`;
+      })()}
+    </div>
+
+    ${DATA.supplements.length?`
+    <div class="card" style="cursor:pointer" onclick="document.querySelector('[data-tab=supplements]').click()">
+      <div class="card-title">Today's supplements</div>
+      ${(()=>{
+        const todayDate = today();
+        const done = DATA.supplements.filter(s=>isCompleted('supplement',s.id,todayDate)).length;
+        const total = DATA.supplements.length;
+        return `<div class="big-stat" style="color:${done===total?'var(--green)':'var(--blue)'}">${done}/${total}</div><div style="font-size:11px;color:var(--text3)">taken today · tap to view →</div>`;
+      })()}
+    </div>`:''}
+
+    <div class="card" style="cursor:pointer" onclick="document.querySelector('[data-tab=goals]').click()">
+      <div class="card-title">Today's water</div>
+      ${(()=>{
+        const todayDate = today();
+        const done = isCompleted('water','water-'+todayDate,todayDate);
+        return `<div class="big-stat" style="color:${done?'var(--green)':'var(--blue)'}">${done?waterGoal()+'L ✓':'Not logged'}</div><div style="font-size:11px;color:var(--text3)">goal: ${waterGoal()}L · tap to log →</div>`;
+      })()}
+    </div>
+
+    <div class="card" style="cursor:pointer" onclick="document.querySelector('[data-tab=steps]').click()">
+      <div class="card-title">Today's steps</div>
+      ${(()=>{
+        const t = DATA.dailySteps.find(s=>s.date===today());
+        const goal = CLIENT.step_goal || 8000;
+        const steps = t ? t.steps : 0;
+        const pct = Math.min(100, Math.round((steps/goal)*100));
+        return `<div class="big-stat" style="color:${steps>=goal?'var(--green)':'var(--accent)'}">${t?t.steps.toLocaleString():'Not logged'}</div>
+          <div style="background:var(--bg3);border-radius:6px;height:6px;overflow:hidden;margin:8px 0 4px">
+            <div style="background:var(--green);height:100%;width:${pct}%;border-radius:6px"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3)">of ${goal.toLocaleString()} goal · tap to log →</div>`;
+      })()}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Today's workout</div>
+      ${(()=>{
+        if (!DATA.workouts.length) return `<div style="color:var(--text3);font-size:13px">No program assigned yet.</div>`;
+        const todayName = DAY_NAMES[(new Date().getDay()+6)%7];
+        const wToday = DATA.workouts.filter(w=>w.day_of_week===todayName);
+        const cToday = DATA.cardioSessions.filter(s=>s.day_of_week===todayName);
+        if (!wToday.length && !cToday.length) return `<div style="color:var(--text3);font-size:13px">Rest day — no training scheduled for ${esc(todayName)}. 💤</div>`;
+        return `
+          ${wToday.map(w=>`<div style="font-weight:600;font-size:14px;margin-bottom:2px">${esc(w.name)}</div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:10px">${(DATA.exercises[w.id]||[]).length} exercises</div>`).join('')}
+          ${cToday.map(s=>`<div style="font-weight:600;font-size:14px;margin-bottom:2px">🏃 ${esc(s.name)}</div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:10px">${esc(s.duration_minutes)} min · ${esc(s.modality)}</div>`).join('')}
+          <button class="btn btn-primary" onclick="document.querySelector('[data-tab=workout]').click()">View workout →</button>`;
+      })()}
+    </div>`;
+}
+
+// ── WORKOUT ───────────────────────────────────────────────────────
+function renderWorkout() {
+  let html = renderSpecialNote();
+  const todayName = DAY_NAMES[(new Date().getDay()+6)%7];
+  if (!DATA.workouts.length) {
+    html += `<div class="empty"><div class="empty-icon">🏋️</div><div class="empty-msg">No workout program assigned yet.<br>Check back once your coach sets one up.</div></div>`;
+  } else {
+    // today's session first, then the rest in program order
+    const ordered = [...DATA.workouts.filter(w=>w.day_of_week===todayName), ...DATA.workouts.filter(w=>w.day_of_week!==todayName)];
+    html += ordered.map(w=>{
+      const exs = DATA.exercises[w.id]||[];
+      const isToday = w.day_of_week===todayName;
+      return `<div class="workout-card" ${isToday?'style="border-color:var(--accent)"':''}>
+        <div class="workout-head">
+          <div>
+            <div style="font-weight:700;font-size:15px">${esc(w.name)}</div>
+            <div style="font-size:12px;color:var(--text3)">${esc(w.day_of_week||'')}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${isToday?badge('green','Today'):''}
+            ${badge('blue',exs.length+' exercises')}
+          </div>
+        </div>
+        ${exs.map(e=>{
+          const key = w.id+'-'+e.id;
+          const done = completedSets[key];
+          const lastLog = DATA.exerciseLogs.filter(l=>l.exercise_id===e.id).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+          const meta = [e.sets&&e.reps?esc(e.sets)+' × '+esc(e.reps):'', e.rest_seconds?esc(e.rest_seconds)+'s rest':'', e.notes?esc(e.notes):''].filter(Boolean).join(' · ');
+          return `<div class="ex-row" style="flex-direction:column;align-items:stretch;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="ex-name">${esc(e.name)}</div>
+                <div class="ex-meta">${meta}</div>
+              </div>
+              <div class="ex-check${done?' done':''}" data-key="${key}">${done?'✓':''}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="number" step=".5" inputmode="decimal" class="weight-log-input" data-ex-id="${esc(e.id)}" placeholder="${lastLog?'Last: '+lastLog.weight_kg+' '+UNIT:UNIT}" style="flex:1;min-width:0;padding:7px 10px;font-size:12px"/>
+              <input type="text" inputmode="numeric" class="reps-log-input" data-ex-id="${esc(e.id)}" placeholder="${lastLog&&lastLog.reps_completed?'Last: '+esc(lastLog.reps_completed):'reps'}" style="width:84px;flex-shrink:0;padding:7px 8px;font-size:12px"/>
+              <button class="btn btn-filled btn-sm weight-log-save" data-ex-id="${esc(e.id)}">Log</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('');
+  }
+
+  if (DATA.cardioSessions.length) {
+    html += `<div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin:20px 0 10px 4px">Cardio</div>`;
+    html += DATA.cardioSessions.map(s=>{
+      const key = 'cardio-'+s.id;
+      const done = completedSets[key];
+      const isToday = s.day_of_week===todayName;
+      return `<div class="workout-card" ${isToday?'style="border-color:var(--accent)"':''}>
+        <div class="workout-head">
+          <div>
+            <div style="font-weight:700;font-size:15px">${esc(s.name)}${isToday?' '+badge('green','Today'):''}</div>
+            <div style="font-size:12px;color:var(--text3)">${esc(s.day_of_week||'')}</div>
+          </div>
+          <div class="ex-check${done?' done':''}" data-key="${key}" style="flex-shrink:0">${done?'✓':''}</div>
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
+          ${badge('blue',s.modality)}
+          ${badge('amber',s.intensity)}
+        </div>
+        <div style="font-size:13px;color:var(--text2)">${esc(s.duration_minutes)} minutes</div>
+        ${s.notes?`<div style="font-size:12px;color:var(--text3);margin-top:6px">${esc(s.notes)}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  return html;
+}
+function attachWorkoutHandlers() {
+  document.querySelectorAll('.ex-check').forEach(c=>{
+    c.onclick = () => { completedSets[c.dataset.key] = !completedSets[c.dataset.key]; render(); };
+  });
+  document.querySelectorAll('.weight-log-save').forEach(btn=>{
+    btn.onclick = async () => {
+      const exId = btn.dataset.exId;
+      const input = document.querySelector(`.weight-log-input[data-ex-id="${exId}"]`);
+      const repsInput = document.querySelector(`.reps-log-input[data-ex-id="${exId}"]`);
+      const val = +input.value;
+      if (!val || val <= 0) return toast('Enter a weight to log');
+      const reps = repsInput && repsInput.value.trim() ? repsInput.value.trim() : null;
+      btn.disabled = true;
+      const data = await sb.insert('exercise_logs', { exercise_id: exId, client_id: CLIENT.id, date: today(), weight_kg: val, reps_completed: reps });
+      if (data && data[0]) { DATA.exerciseLogs.unshift(data[0]); toast(reps?'Set logged ✓':'Weight logged ✓'); render(); }
+      else btn.disabled = false;
+    };
+  });
+}
+function badge(color,text){ return `<span class="badge badge-${color}">${esc(text)}</span>`; }
+
+// ── PROGRESS (exercise log history) ───────────────────────────────
+// Groups every logged lift by exercise so the client can see week-to-week progression.
+// Collapses logs into one entry per training day, using that day's heaviest set.
+// Clients often log several sets of the same lift in a session (e.g. 20, 30, 20) — comparing
+// raw entries would read a warm-up set as a drop/jump, so progression is tracked session to session.
+function groupLogsByExercise() {
+  const raw = {};
+  DATA.exerciseLogs
+    .filter(l => l.exercise_id && l.weight_kg != null && l.weight_kg !== '')
+    .forEach(l => { (raw[l.exercise_id] = raw[l.exercise_id] || []).push(l); });
+
+  const byEx = {};
+  Object.keys(raw).forEach(id => {
+    const byDate = {};
+    raw[id].forEach(l => {
+      const w = Number(l.weight_kg);
+      if (isNaN(w)) return;
+      const s = byDate[l.date];
+      if (!s) byDate[l.date] = { date: l.date, top: w, sets: 1, reps: l.reps_completed || null };
+      else {
+        s.sets++;
+        if (w > s.top) { s.top = w; s.reps = l.reps_completed || s.reps; }
+      }
+    });
+    byEx[id] = Object.values(byDate).sort((a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+  });
+  return byEx;
+}
+
+function renderProgress() {
+  const byEx = groupLogsByExercise();
+  const exIds = Object.keys(byEx);
+  if (!exIds.length) {
+    return `<div class="empty"><div class="empty-icon">📈</div><div class="empty-msg">
+      No lifts logged yet.<br>Log a weight on the Workout tab and your progression will show up here.</div></div>`;
+  }
+
+  // ── This week's summary ──
+  const wk = getWeekDates();
+  const thisWeek = DATA.exerciseLogs.filter(l => l.date >= wk[0] && l.date <= wk[6] && l.weight_kg != null);
+  const sessions = new Set(thisWeek.map(l=>l.date)).size;
+  const exThisWeek = new Set(thisWeek.map(l=>l.exercise_id)).size;
+  let prCount = 0;
+  Object.keys(byEx).forEach(id => {
+    byEx[id].forEach(s => {
+      if (s.date < wk[0] || s.date > wk[6]) return;
+      const prior = byEx[id].filter(x => x.date < s.date).map(x => x.top);
+      if (prior.length && s.top > Math.max(...prior)) prCount++;
+    });
+  });
+
+  let html = `<div class="card">
+    <div class="card-title">This week</div>
+    <div class="stat-row" style="gap:10px">
+      <div style="text-align:center"><div class="big-stat" style="font-size:24px;margin-bottom:0">${sessions}</div><div style="font-size:10px;color:var(--text3)">days logged</div></div>
+      <div style="text-align:center"><div class="big-stat" style="font-size:24px;margin-bottom:0;color:var(--blue)">${exThisWeek}</div><div style="font-size:10px;color:var(--text3)">exercises</div></div>
+    </div>
+    ${prCount?`<div style="margin-top:12px;text-align:center"><span class="badge badge-green">🎉 ${prCount} new personal best${prCount>1?'s':''} this week</span></div>`:''}
+  </div>`;
+
+  // ── Per-exercise cards, most recently trained first ──
+  exIds.sort((a,b) => {
+    const la = byEx[a][byEx[a].length-1].date, lb = byEx[b][byEx[b].length-1].date;
+    return la < lb ? 1 : la > lb ? -1 : 0;
+  });
+
+  html += exIds.map(id => {
+    const arr = byEx[id];
+    const name = DATA.exerciseNames[id] || 'Exercise';
+    const latest = arr[arr.length-1];
+    const prev = arr.length > 1 ? arr[arr.length-2] : null;
+    const weights = arr.map(x => x.top);
+    const best = Math.max(...weights);
+    const isPR = arr.length > 1 && latest.top > Math.max(...weights.slice(0,-1));
+
+    let trend;
+    if (!prev) trend = `<span class="badge badge-gray">First log</span>`;
+    else {
+      const d = latest.top - prev.top;
+      trend = d > 0 ? `<span class="badge badge-green">▲ +${fmtW(d)} ${UNIT}</span>`
+            : d < 0 ? `<span class="badge badge-amber">▼ ${fmtW(d)} ${UNIT}</span>`
+                    : `<span class="badge badge-blue">— holding</span>`;
+    }
+
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px">${esc(name)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Best ${fmtW(best)} ${UNIT} · ${arr.length} session${arr.length>1?'s':''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:20px;font-weight:700;color:var(--accent);letter-spacing:-.5px">${fmtW(latest.top)} ${UNIT}${latest.reps?`<span style="font-size:13px;color:var(--text2);font-weight:600"> × ${esc(latest.reps)}</span>`:''}</div>
+          <div style="margin-top:3px">${isPR?'<span class="badge badge-green">PR 🎉</span>':trend}</div>
+        </div>
+      </div>
+      ${arr.length>1?`<canvas class="ex-spark" data-ex="${esc(id)}" height="52"></canvas>`:''}
+      <details class="prep-group" style="margin-bottom:0;margin-top:10px">
+        <summary>History (${arr.length})</summary>
+        <div style="margin:6px 0 10px">
+          ${[...arr].reverse().map((s,i,rev) => {
+            const nx = rev[i+1];
+            const d = nx ? s.top - nx.top : null;
+            const dTxt = d===null ? '' : d>0 ? `<span style="color:var(--green)">+${fmtW(d)}</span>`
+                        : d<0 ? `<span style="color:var(--amber)">${fmtW(d)}</span>`
+                              : `<span style="color:var(--text3)">—</span>`;
+            return `<div class="food-row"><span class="food-name" style="font-weight:400;color:var(--text2)">${esc(fmtDay(s.date))}${s.sets>1?` <span style="color:var(--text3);font-weight:400">· ${s.sets} sets</span>`:''}</span>
+              <span class="food-macro">${fmtW(s.top)} ${UNIT}${s.reps?' × '+esc(s.reps):''} ${dTxt}</span></div>`;
+          }).join('')}
+        </div>
+      </details>
+    </div>`;
+  }).join('');
+
+  return html;
+}
+
+const fmtDay = d => new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+function drawExerciseSparklines() {
+  const byEx = groupLogsByExercise();
+  document.querySelectorAll('.ex-spark').forEach(canvas => {
+    const arr = byEx[canvas.dataset.ex];
+    if (!arr || arr.length < 2) return;
+    const pts = arr.map(x => x.top);
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.parentElement.clientWidth - 36, H = 52;
+    if (W <= 0) return;
+    canvas.width = W*dpr; canvas.height = H*dpr;
+    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    const pad = 8;
+    const min = Math.min(...pts), max = Math.max(...pts);
+    const span = (max-min) || 1;
+    const X = i => pad + (pts.length===1 ? (W-pad*2)/2 : (i/(pts.length-1))*(W-pad*2));
+    const Y = v => pad + (H-pad*2) - ((v-min)/span)*(H-pad*2);
+    // area fill
+    ctx.beginPath();
+    pts.forEach((v,i)=>{ i===0?ctx.moveTo(X(i),Y(v)):ctx.lineTo(X(i),Y(v)); });
+    ctx.lineTo(X(pts.length-1), H); ctx.lineTo(X(0), H); ctx.closePath();
+    ctx.fillStyle = 'rgba(200,240,101,0.10)'; ctx.fill();
+    // line
+    ctx.beginPath();
+    pts.forEach((v,i)=>{ i===0?ctx.moveTo(X(i),Y(v)):ctx.lineTo(X(i),Y(v)); });
+    ctx.strokeStyle = '#c8f065'; ctx.lineWidth = 2; ctx.lineJoin='round'; ctx.stroke();
+    // dots (last one highlighted)
+    pts.forEach((v,i)=>{
+      ctx.beginPath(); ctx.arc(X(i),Y(v), i===pts.length-1?3.5:2.5, 0, Math.PI*2);
+      ctx.fillStyle = i===pts.length-1 ? '#c8f065' : 'rgba(200,240,101,0.55)'; ctx.fill();
+    });
+  });
+}
+
+// ── NUTRITION ─────────────────────────────────────────────────────
+function renderNutrition() {
+  const latestM = DATA.macros[0];
+  let html = '';
+  html += `<div class="card">
+    <div class="card-title">Daily targets</div>
+    ${latestM ? `
+      <div class="big-stat">${esc(latestM.calories)} kcal</div>
+      <div class="macro-bars">
+        <div class="macro-bar"><div class="macro-bar-val" style="color:var(--blue)">${esc(latestM.protein_g)}g</div><div class="macro-bar-label">Protein</div></div>
+        <div class="macro-bar"><div class="macro-bar-val" style="color:var(--accent)">${esc(latestM.carbs_g)}g</div><div class="macro-bar-label">Carbs</div></div>
+        <div class="macro-bar"><div class="macro-bar-val" style="color:var(--amber)">${esc(latestM.fat_g)}g</div><div class="macro-bar-label">Fat</div></div>
+      </div>` : `<div style="color:var(--text3);font-size:13px">Not set yet.</div>`}
+  </div>`;
+
+  if (!DATA.mealPlans.length) {
+    html += `<div class="empty"><div class="empty-icon">🥗</div><div class="empty-msg">No meal plan assigned yet.</div></div>`;
+    return html;
+  }
+
+  // Plan switcher — only shown when there's more than one option
+  if (DATA.mealPlans.length > 1) {
+    html += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      ${DATA.mealPlans.map((p,i)=>`
+        <button class="plan-switch-btn" data-plan-idx="${i}" style="
+          flex:1;min-width:130px;padding:10px 12px;border-radius:10px;cursor:pointer;
+          border:1px solid ${i===ACTIVE_MEAL_PLAN?'var(--accent)':'var(--border)'};
+          background:${i===ACTIVE_MEAL_PLAN?'var(--accent)':'var(--bg3)'};
+          color:${i===ACTIVE_MEAL_PLAN?'#0f0f11':'var(--text)'};
+          font-weight:${i===ACTIVE_MEAL_PLAN?'700':'500'};font-size:13px;font-family:inherit;text-align:center;">
+          ${esc(p.day_label || p.name)}
+        </button>`).join('')}
+    </div>`;
+  }
+
+  const plan = DATA.mealPlans[ACTIVE_MEAL_PLAN] || DATA.mealPlans[0];
+  const meals = DATA.mealsByPlan[plan.id] || [];
+
+  html += `<div style="font-size:13px;font-weight:700;margin:0 0 10px 4px">${esc(plan.name)}</div>`;
+
+  if (!meals.length) {
+    html += `<div class="empty"><div class="empty-icon">🥗</div><div class="empty-msg">No meals in this plan yet.</div></div>`;
+    return html;
+  }
+
+  const dayTot = {cal:0,p:0,c:0,fat:0};
+  html += meals.map(m=>{
+    const fs = DATA.foods[m.id]||[];
+    const tot = fs.reduce((s,f)=>({cal:s.cal+Number(f.calories||0),p:s.p+Number(f.protein_g||0),c:s.c+Number(f.carbs_g||0),fat:s.fat+Number(f.fat_g||0)}),{cal:0,p:0,c:0,fat:0});
+    dayTot.cal+=tot.cal; dayTot.p+=tot.p; dayTot.c+=tot.c; dayTot.fat+=tot.fat;
+    return `<div class="meal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-weight:700;font-size:14px">${esc(m.name)}${m.time_label?` <span style="font-size:12px;color:var(--text3);font-weight:400">· ${esc(m.time_label)}</span>`:''}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${Math.round(tot.cal)} kcal · P${Math.round(tot.p)}g C${Math.round(tot.c)}g F${Math.round(tot.fat)}g</div>
+      ${fs.map(f=>`<div class="food-row"><span class="food-name">${esc(f.food_name)}</span><span class="food-macro">${f.amount_g?esc(f.amount_g)+'g · ':''}${esc(f.calories)}cal</span></div>`).join('')}
+    </div>`;
+  }).join('');
+
+  html += `<div class="card" style="border-color:var(--accent)">
+    <div class="card-title">Day total</div>
+    <div class="big-stat">${Math.round(dayTot.cal)} kcal</div>
+    <div class="macro-bars">
+      <div class="macro-bar"><div class="macro-bar-val" style="color:var(--blue)">${Math.round(dayTot.p)}g</div><div class="macro-bar-label">Protein</div></div>
+      <div class="macro-bar"><div class="macro-bar-val" style="color:var(--accent)">${Math.round(dayTot.c)}g</div><div class="macro-bar-label">Carbs</div></div>
+      <div class="macro-bar"><div class="macro-bar-val" style="color:var(--amber)">${Math.round(dayTot.fat)}g</div><div class="macro-bar-label">Fat</div></div>
+    </div>
+  </div>`;
+
+  return html;
+}
+
+function attachNutritionHandlers() {
+  document.querySelectorAll('.plan-switch-btn').forEach(btn=>{
+    btn.onclick = () => { ACTIVE_MEAL_PLAN = +btn.dataset.planIdx; render(); };
+  });
+}
+
+// ── SUPPLEMENTS ───────────────────────────────────────────────────
+function renderSupplements() {
+  if (!DATA.supplements.length) {
+    return `<div class="empty"><div class="empty-icon">💊</div><div class="empty-msg">No supplements assigned yet.<br>Your coach will add your stack here.</div></div>`;
+  }
+  const todayStr = today();
+  const allDone = DATA.supplements.every(s=>isCompleted('supplement',s.id,todayStr));
+
+  // Group by timing for a more useful daily view
+  const groups = {};
+  DATA.supplements.forEach(s=>{
+    const t = s.timing || 'Anytime';
+    if (!groups[t]) groups[t] = [];
+    groups[t].push(s);
+  });
+
+  let html = `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="card-title" style="margin-bottom:0">Today's stack</div>
+      ${allDone?badge('green','All taken ✓'):''}
+    </div>
+  </div>`;
+
+  html += Object.keys(groups).map(timing=>`
+    <div class="card">
+      <div class="card-title">${esc(timing)}</div>
+      ${groups[timing].map(s=>{
+        const done = isCompleted('supplement', s.id, todayStr);
+        return `<div class="ex-row" style="cursor:pointer" data-supp-id="${esc(s.id)}">
+          <div>
+            <div class="ex-name" style="${done?'text-decoration:line-through;color:var(--text3)':''}">${esc(s.name)}</div>
+            <div class="ex-meta">${s.dosage?esc(s.dosage):''}${s.notes?' · '+esc(s.notes):''}</div>
+          </div>
+          <div class="ex-check${done?' done':''}">${done?'✓':''}</div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+
+  return html;
+}
+
+function attachSupplementsHandlers() {
+  document.querySelectorAll('[data-supp-id]').forEach(row=>{
+    row.onclick = async () => {
+      const id = row.dataset.suppId;
+      const date = today();
+      const existing = DATA.checklistCompletions.find(c=>c.item_type==='supplement'&&c.item_id===id&&c.date===date);
+      if (existing) {
+        const ok = await sb.delete('checklist_completions','id=eq.'+existing.id);
+        if (ok) DATA.checklistCompletions = DATA.checklistCompletions.filter(c=>c.id!==existing.id);
+      } else {
+        const data = await sb.insert('checklist_completions', { client_id: CLIENT.id, date, item_type: 'supplement', item_id: id, completed: true });
+        if (data && data[0]) DATA.checklistCompletions.push(data[0]);
+      }
+      render();
+    };
+  });
+}
+
+// ── STEPS ─────────────────────────────────────────────────────────
+function renderSteps() {
+  const today_ = today();
+  const todayEntry = DATA.dailySteps.find(s=>s.date===today_);
+  const last7 = [...DATA.dailySteps].sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(-7);
+  const avg7 = last7.length ? Math.round(last7.reduce((s,d)=>s+d.steps,0)/last7.length) : null;
+  const goal = CLIENT.step_goal || 8000;
+  const todaySteps = todayEntry ? todayEntry.steps : 0;
+  const pct = Math.min(100, Math.round((todaySteps/goal)*100));
+  const daysHitGoal = last7.filter(d=>d.steps>=goal).length;
+
+  return `
+    <div class="card">
+      <div class="card-title">Today's progress</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <span class="big-stat" style="color:${todaySteps>=goal?'var(--green)':'var(--accent)'}">${todaySteps.toLocaleString()}</span>
+        <span style="font-size:13px;color:var(--text3)">/ ${goal.toLocaleString()} goal</span>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;height:10px;overflow:hidden;margin-bottom:6px">
+        <div style="background:${todaySteps>=goal?'var(--green)':'var(--accent)'};height:100%;width:${pct}%;transition:width .3s;border-radius:8px"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3)">${todaySteps>=goal?'Goal hit today 🎉':pct+'% of today\\u2019s goal'}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Log today's steps</div>
+      <div class="field"><label>Step count</label><input id="steps-input" type="number" inputmode="numeric" placeholder="e.g. 8500" value="${todayEntry?todayEntry.steps:''}"/></div>
+      <button class="btn btn-primary" id="steps-submit">${todayEntry?'Update today&#39;s steps':'Save steps'}</button>
+      ${todayEntry?`<div style="font-size:12px;color:var(--text3);margin-top:10px;text-align:center">${todayEntry.source==='health'?'🍎 Synced from Apple Health':'Already logged '+esc(todayEntry.steps)+' steps today'} — update anytime.</div>`:''}
+    </div>
+    ${renderHealthSyncCard()}
+
+    <div class="stat-row" style="margin-bottom:14px">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">7-day average</div>
+        <div class="big-stat" style="color:var(--blue)">${avg7!==null?avg7.toLocaleString():'—'}</div>
+        <div style="font-size:11px;color:var(--text3)">steps/day</div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Goal hit</div>
+        <div class="big-stat" style="color:var(--amber)">${daysHitGoal}/${last7.length||0}</div>
+        <div style="font-size:11px;color:var(--text3)">last 7 days</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Last 7 days <span style="color:var(--text3);font-weight:400">— goal: ${goal.toLocaleString()}</span></div>
+      ${last7.length===0?`<div style="color:var(--text3);font-size:13px">No steps logged yet.</div>`:`<canvas id="steps-chart" height="160"></canvas>`}
+    </div>`;
+}
+
+function attachStepsHandlers() {
+  const btn = document.getElementById('steps-submit');
+  btn.onclick = async () => {
+    const val = +document.getElementById('steps-input').value;
+    if (!val || val < 0) return toast('Enter a valid step count');
+    const todayStr = today();
+    const existing = DATA.dailySteps.find(s=>s.date===todayStr);
+    btn.disabled = true;
+    if (existing) {
+      const data = await sb.update('daily_steps', { steps: val, source: 'manual' }, 'id=eq.'+existing.id);
+      if (data && data[0]) { existing.steps = val; existing.source = 'manual'; toast('Steps updated ✓'); render(); return; }
+    } else {
+      const data = await sb.insert('daily_steps', { client_id: CLIENT.id, date: todayStr, steps: val });
+      if (data && data[0]) { DATA.dailySteps.unshift(data[0]); toast('Steps saved ✓'); render(); return; }
+    }
+    btn.disabled = false;
+  };
+  const copyBtn = document.getElementById('sync-copy');
+  if (copyBtn) copyBtn.onclick = async () => {
+    try { await navigator.clipboard.writeText(CLIENT.access_token); toast('Code copied ✓'); }
+    catch(e) { toast('Press and hold the code to copy it'); }
+  };
+  drawStepsChart();
+}
+
+function drawStepsChart() {
+  const canvas = document.getElementById('steps-chart');
+  if (!canvas) return;
+  const last7 = [...DATA.dailySteps].sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(-7);
+  if (!last7.length) return;
+  const goal = CLIENT.step_goal || 8000;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.parentElement.clientWidth - 36;
+  const H = 160;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const pad = {t:10,r:10,b:24,l:10};
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+  const max = Math.max(...last7.map(d=>d.steps), goal, 1000);
+  const barW = cW/last7.length * 0.6;
+  const gap = cW/last7.length;
+
+  if (goal) {
+    const goalY = pad.t + cH - (goal/max)*cH;
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle = 'rgba(245,165,36,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, goalY);
+    ctx.lineTo(pad.l+cW, goalY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  last7.forEach((d,i)=>{
+    const h = (d.steps/max)*cH;
+    const x = pad.l + i*gap + (gap-barW)/2;
+    const y = pad.t + cH - h;
+    const hitGoal = goal && d.steps >= goal;
+    ctx.fillStyle = hitGoal ? '#4ade80' : '#c8f065';
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x,y,barW,h,4) : ctx.rect(x,y,barW,h);
+    ctx.fill();
+    ctx.fillStyle = '#5f5f70';
+    ctx.font = '10px -apple-system,sans-serif';
+    ctx.textAlign = 'center';
+    const lbl = new Date(d.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,3);
+    ctx.fillText(lbl, x+barW/2, H-6);
+  });
+}
+
+// ── CHECK-IN ──────────────────────────────────────────────────────
+function renderCheckin() {
+  const recent = DATA.checkIns.slice(0,5);
+  const todayCI = DATA.checkIns.find(c=>c.date===today());
+  return `
+    ${DATA.checkIns.length>1?`<div class="card">
+      <div class="card-title">Weight trend</div>
+      <canvas id="weight-chart" height="150"></canvas>
+    </div>`:''}
+    <div class="card">
+      <div class="card-title">Log this week's check-in</div>
+      ${todayCI?`<div style="font-size:12px;color:var(--text2);background:var(--adim);border-radius:8px;padding:8px 12px;margin-bottom:12px">You already checked in today — submitting again will update it.</div>`:''}
+      <div class="field"><label>Weight (lbs)</label><input id="ci-w" type="number" step=".1" inputmode="decimal" placeholder="e.g. 74.5" value="${todayCI?esc(todayCI.weight_kg):''}"/></div>
+      <div class="field"><label>Body fat % (optional)</label><input id="ci-bf" type="number" step=".1" inputmode="decimal" placeholder="e.g. 21.0" value="${todayCI&&todayCI.body_fat?esc(todayCI.body_fat):''}"/></div>
+      <div class="field"><label>Energy this week: <span id="ci-e-val" class="slider-val">7</span>/10</label>
+        <div class="slider-row"><input id="ci-e" type="range" min="1" max="10" value="7" oninput="document.getElementById('ci-e-val').textContent=this.value"/></div>
+      </div>
+      <div class="field"><label>Sleep quality: <span id="ci-s-val" class="slider-val">7</span>/10</label>
+        <div class="slider-row"><input id="ci-s" type="range" min="1" max="10" value="7" oninput="document.getElementById('ci-s-val').textContent=this.value"/></div>
+      </div>
+      <div class="field"><label>🏆 Win of the week</label><textarea id="ci-win" placeholder="One thing that went well — a PR, a streak, sticking to the plan…">${todayCI&&todayCI.win_of_week?esc(todayCI.win_of_week):''}</textarea></div>
+      <div class="field"><label>🎯 What can you improve next week?</label><textarea id="ci-improve" placeholder="One thing you'll work on — you naming it makes it stick.">${todayCI&&todayCI.improve_next_week?esc(todayCI.improve_next_week):''}</textarea></div>
+      <div class="field"><label>How did the week go?</label><textarea id="ci-notes" placeholder="Adherence, energy, anything your coach should know…">${todayCI&&todayCI.notes?esc(todayCI.notes):''}</textarea></div>
+
+      <details class="prep-group"${todayCI&&(todayCI.waist_cm||todayCI.skinfolds||todayCI.blood_pressure)?' open':''}>
+        <summary>Prep tracking (optional)</summary>
+        <div class="field" style="margin-top:12px"><label>Waist (cm)</label><input id="ci-waist" type="number" step=".1" inputmode="decimal" placeholder="e.g. 78.5" value="${todayCI&&todayCI.waist_cm?esc(todayCI.waist_cm):''}"/></div>
+        <div class="field"><label>Skinfold sites (mm)</label><input id="ci-skin" type="text" placeholder="e.g. glute 8 · lower back 6 · upper back 5" value="${todayCI&&todayCI.skinfolds?esc(todayCI.skinfolds):''}"/></div>
+        <div class="field"><label>Blood pressure</label><input id="ci-bp" type="text" inputmode="numeric" placeholder="e.g. 118/76" value="${todayCI&&todayCI.blood_pressure?esc(todayCI.blood_pressure):''}"/></div>
+      </details>
+
+      <button class="btn btn-primary" id="ci-submit">Submit check-in</button>
+    </div>
+
+    <div class="card-title" style="margin:20px 0 10px 4px">Recent check-ins</div>
+    ${recent.length===0?`<div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No check-ins yet — log your first one above.</div></div>`:
+    recent.map(ci=>`<div class="card" style="padding:14px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:7px">${esc(ci.date)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${ci.weight_kg?badge('blue',ci.weight_kg+' lbs'):''}
+        ${ci.body_fat?badge('gray',ci.body_fat+'% BF'):''}
+        ${ci.energy?badge('green','Energy '+ci.energy+'/10'):''}
+        ${ci.sleep_quality?badge('amber','Sleep '+ci.sleep_quality+'/10'):''}
+        ${ci.waist_cm?badge('gray','Waist '+ci.waist_cm+'cm'):''}
+        ${ci.blood_pressure?badge('gray','BP '+esc(ci.blood_pressure)):''}
+      </div>
+      ${ci.win_of_week?`<div style="font-size:12px;color:var(--text2);margin-top:8px">🏆 ${esc(ci.win_of_week)}</div>`:''}
+      ${ci.improve_next_week?`<div style="font-size:12px;color:var(--text2);margin-top:4px">🎯 ${esc(ci.improve_next_week)}</div>`:''}
+      ${ci.skinfolds?`<div style="font-size:12px;color:var(--text3);margin-top:4px">Skinfolds: ${esc(ci.skinfolds)}</div>`:''}
+      ${ci.notes?`<div style="font-size:13px;color:var(--text2);margin-top:8px">${esc(ci.notes)}</div>`:''}
+    </div>`).join('')}`;
+}
+function attachCheckinHandlers() {
+  const btn = document.getElementById('ci-submit');
+  btn.onclick = async () => {
+    const w = document.getElementById('ci-w').value;
+    if (!w) return toast('Please enter your weight');
+    const body = {
+      client_id: CLIENT.id, date: today(), weight_kg: w,
+      body_fat: document.getElementById('ci-bf').value || null,
+      energy: +document.getElementById('ci-e').value,
+      sleep_quality: +document.getElementById('ci-s').value,
+      notes: document.getElementById('ci-notes').value,
+      win_of_week: document.getElementById('ci-win').value || null,
+      improve_next_week: document.getElementById('ci-improve').value || null,
+      waist_cm: document.getElementById('ci-waist').value || null,
+      skinfolds: document.getElementById('ci-skin').value || null,
+      blood_pressure: document.getElementById('ci-bp').value || null
+    };
+    btn.disabled = true;
+    const existing = DATA.checkIns.find(c=>c.date===body.date);
+    if (existing) {
+      const data = await sb.update('check_ins', body, 'id=eq.'+existing.id);
+      if (data && data[0]) {
+        Object.assign(existing, data[0]);
+        toast('Check-in updated ✓');
+        render();
+      } else btn.disabled = false;
+    } else {
+      const data = await sb.insert('check_ins', body);
+      if (data && data[0]) {
+        DATA.checkIns.unshift(data[0]);
+        toast('Check-in submitted ✓');
+        render();
+      } else btn.disabled = false;
+    }
+  };
+  drawWeightChart();
+}
+
+function drawWeightChart() {
+  const canvas = document.getElementById('weight-chart');
+  if (!canvas) return;
+  const pts = [...DATA.checkIns].sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(-12)
+    .map(c=>({date:c.date, w:Number(c.weight_kg)})).filter(p=>!isNaN(p.w));
+  if (pts.length < 2) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.parentElement.clientWidth - 36;
+  const H = 150;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const pad = {t:14,r:34,b:22,l:8};
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+  const min = Math.min(...pts.map(p=>p.w)), max = Math.max(...pts.map(p=>p.w));
+  const span = (max-min) || 1;
+  const X = i => pad.l + (pts.length===1?cW/2:(i/(pts.length-1))*cW);
+  const Y = w => pad.t + cH - ((w-min)/span)*cH;
+
+  ctx.strokeStyle = '#5b9cf6';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  pts.forEach((p,i)=>{ i===0?ctx.moveTo(X(i),Y(p.w)):ctx.lineTo(X(i),Y(p.w)); });
+  ctx.stroke();
+
+  ctx.fillStyle = '#5b9cf6';
+  pts.forEach((p,i)=>{ ctx.beginPath(); ctx.arc(X(i),Y(p.w),3,0,Math.PI*2); ctx.fill(); });
+
+  ctx.fillStyle = '#9191a0';
+  ctx.font = '10px -apple-system,sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(pts[pts.length-1].w+'', X(pts.length-1)+7, Y(pts[pts.length-1].w)+3);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#5f5f70';
+  const lbl = d => new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  ctx.fillText(lbl(pts[0].date), X(0)+14, H-6);
+  ctx.fillText(lbl(pts[pts.length-1].date), X(pts.length-1)-6, H-6);
+}
+
+// ── MESSAGES ──────────────────────────────────────────────────────
+function msgDayLabel(ts) {
+  const d = localDate(new Date(ts));
+  if (d === today()) return 'Today';
+  const y = new Date(); y.setDate(y.getDate()-1);
+  if (d === localDate(y)) return 'Yesterday';
+  return new Date(ts).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+function renderMessages() {
+  if (!DATA.messages.length) return `
+    <div id="msg-thread"><div class="empty"><div class="empty-icon">💬</div><div class="empty-msg">No messages yet. Say hi to your coach!</div></div></div>
+    ${msgInputBar()}`;
+  let lastDay = null;
+  return `<div id="msg-thread">
+    ${DATA.messages.map(m=>{
+      const day = localDate(new Date(m.created_at));
+      const sep = day!==lastDay ? `<div class="msg-day">${esc(msgDayLabel(m.created_at))}</div>` : '';
+      lastDay = day;
+      return `${sep}<div class="bubble bubble-${m.sender==='coach'?'coach':'client'}">
+        <div>${esc(m.body)}</div>
+        <div class="bubble-time">${fmt12(m.created_at)}</div>
+      </div>`;
+    }).join('')}
+  </div>${msgInputBar()}`;
+}
+function msgInputBar() {
+  return `<div id="msg-input-bar"><input id="msg-input" placeholder="Message your coach…"/><button class="btn btn-primary" style="width:auto;padding:13px 20px" id="msg-send">Send</button></div>`;
+}
+function attachMessageHandlers() {
+  let sending = false;
+  const send = async () => {
+    if (sending) return;
+    const inp = document.getElementById('msg-input');
+    const btn = document.getElementById('msg-send');
+    const body = inp.value.trim();
+    if (!body) return;
+    sending = true; btn.disabled = true;
+    const data = await sb.insert('messages', { client_id: CLIENT.id, sender:'client', body, read:false, created_at:new Date().toISOString() });
+    sending = false; btn.disabled = false;
+    if (data && data[0]) { DATA.messages.push(data[0]); inp.value=''; render(); document.getElementById('msg-input')?.focus(); }
+  };
+  document.getElementById('msg-send').onclick = send;
+  document.getElementById('msg-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+}
+
+// ── STORAGE HELPERS ─────────────────────────────────────────────────
+// localStorage can throw (private mode, blocked site data) — never let that break the app.
+function lsGet(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
+function lsSet(k, v) { try { v===null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e) {} }
+
+// ── INSTALL AS APP (home screen) ────────────────────────────────────
+let INSTALL_EVT = null; // Android/Chrome install prompt, captured so we can offer our own button
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); INSTALL_EVT = e; if (CLIENT && TAB==='home') render(); });
+window.addEventListener('appinstalled', () => { INSTALL_EVT = null; lsSet('rc_install_dismissed', '1'); });
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+
+function renderInstallCard() {
+  if (isStandalone() || lsGet('rc_install_dismissed')) return '';
+  if (!isIOS() && !INSTALL_EVT) return '';
+  const how = isIOS()
+    ? 'In Safari, tap <b>Share</b> (the square with the arrow), then <b>Add to Home Screen</b>. It opens like an app — already signed in.'
+    : 'Install it in one tap. It opens like an app — already signed in.';
+  return `
+    <div class="card" style="border-color:rgba(200,240,101,0.35)">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <img src="/icons/icon-192.png" width="44" height="44" alt="" style="border-radius:11px;flex-shrink:0"/>
+        <div style="flex:1">
+          <div style="font-weight:600;margin-bottom:3px">Put your plan on your home screen</div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.5">${how}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        ${isIOS()?'':'<button class="btn btn-primary btn-sm" id="install-btn">Install app</button>'}
+        <button class="btn btn-ghost btn-sm" id="install-dismiss">${isIOS()?'Got it':'Not now'}</button>
+      </div>
+    </div>`;
+}
+
+function attachInstallHandlers() {
+  const dismiss = document.getElementById('install-dismiss');
+  if (dismiss) dismiss.onclick = () => { lsSet('rc_install_dismissed', '1'); render(); };
+  const btn = document.getElementById('install-btn');
+  if (btn) btn.onclick = async () => {
+    if (!INSTALL_EVT) return;
+    INSTALL_EVT.prompt();
+    await INSTALL_EVT.userChoice.catch(()=>null);
+    INSTALL_EVT = null; render();
+  };
+}
+
+// ── APPLE HEALTH STEP SYNC ──────────────────────────────────────────
+// Web apps can't read Apple Health directly, so an iOS Shortcut reads today's step count and sends it
+// to the log_steps() database function with the client's personal code. Paste the iCloud link of the
+// shared "Rundy Steps" shortcut here; the card stays hidden until it's set.
+const HEALTH_SHORTCUT_URL = '';
+
+function renderHealthSyncCard() {
+  if (!HEALTH_SHORTCUT_URL) return '';
+  if (!isIOS()) return `
+    <div class="card">
+      <div class="card-title">🍎 Apple Health sync</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.6">Automatic step sync works on iPhone. On Android, log your steps above from your phone's step counter.</div>
+    </div>`;
+  const synced = DATA.dailySteps.find(s=>s.source==='health');
+  return `
+    <div class="card">
+      <div class="card-title">🍎 Sync steps from Apple Health ${synced?badge('green','Connected'):''}</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7">
+        <b>1.</b> Get the shortcut and tap <b>Add Shortcut</b>.<br/>
+        <b>2.</b> When it asks for your sync code, paste this:
+      </div>
+      <div class="sync-code" style="margin:10px 0"><span>${esc(CLIENT.access_token)}</span><button class="btn btn-ghost btn-sm" id="sync-copy">Copy</button></div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-bottom:12px">
+        <b>3.</b> Make it automatic: Shortcuts app → <b>Automation</b> → <b>+</b> → <b>Time of Day</b> → 9:00 PM, Daily → <b>Run Immediately</b> → pick <b>Rundy Steps</b>.<br/>
+        The first run asks for Health access — tap <b>Allow</b>.
+      </div>
+      <a class="btn btn-primary" href="${esc(HEALTH_SHORTCUT_URL)}" target="_blank" rel="noopener" style="text-decoration:none">Get the shortcut</a>
+    </div>`;
+}
+
+// ── PROGRESS PHOTOS ─────────────────────────────────────────────────
+// Files live in the private 'progress-photos' storage bucket under <access_token>/. Each progress_photos
+// row keeps that storage path in `url`; images are shown through short-lived signed URLs, never public links.
+const PHOTO_BUCKET = 'progress-photos';
+const POSES = ['Front','Side','Back'];
+let PHOTO_DRAFT = {};        // pose -> { blob, url } waiting to upload
+let PHOTO_URLS = {};         // storage path -> signed URL
+let PHOTO_URLS_AT = 0;       // when the signed URLs above were minted (they last 1 hour)
+let COMPARE_POSE = 'Front';
+
+const storageHeaders = extra => Object.assign({ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, extra||{});
+
+async function signPhotoUrls(paths) {
+  if (Date.now() - PHOTO_URLS_AT > 50*60*1000) { PHOTO_URLS = {}; PHOTO_URLS_AT = Date.now(); }
+  const need = [...new Set(paths)].filter(p=>!PHOTO_URLS[p]);
+  if (!need.length) return;
+  try {
+    const r = await fetch(SB_URL+'/storage/v1/object/sign/'+PHOTO_BUCKET, { method:'POST', headers: storageHeaders({'Content-Type':'application/json'}), body: JSON.stringify({ expiresIn: 3600, paths: need }) });
+    if (!r.ok) return console.error('Photo sign error', r.status, await r.text());
+    (await r.json()).forEach(x => { if (x.signedURL) PHOTO_URLS[x.path] = SB_URL + '/storage/v1' + x.signedURL; });
+  } catch(e) { console.error('Photo sign network error', e); }
+}
+
+// Shrink to max 1600px JPEG before upload — phone photos are 3–8 MB and this keeps uploads fast on cell data.
+async function resizePhoto(file) {
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+  const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth*scale); c.height = Math.round(img.naturalHeight*scale);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  URL.revokeObjectURL(img.src);
+  return await new Promise(res => c.toBlob(res, 'image/jpeg', 0.85));
+}
+
+const photoDates = () => [...new Set(DATA.photos.map(p=>p.taken_at))].sort().reverse();
+const fmtPhotoDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});
+
+function renderPhotoNudge() {
+  const last = photoDates()[0];
+  const days = last ? Math.round((new Date(today()+'T00:00:00') - new Date(last+'T00:00:00'))/86400000) : null;
+  if (days !== null && days < 6) return '';
+  return `
+    <div class="card" style="cursor:pointer;display:flex;align-items:center;gap:12px" onclick="document.querySelector('[data-tab=photos]').click()">
+      <div style="font-size:24px">📸</div>
+      <div style="flex:1">
+        <div style="font-weight:600">Add this week's progress photos</div>
+        <div style="font-size:12px;color:var(--text3)">${last?'Last photos '+days+' days ago':'No photos yet'} — front, side, back</div>
+      </div>
+      <div style="color:var(--accent);font-size:18px">→</div>
+    </div>`;
+}
+
+function renderPhotos() {
+  const dates = photoDates();
+  const hasDraft = POSES.some(p=>PHOTO_DRAFT[p]);
+  const slot = pose => `
+    <label class="photo-slot">
+      <input type="file" accept="image/*" data-pose="${pose}"/>
+      ${PHOTO_DRAFT[pose] ? `<img src="${PHOTO_DRAFT[pose].url}" alt=""/>` : `<span class="ps-plus">+</span><span>Add photo</span>`}
+      <span class="ps-label">${pose}</span>
+    </label>`;
+
+  // First vs latest for the chosen pose
+  let compare = '';
+  const first = dates[dates.length-1], latest = dates[0];
+  if (dates.length >= 2) {
+    const posesBoth = POSES.filter(p => DATA.photos.some(x=>x.taken_at===first&&x.label===p) && DATA.photos.some(x=>x.taken_at===latest&&x.label===p));
+    if (posesBoth.length) {
+      if (!posesBoth.includes(COMPARE_POSE)) COMPARE_POSE = posesBoth[0];
+      const a = DATA.photos.find(x=>x.taken_at===first&&x.label===COMPARE_POSE);
+      const b = DATA.photos.find(x=>x.taken_at===latest&&x.label===COMPARE_POSE);
+      const weeks = Math.round((new Date(latest)-new Date(first))/(7*86400000));
+      compare = `
+        <div class="card">
+          <div class="card-title">Then vs now <span style="color:var(--text3);font-weight:400">— ${weeks} week${weeks===1?'':'s'}</span></div>
+          ${posesBoth.length>1?`<div class="pose-chips">${posesBoth.map(p=>`<button class="pose-chip${p===COMPARE_POSE?' active':''}" data-compare-pose="${p}">${p}</button>`).join('')}</div>`:''}
+          <div class="photo-compare">
+            ${[a,b].map(x=>`<div><div class="photo-thumb" data-photo-id="${esc(x.id)}"><img data-path="${esc(x.url)}" alt=""/></div><div style="font-size:11px;color:var(--text3);text-align:center;margin-top:5px">${fmtPhotoDate(x.taken_at)}</div></div>`).join('')}
+          </div>
+        </div>`;
+    }
+  }
+
+  return `
+    <div class="card">
+      <div class="card-title">New photo check-in</div>
+      <div class="photo-slots">${POSES.map(slot).join('')}</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5;margin-bottom:14px">Same spot, same lighting, same time of day (morning, before food) — it's the only way the comparison is honest.</div>
+      <div class="field"><label>Date taken</label><input id="photo-date" type="date" value="${today()}" max="${today()}"/></div>
+      <button class="btn btn-primary" id="photo-upload"${hasDraft?'':' disabled style="opacity:.5"'}>Upload photos</button>
+      ${hasDraft?`<button class="btn btn-ghost" id="photo-clear" style="margin-top:8px">Clear</button>`:''}
+    </div>
+    ${compare}
+    ${dates.length===0 ? `<div class="empty"><div class="empty-icon">📸</div><div class="empty-msg">Your progress photos will show up here.<br/>Take your first set above.</div></div>` :
+      dates.map(d => `
+        <div class="card">
+          <div class="card-title">${fmtPhotoDate(d)}</div>
+          <div class="photo-grid">
+            ${DATA.photos.filter(p=>p.taken_at===d).map(p=>`<div class="photo-thumb" data-photo-id="${esc(p.id)}"><img data-path="${esc(p.url)}" alt=""/><span class="pt-label">${esc(p.label||'')}</span></div>`).join('')}
+          </div>
+        </div>`).join('')}`;
+}
+
+function attachPhotosHandlers() {
+  document.querySelectorAll('.photo-slot input').forEach(inp => {
+    inp.onchange = async () => {
+      const file = inp.files && inp.files[0];
+      if (!file) return;
+      try {
+        const blob = await resizePhoto(file);
+        if (!blob) throw new Error('resize failed');
+        const pose = inp.dataset.pose;
+        if (PHOTO_DRAFT[pose]) URL.revokeObjectURL(PHOTO_DRAFT[pose].url);
+        PHOTO_DRAFT[pose] = { blob, url: URL.createObjectURL(blob) };
+        render();
+      } catch(e) { console.error(e); toast('Couldn’t read that photo — try another'); }
+    };
+  });
+  const clear = document.getElementById('photo-clear');
+  if (clear) clear.onclick = () => { Object.values(PHOTO_DRAFT).forEach(d=>URL.revokeObjectURL(d.url)); PHOTO_DRAFT = {}; render(); };
+  const up = document.getElementById('photo-upload');
+  if (up) up.onclick = () => uploadPhotos(up);
+  document.querySelectorAll('[data-compare-pose]').forEach(b => b.onclick = () => { COMPARE_POSE = b.dataset.comparePose; render(); });
+  document.querySelectorAll('.photo-thumb[data-photo-id]').forEach(t => t.onclick = () => openLightbox(t.dataset.photoId));
+  // Fill in thumbnails once signed URLs are ready
+  const imgs = [...document.querySelectorAll('img[data-path]')];
+  if (!imgs.length) return;
+  signPhotoUrls(imgs.map(i=>i.dataset.path)).then(() => {
+    imgs.forEach(i => { if (PHOTO_URLS[i.dataset.path]) i.src = PHOTO_URLS[i.dataset.path]; });
+  });
+}
+
+async function uploadPhotos(btn) {
+  const date = document.getElementById('photo-date').value || today();
+  const poses = POSES.filter(p=>PHOTO_DRAFT[p]);
+  if (!poses.length) return toast('Add at least one photo');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  const checkIn = DATA.checkIns.find(c=>c.date===date);
+  let saved = 0;
+  for (const pose of poses) {
+    const path = CLIENT.access_token + '/' + date + '-' + pose.toLowerCase() + '-' + Math.random().toString(36).slice(2,10) + '.jpg';
+    try {
+      const r = await fetch(SB_URL+'/storage/v1/object/'+PHOTO_BUCKET+'/'+path, { method:'POST', headers: storageHeaders({'Content-Type':'image/jpeg'}), body: PHOTO_DRAFT[pose].blob });
+      if (!r.ok) { console.error('Photo upload error', r.status, await r.text()); continue; }
+    } catch(e) { console.error('Photo upload network error', e); continue; }
+    const row = await sb.insert('progress_photos', { client_id: CLIENT.id, check_in_id: checkIn?checkIn.id:null, url: path, label: pose, taken_at: date });
+    if (row && row[0]) {
+      DATA.photos.unshift(row[0]);
+      URL.revokeObjectURL(PHOTO_DRAFT[pose].url); delete PHOTO_DRAFT[pose];
+      saved++;
+    }
+  }
+  DATA.photos.sort((a,b)=> (b.taken_at||'').localeCompare(a.taken_at||'') || (b.created_at||'').localeCompare(a.created_at||''));
+  toast(saved===poses.length ? 'Photos saved ✓' : saved ? saved+' of '+poses.length+' saved — try the rest again' : 'Upload failed — try again');
+  render();
+}
+
+function openLightbox(id) {
+  const p = DATA.photos.find(x=>x.id===id);
+  if (!p) return;
+  const box = document.createElement('div');
+  box.id = 'lightbox';
+  box.innerHTML = `
+    <div style="color:var(--text2);font-size:13px">${esc(p.label||'')} · ${fmtPhotoDate(p.taken_at)}</div>
+    <img src="${esc(PHOTO_URLS[p.url]||'')}" alt=""/>
+    <div style="display:flex;gap:10px;width:100%;max-width:360px">
+      <button class="btn btn-ghost" id="lb-close">Close</button>
+      <button class="btn btn-ghost" id="lb-delete" style="color:var(--red)">Delete</button>
+    </div>`;
+  document.body.appendChild(box);
+  box.onclick = e => { if (e.target===box) box.remove(); };
+  box.querySelector('#lb-close').onclick = () => box.remove();
+  box.querySelector('#lb-delete').onclick = async () => {
+    if (!confirm('Delete this photo? This can’t be undone.')) return;
+    try { await fetch(SB_URL+'/storage/v1/object/'+PHOTO_BUCKET+'/'+p.url, { method:'DELETE', headers: storageHeaders() }); } catch(e) {}
+    const ok = await sb.delete('progress_photos', 'id=eq.'+p.id);
+    if (ok) { DATA.photos = DATA.photos.filter(x=>x.id!==p.id); toast('Photo deleted'); }
+    box.remove(); render();
+  };
+}
+
+// Error screen: let the client paste their link or code (e.g. after reinstalling the home-screen app)
+document.getElementById('token-submit').onclick = () => {
+  const raw = document.getElementById('token-input').value.trim();
+  if (!raw) return;
+  let t = raw;
+  try { t = new URL(raw).searchParams.get('t') || raw; } catch(e) {}
+  location.href = location.pathname + '?t=' + encodeURIComponent(t);
+};
+
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+
+init().catch(e=>{ console.error(e); showError(); });
+</script>
+</body>
+</html>

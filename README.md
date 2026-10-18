@@ -1,0 +1,78 @@
+# Rundy Coaching — client portal
+
+Live: https://rundycoaching.netlify.app · Owner: Ryan Rundhawa (@ryan.rundy)
+
+A coaching portal for Ryan's online/in-person clients: the coach builds programs, meal plans, cardio and supplements, and the client logs workouts, steps, water, daily check-ins, weekly check-ins and progress photos.
+
+This folder is an exact copy of the live site as of **2026-10-18** (Netlify deploy `6ac70580f3aaf598aac2acfd`). The only changes: the comment and meta tags Netlify injects into served pages were removed, and the files Netlify doesn't serve back (`_redirects`, `_headers`, the DB schema, the edge function) were rebuilt by hand.
+
+---
+
+## How it's built
+
+**There's no framework, no build step and no package.json.** It's two big single-file HTML pages that call Supabase's REST API directly with `fetch`.
+
+| File | What it is |
+|---|---|
+| `index.html` | **Coach dashboard** (~105 KB). Every path serves it, via `_redirects`. Clients list, client detail tabs, program/meal/cardio builders, payments, messages, and the "Daily check-ins · today" roll-up. |
+| `client.html` | **Client app** (~93 KB). Opened as `client.html?t=<access_token>`; the token comes from `clients.access_token`. Tabs: Home, Workout, Progress, Nutrition, Steps, Photos, Check-in, Messages. Installable as a PWA, and it saves the token in localStorage under `rc_token`. |
+| `manifest.webmanifest`, `sw.js`, `icons/` | PWA install. The manifest deliberately has **no `start_url`**, so the installed app keeps its `?t=` token. `sw.js` is network-first and only touches same-origin requests. |
+| `_redirects` | `/*  /index.html  200` |
+| `_headers` | Security headers, plus the manifest content type. |
+| `supabase/schema.sql` | Full DB schema (structure only, no client data). Run it on a fresh Supabase project to get a sandbox. |
+| `supabase/functions/steps/` | Edge function for Apple Health step sync. Built but **dormant**: Ryan chose not to roll it out. |
+
+Backend: Supabase project `emrtizvqzjkfrpgyrljn`. `SB_URL` / `SB_KEY` are near the top of each HTML file's `<script>` (index.html ~line 215, client.html ~line 187). The key is the **anon** key; no service-role key appears anywhere in this code.
+
+### Running it locally
+```bash
+npx serve .
+```
+Then open `http://localhost:3000/` for the coach view, or `http://localhost:3000/client.html?t=<token>` for a client.
+
+> ⚠️ **As shipped, the HTML points at the LIVE database with real client data.** Before you change anything, create your own free Supabase project, run `supabase/schema.sql` in it, and swap `SB_URL`/`SB_KEY` in both files to your project's values. Add a test client with the insert at the bottom of the schema file.
+
+---
+
+## Known problems, worst first
+
+### 1. 🔴 No database security (RLS is off on all 19 tables)
+Row Level Security is disabled and the anon key is public, because it sits in the page source. **Anyone who views the source can read, edit or delete every client's data**, including payments, messages and personal notes, without a token. The client `?t=` token only hides data in the UI; it doesn't protect anything.
+
+Turning RLS on without policies would break the app instantly, because every query runs as `anon`. Realistic fixes:
+- **(a)** Put Supabase Auth on the coach dashboard, give the coach's user full-access policies, and route client reads/writes through `security definer` RPCs that take `p_token` and check it (the same pattern `log_steps()` already uses).
+- **(b)** Move all DB access behind Netlify Functions that hold the service-role key and check the token or coach session server-side.
+
+The storage policies for `progress-photos` are a bit better (scoped to folders named after real tokens), but they still accept any valid token from anyone.
+
+### 2. 🔴 The coach dashboard has no login
+`https://rundycoaching.netlify.app/` (and any path on the site) opens the full coach view with every client. This gets fixed as part of #1.
+
+### 3. 🟠 No version control or deploy process
+Deploys were manual drag-and-drops, and each one **replaces the whole site**. That already caused one silent regression (an Aug 4 drop wiped two days of work, which had to be recovered by 3-way merging old deploys). From now on, this folder/repo is the source of truth: connect it to Netlify via Git so deploys come from commits.
+- If you ever deploy manually, include **every** file (`index.html`, `client.html`, `_redirects`, `_headers`, `manifest.webmanifest`, `sw.js`, `icons/`).
+- Netlify never serves `_redirects`/`_headers` back, so they can't be recovered from the live site. Keep them in the repo.
+
+### 4. 🟡 Unit mismatch: `weight_kg` columns hold pounds
+The UI shows **lbs**, but the columns are named `weight_kg` (clients, check_ins, exercise_logs, daily_logs). This was a deliberate relabel, not a conversion: each row holds whatever number the client typed. **Don't run a kg→lbs conversion on old rows.** Renaming the columns (e.g. to `weight`) would be a good cleanup, but it touches both HTML files. The client app has `const UNIT='lbs'` and `fmtW()` helpers.
+
+### 5. 🟡 Settings that can only be changed with SQL
+The coach UI has no way to edit these: `clients.water_goal_l`, `clients.special_note` (the speech bubble on the client Home/Workout tabs). Worth adding to the client-detail screen.
+
+### 6. 🟡 "Newest wins" ordering
+The client app always loads the **newest program** by `created_at`, and meal-plan tabs are ordered `created_at DESC`. There's no "active" flag, so swapping a client back to an older plan means editing timestamps.
+
+### 7. 🟢 Smaller things
+- `daily_logs.client_id` is the only FK **without** `on delete cascade`, so deleting a client who has daily logs will fail.
+- Date logic must stay **local time**: both files use a `localDate()` helper. `index.html` used UTC until Aug 2026, which made "logged today" show nobody in the evening. Don't reintroduce `toISOString().slice(0,10)`.
+- One row, "Ryan Rundhawa (coach test)" (status `inactive`), is Ryan's test profile. Exclude it from client counts.
+- Apple Health sync: `HEALTH_SHORTCUT_URL` in client.html is intentionally empty, which keeps the Steps-tab sync card hidden. The `steps` edge function, `log_steps()` and `daily_steps.source` are unused but harmless.
+- Both files are very large single files. Splitting them into JS/CSS modules (or a small Vite app) would make review much easier, but it's optional.
+
+---
+
+## Data model cheat sheet
+`clients` → `programs` → `workouts` → `exercises` → `exercise_logs`
+`clients` → `meal_plans` → `meals` → `meal_foods`; plus `macros` and `supplements`
+`clients` → `cardio_protocols` → `cardio_sessions`
+Per-client tracking: `check_ins`, `daily_logs`, `daily_steps`, `checklist_completions`, `progress_photos` (storage path in the private `progress-photos` bucket, under `<access_token>/`), `messages`, `payments`.

@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Elite Coach — @ryan.rundy</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f11;--bg2:#17171a;--bg3:#1f1f24;--bg4:#27272d;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --text:#f0f0f2;--text2:#9191a0;--text3:#5f5f70;
+  --accent:#c8f065;--adim:rgba(200,240,101,0.12);
+  --red:#ff5c5c;--rdim:rgba(255,92,92,0.15);
+  --blue:#5b9cf6;--bdim:rgba(91,156,246,0.12);
+  --amber:#f5a524;--ambdim:rgba(245,165,36,0.12);
+  --green:#4ade80;--gdim:rgba(74,222,128,0.12);
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --sb:228px;--r:10px;--rl:14px
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;width:100%;outline:none;transition:border .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:72px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:4px}
+#app{display:flex;height:100vh;overflow:hidden}
+/* Sidebar */
+#sidebar{width:var(--sb);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;flex-shrink:0}
+.sb-logo{padding:16px 14px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10}
+.sb-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.sb-brand{font-weight:700;font-size:14px;color:var(--accent);letter-spacing:-.5px}
+.sb-sub{font-size:10px;color:var(--text3)}
+nav{flex:1;padding:8px 6px;overflow-y:auto}
+.nav-btn{width:100%;display:flex;align-items:center;gap:10;padding:8px 11px;border-radius:9px;margin-bottom:2px;font-size:13px;text-align:left;transition:all .15s;color:var(--text2);cursor:pointer;border:none;background:transparent}
+.nav-btn:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+.nav-btn.active{background:var(--adim);color:var(--accent);font-weight:600}
+.nav-icon{font-size:17px;flex-shrink:0;width:20px;text-align:center}
+.nav-label{flex:1}
+.nav-badge{border-radius:12px;padding:1px 7px;font-size:10px;font-weight:700}
+.sb-status{padding:10px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--green);display:flex;align-items:center;gap:6}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+/* Main */
+#main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.page{padding:28px 32px;overflow-y:auto;flex:1;display:none;min-height:0}
+.page.active{display:flex;flex-direction:column;min-height:0}
+/* Typography */
+h1{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
+h2{font-size:15px;font-weight:600;margin-bottom:14px}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid;font-family:inherit}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-primary{background:var(--accent);color:#0f0f11;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent);opacity:.9}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+.btn-danger{background:transparent;color:var(--red);border-color:var(--rdim)}
+.btn-danger:hover{background:var(--rdim)}
+.btn-filled{background:var(--bg3);color:var(--text);border-color:var(--border)}
+.btn-full{width:100%;justify-content:center}
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:18px;transition:border .15s}
+.card:hover{border-color:var(--border2)}
+.card-grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.grid-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.grid-auto{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+/* Stat cards */
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.stat-value{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+/* Badge */
+.badge{border-radius:6px;padding:2px 9px;font-size:11px;font-weight:500;white-space:nowrap;display:inline-block}
+.badge-green{background:var(--gdim);color:var(--green)}
+.badge-blue{background:var(--bdim);color:var(--blue)}
+.badge-amber{background:var(--ambdim);color:var(--amber)}
+.badge-red{background:var(--rdim);color:var(--red)}
+.badge-gray{background:rgba(255,255,255,0.06);color:var(--text2)}
+.badge-accent{background:var(--adim);color:var(--accent)}
+.badge-active{background:var(--gdim);color:var(--green)}
+.badge-paused{background:var(--ambdim);color:var(--amber)}
+.badge-inactive{background:rgba(255,255,255,0.06);color:var(--text3)}
+.badge-paid{background:var(--gdim);color:var(--green)}
+.badge-pending{background:var(--ambdim);color:var(--amber)}
+.badge-overdue{background:var(--rdim);color:var(--red)}
+/* Avatar */
+.avatar{border-radius:50%;background:var(--adim);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);flex-shrink:0;letter-spacing:-.5px}
+/* Form */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 12px}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow:auto;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.modal-wide{max-width:700px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1}
+.modal-header span{font-weight:600;font-size:15px}
+.modal-close{color:var(--text3);font-size:22px;cursor:pointer;line-height:1;background:none;border:none}
+.modal-body{padding:20px 22px}
+/* Table */
+.data-table{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.table-head{display:grid;padding:10px 18px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.table-row{display:grid;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center;font-size:13px;transition:background .1s;cursor:default}
+.table-row:hover{background:var(--bg3)}
+.table-row:last-child{border-bottom:none}
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{height:4px}
+.tab-btn{flex-shrink:0}
+.tab-btn{padding:8px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:400;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s;font-family:inherit;text-transform:capitalize}
+.tab-btn.active{background:var(--bg3);color:var(--accent);font-weight:600;border-bottom:2px solid var(--accent)}
+/* Breadcrumb */
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:22px;font-size:13px}
+.breadcrumb-link{color:var(--text3);cursor:pointer;transition:color .15s}
+.breadcrumb-link:hover{color:var(--text)}
+.breadcrumb-sep{color:var(--border);font-size:14px}
+/* Empty state */
+.empty{text-align:center;padding:56px 0;color:var(--text3)}
+.empty-icon{font-size:32px;margin-bottom:12px}
+.empty-msg{font-size:13px}
+/* Checkin item */
+.ci-item{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:15px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
+.ci-date{font-size:11px;color:var(--text3);min-width:92px;padding-top:2px}
+/* Macro card */
+.macro-card{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:18px;margin-bottom:10px}
+.macro-val{font-size:24px;font-weight:700;color:var(--accent);letter-spacing:-.5px;margin-bottom:12px}
+.macro-bars{display:flex;gap:10px}
+.macro-bar{flex:1;background:var(--bg3);border-radius:9px;padding:9px;text-align:center}
+.macro-bar-val{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.macro-bar-label{font-size:10px;color:var(--text3);margin-top:2px}
+/* Message layout */
+#msg-layout{display:flex;flex:1;overflow:hidden;min-height:0}
+#msg-list{width:240px;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;min-height:0}
+#msg-list-header{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600;font-size:14px;flex-shrink:0}
+#msg-clients{overflow-y:auto;flex:1}
+.msg-client-btn{width:100%;padding:11px 14px;display:flex;align-items:center;gap:10px;background:transparent;border-bottom:1px solid var(--border);text-align:left;transition:background .1s;cursor:pointer;border-left:none;border-right:none;border-top:none;font-family:inherit}
+.msg-client-btn:hover{background:rgba(255,255,255,0.03)}
+.msg-client-btn.active{background:var(--adim)}
+.msg-thread-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+#msg-thread-header{padding:13px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+#msg-thread{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-height:0}
+#msg-input-row{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0}
+.bubble{max-width:70%;border-radius:14px;padding:9px 13px;font-size:13px;line-height:1.5}
+.bubble-coach{background:var(--accent);color:#0f0f11;border-radius:14px 14px 3px 14px;align-self:flex-end}
+.bubble-client{background:var(--bg3);color:var(--text);border-radius:14px 14px 14px 3px;align-self:flex-start}
+.bubble-time{font-size:10px;opacity:.55;margin-top:4px}
+/* Progress chart placeholder */
+.chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px}
+.chart-title{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;font-weight:600}
+canvas{display:block}
+/* Loading */
+#loading{display:flex;height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--text3)}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Workout grid */
+.workout-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.ex-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border)}
+.ex-name{font-size:12px;font-weight:500}
+.ex-meta{font-size:11px;color:var(--text3);margin-top:1px}
+/* Meal plan */
+.meal-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.meal-food-row{display:grid;grid-template-columns:1fr 55px 64px 44px 44px 44px;gap:8px;padding:5px 0;border-top:1px solid var(--border);font-size:12px;align-items:center}
+/* Dashboard roster button */
+.roster-btn{width:100%;display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);text-align:left;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;transition:opacity .15s}
+.roster-btn:hover{opacity:.75}
+select option{background:var(--bg3)}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div style="width:40px;height:40px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:4px">⚡</div>
+  <div class="spinner"></div>
+  <span style="font-size:13px">Loading Elite Coach…</span>
+</div>
+
+<div id="app" style="display:none">
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-icon">⚡</div>
+      <div>
+        <div class="sb-brand">Elite Coach</div>
+        <div class="sb-sub">@ryan.rundy</div>
+      </div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="sb-status"><div class="dot"></div>Live · Supabase connected</div>
+  </div>
+  <!-- Main -->
+  <div id="main">
+    <div id="page-dashboard" class="page active"></div>
+    <div id="page-clients" class="page"></div>
+    <div id="page-client-detail" class="page"></div>
+    <div id="page-programs" class="page"></div>
+    <div id="page-cardio" class="page"></div>
+    <div id="page-checkins" class="page"></div>
+    <div id="page-macros" class="page"></div>
+    <div id="page-meals" class="page"></div>
+    <div id="page-messages" class="page" style="padding:0;overflow:hidden"></div>
+    <div id="page-payments" class="page"></div>
+    <div id="page-progress" class="page"></div>
+  </div>
+</div>
+
+<!-- Modal container -->
+<div id="modal-root"></div>
+
+<script>
+// ── Supabase ──────────────────────────────────────────────────────
+const SB_URL='https://emrtizvqzjkfrpgyrljn.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtcnRpenZxemprZnJwZ3lybGpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTA0NjAsImV4cCI6MjA5NzMyNjQ2MH0.n11s1EOwPRBP934TY4sZrMWuh-A7aUGLh3VZ0yZOtww';
+
+async function sbFetch(path, opts={}) {
+  const url = SB_URL + '/rest/v1/' + path;
+  const headers = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': opts.prefer || 'return=representation',
+    ...(opts.headers||{})
+  };
+  const r = await fetch(url, { method: opts.method||'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  if (!r.ok) { const t = await r.text(); console.error('SB error', r.status, t); return null; }
+  if (r.status === 204) return true;
+  return r.json();
+}
+
+const sb = {
+  async select(table, params='') { return await sbFetch(table + '?' + params + '&apikey=' + SB_KEY) || []; },
+  async insert(table, body) { return await sbFetch(table, { method:'POST', body, prefer:'return=representation' }); },
+  async update(table, body, match) { return await sbFetch(table + '?' + match, { method:'PATCH', body, prefer:'return=representation' }); },
+  async delete(table, match) { return await sbFetch(table + '?' + match, { method:'DELETE', prefer:'return=minimal' }); }
+};
+
+// ── State ─────────────────────────────────────────────────────────
+let STATE = { clients:[], payments:[], messages:[], checkIns:[], dailyLogs:[], currentView:'dashboard', selectedClient:null, charts:{} };
+
+// ── Helpers ───────────────────────────────────────────────────────
+const initials = n => (n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+const fmtCAD = n => '$' + Number(n).toFixed(2);
+// local-timezone date (UTC would roll over to tomorrow during Ryan's evening,
+// and the client app writes local dates — these must agree)
+const localDate = d => { const x = new Date(d); x.setMinutes(x.getMinutes() - x.getTimezoneOffset()); return x.toISOString().split('T')[0]; };
+const today = () => localDate(new Date());
+const daysAgoDate = n => { const d = new Date(); d.setDate(d.getDate()-n); return localDate(d); };
+function getWeekDates() {
+  const now = new Date();
+  const dow = now.getDay();
+  const mondayOffset = dow === 0 ? -6 : 1 - dow;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + mondayOffset);
+  const dates = [];
+  for (let i=0;i<7;i++) { const d = new Date(monday); d.setDate(monday.getDate()+i); dates.push(d.toISOString().split('T')[0]); }
+  return dates;
+}
+const fmt12 = ts => new Date(ts).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function avatar(name, size=36) {
+  const s = Math.round(size*0.35);
+  return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${s}px">${esc(initials(name))}</div>`;
+}
+
+function badge(color, text) {
+  return `<span class="badge badge-${esc(color)}">${esc(text)}</span>`;
+}
+
+function btn(label, cls, attrs='', icon='') {
+  return `<button class="btn ${cls}" ${attrs}>${icon?`<span>${icon}</span>`:''}${esc(label)}</button>`;
+}
+
+function statCard(label, value, icon, color, sub='') {
+  return `<div class="stat-card">
+    <div class="stat-label"><span>${icon}</span>${esc(label)}</div>
+    <div class="stat-value" style="color:${color}">${esc(value)}</div>
+    ${sub?`<div class="stat-sub">${esc(sub)}</div>`:''}
+  </div>`;
+}
+
+function empty(icon, msg) {
+  return `<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-msg">${esc(msg)}</div></div>`;
+}
+
+function field(label, input) {
+  return `<div class="field"><label>${esc(label)}</label>${input}</div>`;
+}
+
+// ── Modal ─────────────────────────────────────────────────────────
+function showModal(title, bodyHtml, wide=false, onShow=null) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal${wide?' modal-wide':''}">
+        <div class="modal-header">
+          <span>${esc(title)}</span>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">${bodyHtml}</div>
+      </div>
+    </div>`;
+  document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target.id==='modal-overlay') closeModal(); });
+  if(onShow) setTimeout(onShow, 10);
+}
+function closeModal() { document.getElementById('modal-root').innerHTML=''; }
+
+// ── Navigation ────────────────────────────────────────────────────
+const NAV = [
+  {id:'dashboard', icon:'🏠', label:'Dashboard'},
+  {id:'clients', icon:'👥', label:'Clients'},
+  {id:'programs', icon:'🏋️', label:'Programs'},
+  {id:'cardio', icon:'🏃', label:'Cardio'},
+  {id:'checkins', icon:'📋', label:'Check-ins'},
+  {id:'macros', icon:'🥧', label:'Macros'},
+  {id:'meals', icon:'🥗', label:'Meal Plans'},
+  {id:'messages', icon:'💬', label:'Messages'},
+  {id:'payments', icon:'💳', label:'Payments'},
+  {id:'progress', icon:'📈', label:'Progress'},
+];
+
+function renderNav() {
+  const unread = STATE.messages.filter(m=>!m.read&&m.sender==='client').length;
+  document.getElementById('nav').innerHTML = NAV.map(n => {
+    const isActive = STATE.currentView===n.id || (STATE.currentView==='client-detail'&&n.id==='clients');
+    let badge2 = '';
+    if(n.id==='clients') badge2 = `<span class="nav-badge" style="background:var(--adim);color:var(--accent)">${STATE.clients.length}</span>`;
+    if(n.id==='messages'&&unread>0) badge2 = `<span class="nav-badge" style="background:var(--rdim);color:var(--red)">${unread}</span>`;
+    return `<button class="nav-btn${isActive?' active':''}" onclick="navigate('${n.id}')">
+      <span class="nav-icon">${n.icon}</span>
+      <span class="nav-label">${n.label}</span>
+      ${badge2}
+    </button>`;
+  }).join('');
+}
+
+function navigate(view) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target = document.getElementById('page-'+view);
+  if(target) { target.classList.add('active'); STATE.currentView=view; renderNav(); renderPage(view); }
+}
+
+function navToClientDetail(client) {
+  STATE.selectedClient = client;
+  STATE.currentView = 'client-detail';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-client-detail').classList.add('active');
+  renderNav();
+  renderClientDetail(client);
+}
+
+// ── Pages ─────────────────────────────────────────────────────────
+function renderPage(view) {
+  switch(view) {
+    case 'dashboard': renderDashboard(); break;
+    case 'clients': renderClients(); break;
+    case 'programs': renderPrograms(); break;
+    case 'cardio': renderCardio(); break;
+    case 'checkins': renderCheckIns(); break;
+    case 'macros': renderMacros(); break;
+    case 'meals': renderMeals(); break;
+    case 'messages': renderMessages(); break;
+    case 'payments': renderPayments(); break;
+    case 'progress': renderProgress(); break;
+  }
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────
+// ── Daily check-in roll-up (feeds the dashboard card) ─────────────
+// Daily weight is noisy; the 7-day average is the signal. Compare the last
+// 7 days against the 7 before it — that trend is what drives a macro change.
+function dailyRollup() {
+  const todayStr = today(), d7 = daysAgoDate(6), d8 = daysAgoDate(7), d14 = daysAgoDate(13);
+  const byClient = {};
+  (STATE.dailyLogs||[]).forEach(d => { (byClient[d.client_id] = byClient[d.client_id]||[]).push(d); });
+  const mean = a => a.length ? a.reduce((s,n)=>s+n,0)/a.length : null;
+  const wIn = (logs,from,to) => mean(logs.filter(l=>l.weight_kg!=null && l.date>=from && l.date<=to).map(l=>Number(l.weight_kg)));
+
+  return STATE.clients.filter(c=>c.status==='active').map(c => {
+    const logs = byClient[c.id] || [];
+    const todayLog = logs.find(l=>l.date===todayStr) || null;
+    const avg = wIn(logs, d7, todayStr), prev = wIn(logs, d14, d8);
+    return {
+      client: c, log: todayLog, avg,
+      delta: (avg!=null && prev!=null) ? avg-prev : null,
+      logged7: logs.filter(l=>l.date>=d7 && l.date<=todayStr).length
+    };
+  }).sort((a,b) => (a.log?1:0)-(b.log?1:0) || a.client.name.localeCompare(b.client.name));
+}
+
+function renderDailyCheckinCard() {
+  const rows = dailyRollup();
+  if (!rows.length) return '';
+  const done = rows.filter(r=>r.log).length;
+  const line = r => {
+    const d = r.log;
+    const trend = r.delta==null ? '' :
+      r.delta <= -0.2 ? `<span class="badge badge-green">▼ ${Math.abs(r.delta).toFixed(1)} lbs/wk</span>`
+    : r.delta >=  0.2 ? `<span class="badge badge-amber">▲ ${r.delta.toFixed(1)} lbs/wk</span>`
+    : `<span class="badge badge-gray">flat</span>`;
+    return `<button class="daily-btn" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 0;background:transparent;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left">
+      ${avatar(r.client.name,32)}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--text)">${esc(r.client.name)}</div>
+        <div style="font-size:11px;color:var(--text3)">
+          ${d ? `${d.weight_kg!=null?esc(d.weight_kg)+' lbs today':'no weight'} · ${r.logged7}/7 days logged`
+              : `Not logged today · ${r.logged7}/7 days this week`}
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+        ${r.avg!=null?badge('blue','7d avg '+r.avg.toFixed(1)):''}
+        ${trend}
+        ${d&&d.refreshed===false?badge('amber','Not rested'):''}
+        ${d&&d.desire_to_train!=null&&d.desire_to_train<=2?badge('red','Drive '+d.desire_to_train+'/5'):''}
+        ${d&&d.digestive_issue?badge('amber','Digestive'):''}
+        ${d&&d.untracked_food?badge('gray','Untracked'):''}
+        ${d?'':badge('gray','—')}
+      </div>
+    </button>`;
+  };
+  return `<div class="card" style="cursor:default;margin-bottom:26px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600">Daily check-ins · today</div>
+      <span class="badge badge-${done===rows.length?'green':(done?'amber':'gray')}">${done}/${rows.length} logged</span>
+    </div>
+    ${rows.map(line).join('')}
+  </div>`;
+}
+
+function renderDashboard() {
+  const el = document.getElementById('page-dashboard');
+  const active = STATE.clients.filter(c=>c.status==='active').length;
+  const revenue = STATE.payments.filter(p=>p.status==='paid').reduce((s,p)=>s+Number(p.amount_cad),0);
+  const overdue = STATE.payments.filter(p=>p.status==='overdue').length;
+  const unread = STATE.messages.filter(m=>!m.read&&m.sender==='client').length;
+  const recent = [...STATE.checkIns].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+  const gc = id => STATE.clients.find(c=>c.id===id);
+  const dateStr = new Date().toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  el.innerHTML = `
+    <div style="margin-bottom:26px">
+      <h1>Good to see you, Ryan</h1>
+      <p style="color:var(--text2);font-size:13px">${esc(dateStr)}</p>
+    </div>
+    <div class="card-grid grid-4" style="margin-bottom:26px">
+      ${statCard('Active clients', active, '👥', 'var(--accent)')}
+      ${statCard('Revenue (CAD)', fmtCAD(revenue), '✅', 'var(--green)', 'paid invoices')}
+      ${statCard('Overdue', overdue, '⚠️', 'var(--red)', 'invoices')}
+      ${statCard('Unread msgs', unread, '💬', 'var(--blue)')}
+    </div>
+    ${renderDailyCheckinCard()}
+    <div class="card-grid grid-2">
+      <div class="card" style="cursor:default">
+        <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:14px">Recent check-ins</div>
+        ${recent.length===0 ? empty('📋','No check-ins yet') : recent.map(ci => {
+          const cl = gc(ci.client_id);
+          return `<div class="ci-item" style="margin-bottom:0;border-radius:0;border-left:none;border-right:none;border-top:none;border-bottom:1px solid var(--border);padding:8px 0;background:transparent;display:flex;align-items:center;gap:10px">
+            ${avatar(cl?.name||'?',32)}
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:500">${esc(cl?.name||'Unknown')}</div>
+              <div style="font-size:11px;color:var(--text3)">${esc(ci.date)} · ${esc(ci.weight_kg)} lbs</div>
+            </div>
+            ${badge('blue','E '+ci.energy+'/10')}
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="card" style="cursor:default">
+        <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:14px">Client roster</div>
+        ${STATE.clients.slice(0,7).map(c => `
+          <button class="roster-btn" onclick="navToClientDetail(${JSON.stringify(esc(JSON.stringify(c))).slice(1,-1)})">
+            ${avatar(c.name,32)}
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:500;color:var(--text)">${esc(c.name)}</div>
+              <div style="font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.goal||'')}</div>
+            </div>
+            ${badge(c.status,c.status)}
+          </button>`).join('')}
+      </div>
+    </div>`;
+
+  // Fix the roster buttons - use data attributes to avoid JSON escaping issues
+  el.querySelectorAll('.roster-btn').forEach((btn, i) => {
+    btn.onclick = () => navToClientDetail(STATE.clients[i]);
+  });
+  // daily check-in rows open that client's detail (same rollup order)
+  const dailyRows = dailyRollup();
+  el.querySelectorAll('.daily-btn').forEach((btn, i) => {
+    btn.onclick = () => navToClientDetail(dailyRows[i].client);
+  });
+}
+
+// ── Clients ───────────────────────────────────────────────────────
+function renderClients(search='') {
+  const el = document.getElementById('page-clients');
+  const filtered = STATE.clients.filter(c => !search || c.name.toLowerCase().includes(search.toLowerCase()) || (c.email||'').toLowerCase().includes(search.toLowerCase()));
+  el.innerHTML = `
+    <div class="page-header">
+      <h1>Clients</h1>
+      <button class="btn btn-primary" onclick="showAddClient()">+ Add client</button>
+    </div>
+    <input placeholder="Search by name or email…" value="${esc(search)}" oninput="renderClients(this.value)" style="max-width:340px;margin-bottom:20px"/>
+    ${filtered.length===0 ? empty('👥','No clients found.') : `<div class="card-grid grid-auto">${filtered.map((c,i) => `
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            ${avatar(c.name,42)}
+            <div>
+              <div style="font-weight:600;font-size:14px">${esc(c.name)}</div>
+              <div style="font-size:11px;color:var(--text3)">${esc(c.email||'No email')}</div>
+            </div>
+          </div>
+          ${badge(c.status,c.status)}
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;min-height:32px;line-height:1.5">${esc(c.goal||'No goal set')}</div>
+        <div style="display:flex;gap:12px;margin-bottom:14px;font-size:11px;color:var(--text3)">
+          ${c.weight_kg?`<span>⚖ ${esc(c.weight_kg)} lbs</span>`:''}
+          ${c.body_fat?`<span>% ${esc(c.body_fat)}% BF</span>`:''}
+          ${c.start_date?`<span>📅 ${esc(c.start_date)}</span>`:''}
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-filled btn-sm" data-idx="${i}" data-action="view">👁 View</button>
+          <button class="btn btn-filled btn-sm" data-idx="${i}" data-action="link">🔗 Portal link</button>
+          <button class="btn btn-danger btn-sm" data-idx="${i}" data-action="del">🗑 Delete</button>
+        </div>
+      </div>`).join('')}</div>`}`;
+
+  el.querySelectorAll('[data-action]').forEach(b => {
+    const idx = +b.dataset.idx;
+    const c = filtered[idx];
+    if(b.dataset.action==='view') b.onclick = () => navToClientDetail(c);
+    if(b.dataset.action==='del') b.onclick = () => deleteClient(c);
+    if(b.dataset.action==='link') b.onclick = () => showClientLink(c);
+  });
+}
+
+function showClientLink(c) {
+  const url = window.location.origin + window.location.pathname.replace('index.html','') + 'client.html?t=' + c.access_token;
+  showModal('Client portal link', `
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Send this private link to <strong style="color:var(--text)">${esc(c.name)}</strong>. They can view their workouts, macros, meal plan, log check-ins, and message you — no account needed.</p>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;color:var(--accent);word-break:break-all;margin-bottom:14px;font-family:monospace">${esc(url)}</div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-filled btn-full" onclick="navigator.clipboard.writeText('${url}');this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy link',1500)">Copy link</button>
+      <button class="btn btn-primary btn-full" onclick="window.open('${url}','_blank')">Open preview</button>
+    </div>
+  `);
+}
+
+function showAddClient() {
+  showModal('Add new client', `
+    <div class="form-row">
+      ${field('Full name *','<input id="f-name" placeholder="Rajan Patel" autofocus/>')}
+      ${field('Email','<input id="f-email" type="email" placeholder="rajan@email.com"/>')}
+      ${field('Phone','<input id="f-phone" placeholder="+1 604-555-0100"/>')}
+      ${field('Status','<select id="f-status"><option value="active">Active</option><option value="paused">Paused</option><option value="inactive">Inactive</option></select>')}
+      ${field('Starting weight (lbs)','<input id="f-weight" type="number" placeholder="75"/>')}
+      ${field('Body fat %','<input id="f-bf" type="number" placeholder="20"/>')}
+    </div>
+    ${field('Goal','<input id="f-goal" placeholder="Build muscle, lose fat…"/>')}
+    ${field('Notes','<textarea id="f-notes" placeholder="Dietary restrictions, injuries, preferences…"></textarea>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addClient()">Add client</button>
+    </div>`, true);
+  setTimeout(()=>document.getElementById('f-name')?.focus(),50);
+}
+
+async function addClient() {
+  const name = document.getElementById('f-name').value.trim();
+  if(!name) return alert('Name is required');
+  const body = {
+    name, email:document.getElementById('f-email').value, phone:document.getElementById('f-phone').value,
+    goal:document.getElementById('f-goal').value, status:document.getElementById('f-status').value,
+    weight_kg:document.getElementById('f-weight').value||null, body_fat:document.getElementById('f-bf').value||null,
+    notes:document.getElementById('f-notes').value, start_date:today()
+  };
+  const data = await sb.insert('clients', body);
+  if(data&&data[0]) { STATE.clients.unshift(data[0]); closeModal(); renderClients(); renderNav(); }
+}
+
+async function deleteClient(c) {
+  if(!confirm(`Delete ${c.name}? This removes all their data.`)) return;
+  await sb.delete('clients', 'id=eq.'+c.id);
+  STATE.clients = STATE.clients.filter(x=>x.id!==c.id);
+  renderClients(); renderNav();
+}
+
+// ── Client Detail ─────────────────────────────────────────────────
+let CD = { checkIns:[], macros:[], programs:[], dailySteps:[], checklist:[], weekWorkouts:[], weekCardio:[], weekMeals:[], tab:'overview' };
+let CURRENT_CLIENT = null; // tracks the client currently open in the detail view, to avoid passing JSON through onclick attributes
+
+async function renderClientDetail(client) {
+  CURRENT_CLIENT = client;
+  const el = document.getElementById('page-client-detail');
+  el.innerHTML = `<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  const weekDates = getWeekDates();
+  const [ci, m, p, ds, cl, dl] = await Promise.all([
+    sb.select('check_ins','client_id=eq.'+client.id+'&order=date.desc'),
+    sb.select('macros','client_id=eq.'+client.id+'&order=effective_date.desc'),
+    sb.select('programs','client_id=eq.'+client.id+'&order=created_at.desc'),
+    sb.select('daily_steps','client_id=eq.'+client.id+'&order=date.desc&limit=30'),
+    sb.select('checklist_completions','client_id=eq.'+client.id+'&date=gte.'+weekDates[0]+'&date=lte.'+weekDates[6]),
+    sb.select('daily_logs','client_id=eq.'+client.id+'&order=date.desc&limit=14'),
+  ]);
+  CD = { checkIns:ci||[], macros:m||[], programs:p||[], dailySteps:ds||[], checklist:cl||[], dailyLogs:dl||[], weekWorkouts:[], weekCardio:[], weekMeals:[], tab:'overview' };
+  // Load assigned items for adherence calc (most recent program/cardio protocol/meal plan)
+  if (CD.programs.length) {
+    const ws = await sb.select('workouts','program_id=eq.'+CD.programs[0].id);
+    CD.weekWorkouts = ws||[];
+  }
+  const cardioProtos = await sb.select('cardio_protocols','client_id=eq.'+client.id+'&order=created_at.desc');
+  if (cardioProtos&&cardioProtos.length) {
+    const cs = await sb.select('cardio_sessions','protocol_id=eq.'+cardioProtos[0].id);
+    CD.weekCardio = cs||[];
+  }
+  const mealPlans = await sb.select('meal_plans','client_id=eq.'+client.id+'&order=created_at.desc&limit=1');
+  CD.weekMeals = mealPlans||[];
+  renderCDPage(client);
+}
+
+function renderCDPage(client) {
+  const el = document.getElementById('page-client-detail');
+  const tabs = ['overview','check-ins','photos','macros','steps','programs','cardio','supplements'];
+  el.innerHTML = `
+    <div class="breadcrumb">
+      <span class="breadcrumb-link" onclick="navigate('clients')">← Clients</span>
+      <span class="breadcrumb-sep">›</span>
+      <span style="font-weight:600">${esc(client.name)}</span>
+      ${badge(client.status,client.status)}
+      <button class="btn btn-filled btn-sm" style="margin-left:auto" onclick="showClientLink(CURRENT_CLIENT)">🔗 Portal link</button>
+    </div>
+    <div class="card-grid grid-2" style="grid-template-columns:200px 1fr;margin-bottom:22px">
+      <div class="card" style="text-align:center;cursor:default">
+        <div style="display:flex;justify-content:center;margin-bottom:12px">${avatar(client.name,60)}</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:3px">${esc(client.name)}</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:14px">${esc(client.email||'')}</div>
+        <div style="display:flex;flex-direction:column;gap:6px;text-align:left;font-size:12px;color:var(--text2)">
+          ${client.weight_kg?`<span>⚖ ${client.weight_kg} lbs starting</span>`:''}
+          ${client.body_fat?`<span>% ${client.body_fat}% BF starting</span>`:''}
+          ${client.phone?`<span>📱 ${esc(client.phone)}</span>`:''}
+          <span>📅 Since ${esc(client.start_date||'')}</span>
+        </div>
+      </div>
+      <div class="card" style="cursor:default">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Goal</div>
+        <div style="font-size:14px;margin-bottom:16px;line-height:1.6">${esc(client.goal||'—')}</div>
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Coach notes</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">${esc(client.notes||'—')}</div>
+      </div>
+    </div>
+    <div class="tabs">${tabs.map(t=>`<button class="tab-btn${CD.tab===t?' active':''}" data-tab-client-id="${esc(client.id)}" data-tab-name="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+    <div id="cd-tab-content"></div>`;
+  el.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.onclick = () => {
+      const c = STATE.clients.find(x=>x.id===btn.dataset.tabClientId) || client;
+      setCDTab(btn.dataset.tabName, c);
+    };
+  });
+  renderCDTab(client);
+}
+
+function setCDTab(tab, client) {
+  CD.tab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent===tab));
+  renderCDTab(client);
+}
+
+function renderCDTab(client) {
+  const el = document.getElementById('cd-tab-content');
+  if(!el) return;
+  if(CD.tab==='overview') {
+    const totalAssigned = CD.weekWorkouts.length*5 + CD.weekCardio.length*5 + (CD.weekMeals.length?7:0); // rough weekly total: workouts/cardio assumed ~5x/wk relevance, meals daily
+    const totalDone = CD.checklist.filter(c=>c.completed).length;
+    const waterDaysHit = CD.checklist.filter(c=>c.item_type==='water'&&c.completed).length;
+    el.innerHTML = `<div class="card-grid grid-3">
+      ${statCard('Current calories', CD.macros[0]?CD.macros[0].calories+' kcal':'Not set','🥧','var(--accent)', CD.macros[0]?`P${CD.macros[0].protein_g}g · C${CD.macros[0].carbs_g}g · F${CD.macros[0].fat_g}g`:'')}
+      ${statCard('Latest weight', CD.checkIns[0]?CD.checkIns[0].weight_kg+' lbs':'No data','⚖','var(--blue)', CD.checkIns[0]?CD.checkIns[0].date:'')}
+      ${statCard('Programs', CD.programs.length,'🏋️','var(--amber)', CD.programs[0]?.name||'None assigned')}
+    </div>
+    <div class="card-grid grid-3" style="margin-top:13px">
+      ${statCard('This week checklist', totalDone+' items done','✅','var(--green)','workouts, cardio & meals checked off')}
+      ${statCard('Water goal hit', waterDaysHit+'/7 days','💧','var(--blue)','4L target')}
+    </div>`;
+  } else if(CD.tab==='check-ins') {
+    el.innerHTML = `
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <button class="btn btn-primary" onclick="showAddCI(CURRENT_CLIENT)">+ Log check-in</button>
+      </div>
+      ${CD.checkIns.length===0?empty('📋','No check-ins yet.'):CD.checkIns.map(ci=>`
+        <div class="ci-item">
+          <div class="ci-date">${esc(ci.date)}</div>
+          <div style="flex:1">
+            <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px">
+              ${ci.weight_kg?badge('blue',ci.weight_kg+' lbs'):''}
+              ${ci.body_fat?badge('gray',ci.body_fat+'% BF'):''}
+              ${ci.energy?badge('green','Energy '+ci.energy+'/10'):''}
+              ${ci.sleep_quality?badge('amber','Sleep '+ci.sleep_quality+'/10'):''}
+              ${ci.waist_cm?badge('gray','Waist '+ci.waist_cm+'cm'):''}
+              ${ci.blood_pressure?badge('gray','BP '+esc(ci.blood_pressure)):''}
+            </div>
+            ${ci.win_of_week?`<div style="font-size:12.5px;color:var(--text2);line-height:1.5">🏆 ${esc(ci.win_of_week)}</div>`:''}
+            ${ci.improve_next_week?`<div style="font-size:12.5px;color:var(--text2);line-height:1.5">🎯 ${esc(ci.improve_next_week)}</div>`:''}
+            ${ci.skinfolds?`<div style="font-size:12px;color:var(--text3);line-height:1.5">Skinfolds: ${esc(ci.skinfolds)}</div>`:''}
+            ${ci.notes?`<div style="font-size:13px;color:var(--text2);line-height:1.5;margin-top:4px">${esc(ci.notes)}</div>`:''}
+          </div>
+        </div>`).join('')}
+      ${(CD.dailyLogs&&CD.dailyLogs.length)?`
+        <h3 style="margin:22px 0 10px;font-size:14px">Recent daily logs</h3>
+        ${CD.dailyLogs.map(d=>`
+          <div class="ci-item">
+            <div class="ci-date">${esc(d.date)}</div>
+            <div style="flex:1">
+              <div style="display:flex;gap:7px;flex-wrap:wrap">
+                ${d.weight_kg!=null?badge('blue',d.weight_kg+' lbs'):''}
+                ${d.refreshed===true?badge('green','Rested ✓'):(d.refreshed===false?badge('amber','Not rested'):'')}
+                ${d.desire_to_train!=null?badge('blue','Train drive '+d.desire_to_train+'/5'):''}
+                ${d.digestive_issue?badge('amber','Digestive'):''}
+                ${d.untracked_food?badge('gray','Untracked food'):''}
+              </div>
+              ${d.digestive_issue?`<div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:5px">Digestive: ${esc(d.digestive_issue)}</div>`:''}
+              ${d.untracked_food?`<div style="font-size:12px;color:var(--text3);line-height:1.5">Untracked: ${esc(d.untracked_food)}</div>`:''}
+            </div>
+          </div>`).join('')}`:''}`;
+  } else if(CD.tab==='macros') {
+    el.innerHTML = `
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <button class="btn btn-primary" onclick="showAddMacro(CURRENT_CLIENT)">+ Set macros</button>
+      </div>
+      ${CD.macros.length===0?empty('🥧','No macro targets set yet.'):CD.macros.map(m=>`
+        <div class="macro-card">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+            <div class="macro-val">${esc(m.calories)} kcal</div>
+            <div style="font-size:11px;color:var(--text3)">Effective ${esc(m.effective_date)}</div>
+          </div>
+          <div class="macro-bars">
+            <div class="macro-bar"><div class="macro-bar-val" style="color:var(--blue)">${esc(m.protein_g)}g</div><div class="macro-bar-label">Protein</div></div>
+            <div class="macro-bar"><div class="macro-bar-val" style="color:var(--accent)">${esc(m.carbs_g)}g</div><div class="macro-bar-label">Carbs</div></div>
+            <div class="macro-bar"><div class="macro-bar-val" style="color:var(--amber)">${esc(m.fat_g)}g</div><div class="macro-bar-label">Fat</div></div>
+          </div>
+          ${m.notes?`<div style="font-size:12px;color:var(--text2);margin-top:10px">${esc(m.notes)}</div>`:''}
+        </div>`).join('')}`;
+  } else if(CD.tab==='photos') {
+    renderPhotosEmbedded(client);
+  } else if(CD.tab==='steps') {
+    renderStepsTab();
+  } else if(CD.tab==='programs') {
+    renderProgramsEmbedded(client);
+  } else if(CD.tab==='cardio') {
+    renderCardioEmbedded(client);
+  } else if(CD.tab==='supplements') {
+    renderSupplementsEmbedded(client);
+  }
+}
+
+// Progress photos uploaded from the client portal. Files sit in the private 'progress-photos' bucket;
+// progress_photos.url holds the storage path, shown here through 1-hour signed URLs.
+async function renderPhotosEmbedded(client) {
+  const el = document.getElementById('cd-tab-content');
+  el.innerHTML = `<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  const rows = await sb.select('progress_photos','client_id=eq.'+client.id+'&order=taken_at.desc,created_at.desc') || [];
+  if (CD.tab!=='photos') return;
+  if (!rows.length) { el.innerHTML = empty('📸','No progress photos yet. Clients upload them from the Photos tab in their portal.'); return; }
+  const urls = {};
+  try {
+    const r = await fetch(SB_URL+'/storage/v1/object/sign/progress-photos', { method:'POST', headers:{ apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ expiresIn:3600, paths: rows.map(p=>p.url) }) });
+    if (r.ok) (await r.json()).forEach(x => { if (x.signedURL) urls[x.path] = SB_URL+'/storage/v1'+x.signedURL; });
+  } catch(e) { console.error('Photo sign error', e); }
+  if (CD.tab!=='photos') return;
+  const dates = [...new Set(rows.map(p=>p.taken_at))];
+  const thumb = p => `<a href="${esc(urls[p.url]||'#')}" target="_blank" rel="noopener" style="position:relative;display:block;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:var(--bg3)">
+      <img src="${esc(urls[p.url]||'')}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"/>
+      <span style="position:absolute;left:0;right:0;bottom:0;padding:5px;background:rgba(0,0,0,.55);font-size:11px;font-weight:600;color:#fff;text-align:center">${esc(p.label||'')}</span></a>`;
+  // Then vs now: earliest and latest date, every pose present on both
+  let compare = '';
+  if (dates.length>=2) {
+    const first = dates[dates.length-1], latest = dates[0];
+    const pairs = ['Front','Side','Back'].map(pose => [rows.find(p=>p.taken_at===first&&p.label===pose), rows.find(p=>p.taken_at===latest&&p.label===pose)]).filter(([a,b])=>a&&b);
+    if (pairs.length) compare = `
+      <div class="card" style="cursor:default;margin-bottom:18px">
+        <div class="card-title">Then vs now — ${esc(first)} → ${esc(latest)}</div>
+        <div style="display:grid;grid-template-columns:repeat(${pairs.length*2},1fr);gap:10px;max-width:${pairs.length*2*170}px">${pairs.map(([a,b])=>thumb(a)+thumb(b)).join('')}</div>
+      </div>`;
+  }
+  el.innerHTML = compare + dates.map(d => `
+    <h3 style="margin:0 0 10px;font-size:14px">${esc(d)} <span style="color:var(--text3);font-weight:400;font-size:12px">· ${rows.filter(p=>p.taken_at===d).length} photo(s)</span></h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:22px;max-width:640px">${rows.filter(p=>p.taken_at===d).map(thumb).join('')}</div>`).join('');
+}
+
+function renderStepsTab() {
+  const el = document.getElementById('cd-tab-content');
+  const sorted = [...CD.dailySteps].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const last7 = sorted.slice(-7);
+  const avg7 = last7.length ? Math.round(last7.reduce((s,d)=>s+d.steps,0)/last7.length) : null;
+  const today_ = CD.dailySteps.find(d=>d.date===new Date().toISOString().split('T')[0]);
+  const goal = CURRENT_CLIENT.step_goal || 8000;
+  const daysHitGoal = last7.filter(d=>d.steps>=goal).length;
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-title">Daily step goal</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input id="step-goal-input" type="number" value="${esc(goal)}" style="max-width:140px"/>
+        <button class="btn btn-primary btn-sm" onclick="saveStepGoal()">Save goal</button>
+        <span style="font-size:12px;color:var(--text3)">steps/day</span>
+      </div>
+    </div>
+    <div class="card-grid grid-3" style="margin-bottom:18px">
+      ${statCard('Today', today_?today_.steps.toLocaleString():'Not logged','👟', today_&&today_.steps>=goal?'var(--green)':'var(--accent)', today_?(today_.steps>=goal?'Goal hit ✓':(goal-today_.steps).toLocaleString()+' to go'):'')}
+      ${statCard('7-day average', avg7!==null?avg7.toLocaleString():'—','📊','var(--blue)','steps/day')}
+      ${statCard('Days goal hit', daysHitGoal+'/'+last7.length,'🎯','var(--amber)','last 7 days')}
+    </div>
+    ${last7.length===0?empty('👟','No steps logged yet. Steps are tracked from the client portal.'):`
+    <div class="chart-box"><div class="chart-title">Last 7 days <span style="color:var(--text3);font-weight:400">— goal: ${esc(goal.toLocaleString())}</span></div><canvas id="coach-steps-chart" height="180"></canvas></div>`}
+  `;
+  if(last7.length) drawCoachStepsChart(last7, goal);
+}
+
+async function saveStepGoal() {
+  const val = +document.getElementById('step-goal-input').value;
+  if (!val || val <= 0) return alert('Enter a valid step goal');
+  const data = await sb.update('clients', { step_goal: val }, 'id=eq.'+CURRENT_CLIENT.id);
+  if (data && data[0]) {
+    CURRENT_CLIENT.step_goal = val;
+    const idx = STATE.clients.findIndex(c=>c.id===CURRENT_CLIENT.id);
+    if (idx>=0) STATE.clients[idx].step_goal = val;
+    renderStepsTab();
+  }
+}
+
+function drawCoachStepsChart(data, goal) {
+  const canvas = document.getElementById('coach-steps-chart');
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 180;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const pad = {t:10,r:10,b:26,l:10};
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+  const max = Math.max(...data.map(d=>d.steps), goal||1000, 1000);
+  const barW = cW/data.length * 0.6;
+  const gap = cW/data.length;
+
+  // Goal reference line
+  if (goal) {
+    const goalY = pad.t + cH - (goal/max)*cH;
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle = 'rgba(245,165,36,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, goalY);
+    ctx.lineTo(pad.l+cW, goalY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  data.forEach((d,i)=>{
+    const h = (d.steps/max)*cH;
+    const x = pad.l + i*gap + (gap-barW)/2;
+    const y = pad.t + cH - h;
+    const hitGoal = goal && d.steps >= goal;
+    ctx.fillStyle = hitGoal ? '#4ade80' : '#c8f065';
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x,y,barW,h,4) : ctx.rect(x,y,barW,h);
+    ctx.fill();
+    ctx.fillStyle = '#5f5f70';
+    ctx.font = '10px -apple-system,sans-serif';
+    ctx.textAlign = 'center';
+    const lbl = new Date(d.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,3);
+    ctx.fillText(lbl, x+barW/2, H-8);
+  });
+}
+
+function showAddCI(client) {
+  showModal('Log check-in', `
+    ${field('Date','<input id="ci-date" type="date" value="'+today()+'"/>')}
+    <div class="form-row">
+      ${field('Weight (lbs)','<input id="ci-w" type="number" step=".1" placeholder="74.5"/>')}
+      ${field('Body fat %','<input id="ci-bf" type="number" step=".1" placeholder="21.0"/>')}
+    </div>
+    <div class="form-row">
+      ${field('Energy level','<div style="display:flex;align-items:center;gap:10px"><input id="ci-e" type="range" min="1" max="10" value="7" oninput="document.getElementById(\'ci-e-val\').textContent=this.value"/><span id="ci-e-val">7</span>/10</div>')}
+      ${field('Sleep quality','<div style="display:flex;align-items:center;gap:10px"><input id="ci-s" type="range" min="1" max="10" value="7" oninput="document.getElementById(\'ci-s-val\').textContent=this.value"/><span id="ci-s-val">7</span>/10</div>')}
+    </div>
+    ${field('Notes','<textarea id="ci-notes" placeholder="How the week went…"></textarea>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addCI(CURRENT_CLIENT)">Save check-in</button>
+    </div>`);
+}
+
+async function addCI(client) {
+  const body = {
+    client_id: client.id,
+    date: document.getElementById('ci-date').value,
+    weight_kg: document.getElementById('ci-w').value||null,
+    body_fat: document.getElementById('ci-bf').value||null,
+    energy: +document.getElementById('ci-e').value,
+    sleep_quality: +document.getElementById('ci-s').value,
+    notes: document.getElementById('ci-notes').value
+  };
+  const data = await sb.insert('check_ins', body);
+  if(data&&data[0]) { CD.checkIns.unshift(data[0]); closeModal(); renderCDTab(client); }
+}
+
+function showAddMacro(client) {
+  showModal('Set macro targets', `
+    ${field('Effective from','<input id="m-date" type="date" value="'+today()+'"/>')}
+    <div class="form-row">
+      ${field('Calories','<input id="m-cal" type="number" placeholder="2450"/>')}
+      ${field('Protein (g)','<input id="m-p" type="number" placeholder="185"/>')}
+      ${field('Carbs (g)','<input id="m-c" type="number" placeholder="260"/>')}
+      ${field('Fat (g)','<input id="m-f" type="number" placeholder="70"/>')}
+    </div>
+    ${field('Notes','<input id="m-notes" placeholder="Recomp phase, training vs rest days…"/>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addMacro(CURRENT_CLIENT)">Save macros</button>
+    </div>`);
+}
+
+async function addMacro(client) {
+  const body = {
+    client_id: client.id,
+    effective_date: document.getElementById('m-date').value,
+    calories: +document.getElementById('m-cal').value,
+    protein_g: +document.getElementById('m-p').value,
+    carbs_g: +document.getElementById('m-c').value,
+    fat_g: +document.getElementById('m-f').value,
+    notes: document.getElementById('m-notes').value
+  };
+  const data = await sb.insert('macros', body);
+  if(data&&data[0]) { CD.macros.unshift(data[0]); closeModal(); renderCDTab(client); }
+}
+
+// ── Programs ──────────────────────────────────────────────────────
+let PG = { programs:[], selected:null, workouts:[], exercises:{}, exerciseLogs:[] };
+
+async function renderPrograms() {
+  const el = document.getElementById('page-programs');
+  el.innerHTML = `<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  PG.programs = await sb.select('programs','order=created_at.desc') || [];
+  PG.selected = null;
+  renderProgramsList(el);
+}
+
+function renderProgramsList(el) {
+  if(!el) el = document.getElementById('page-programs');
+  el.innerHTML = `
+    <div class="page-header">
+      <h1>Programs</h1>
+      <button class="btn btn-primary" onclick="showAddProgram()">+ New program</button>
+    </div>
+    ${PG.programs.length===0?empty('🏋️','No programs yet.'):
+    `<div class="card-grid grid-auto">${PG.programs.map((p,i)=>{
+      const cl = STATE.clients.find(c=>c.id===p.client_id);
+      return `<div class="card" style="cursor:pointer" data-prog-idx="${i}">
+        <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(p.name)}</div>
+        ${cl?`<div style="font-size:12px;color:var(--accent);margin-bottom:6px">${esc(cl.name)}</div>`:''}
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;min-height:18px">${esc(p.goal||'')}</div>
+        ${badge('blue',p.weeks+' weeks')}
+      </div>`;}).join('')}</div>`}`;
+  el.querySelectorAll('[data-prog-idx]').forEach(card=>{
+    const p = PG.programs[+card.dataset.progIdx];
+    card.onmouseenter = ()=>card.style.borderColor='var(--accent)';
+    card.onmouseleave = ()=>card.style.borderColor='var(--border)';
+    card.onclick = ()=>openProgram(p);
+  });
+}
+
+async function openProgram(p) {
+  PG.selected = p;
+  const el = document.getElementById('page-programs');
+  el.innerHTML = `<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  PG.workouts = await sb.select('workouts','program_id=eq.'+p.id+'&order=order_index') || [];
+  PG.exercises = {};
+  await Promise.all(PG.workouts.map(async w=>{
+    PG.exercises[w.id] = await sb.select('exercises','workout_id=eq.'+w.id+'&order=order_index') || [];
+  }));
+  PG.exerciseLogs = p.client_id ? (await sb.select('exercise_logs','client_id=eq.'+p.client_id+'&order=date.desc&limit=300') || []) : [];
+  renderProgramDetail(el);
+}
+
+function renderProgramDetail(el) {
+  if(!el) el = document.getElementById('page-programs');
+  const p = PG.selected;
+  el.innerHTML = `
+    <div class="breadcrumb">
+      <span class="breadcrumb-link" onclick="renderPrograms()">← Programs</span>
+      <span class="breadcrumb-sep">›</span>
+      <span style="font-weight:600">${esc(p.name)}</span>
+      ${badge('blue',p.weeks+'w')}
+      ${p.goal?`<span style="font-size:12px;color:var(--text2)">— ${esc(p.goal)}</span>`:''}
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn btn-primary btn-sm" onclick="showAddWorkout()">+ Add workout</button>
+    </div>
+    ${PG.workouts.length===0?empty('🏋️','No workouts yet. Add your first one.'):`
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px">
+      ${PG.workouts.map((w,wi)=>{
+        const exs = PG.exercises[w.id]||[];
+        return `<div class="workout-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div>
+              <div style="font-weight:600;font-size:14px">${esc(w.name)}</div>
+              <div style="font-size:11px;color:var(--text3)">${esc(w.day_of_week||'')}</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-wid="${esc(w.id)}" onclick="showAddExercise('${esc(w.id)}')">+ Add</button>
+          </div>
+          ${exs.length===0?`<div style="font-size:11px;color:var(--text3);text-align:center;padding:12px 0">No exercises added</div>`:
+          exs.map(e=>{
+            const logs = (PG.exerciseLogs||[]).filter(l=>l.exercise_id===e.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+            const last = logs[0];
+            return `<div class="ex-row" style="flex-direction:column;align-items:stretch;gap:4px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="flex:1">
+                  <div class="ex-name">${esc(e.name)}</div>
+                  <div class="ex-meta">${esc(e.sets)} × ${esc(e.reps)} · ${esc(e.rest_seconds)}s rest${e.notes?` · ${esc(e.notes)}`:''}</div>
+                </div>
+                <button onclick="deleteExercise('${esc(e.id)}','${esc(w.id)}')" style="color:var(--text3);font-size:16px;padding:0 4px;line-height:1">✕</button>
+              </div>
+              ${last?`<div style="font-size:11px;color:var(--accent)">Last logged: ${esc(last.weight_kg)} lbs${last.reps_completed?' × '+esc(last.reps_completed):''} on ${esc(last.date)}${logs.length>1?` · ${logs.length} entries`:''}</div>`:`<div style="font-size:11px;color:var(--text3)">No weight logged yet</div>`}
+            </div>`;
+          }).join('')}
+        </div>`;
+      }).join('')}
+    </div>`}`;
+}
+
+async function renderProgramsEmbedded(client) {
+  const el = document.getElementById('cd-tab-content');
+  const progs = await sb.select('programs','client_id=eq.'+client.id+'&order=created_at.desc') || [];
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn btn-primary" onclick="showAddProgramForClient(CURRENT_CLIENT)">+ New program</button>
+    </div>
+    ${progs.length===0?empty('🏋️','No programs assigned.'):`
+    <div class="card-grid grid-auto">${progs.map(p=>`<div class="card" style="cursor:default">
+      <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(p.name)}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">${esc(p.goal||'')}</div>
+      ${badge('blue',p.weeks+' weeks')}
+    </div>`).join('')}</div>`}`;
+}
+
+async function renderCardioEmbedded(client) {
+  const el = document.getElementById('cd-tab-content');
+  const protos = await sb.select('cardio_protocols','client_id=eq.'+client.id+'&order=created_at.desc') || [];
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn btn-primary" onclick="showAddCardioProtocolForClient(CURRENT_CLIENT)">+ New protocol</button>
+    </div>
+    ${protos.length===0?empty('🏃','No cardio protocols assigned.'):`
+    <div class="card-grid grid-auto">${protos.map((p,i)=>`<div class="card" style="cursor:pointer" data-cdcardio-idx="${i}">
+      <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(p.name)}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">${esc(p.goal||'')}</div>
+      ${badge('green',p.weeks+' weeks')}
+    </div>`).join('')}</div>`}`;
+  el.querySelectorAll('[data-cdcardio-idx]').forEach(card=>{
+    const p = protos[+card.dataset.cdcardioIdx];
+    card.onmouseenter=()=>card.style.borderColor='var(--green)';
+    card.onmouseleave=()=>card.style.borderColor='var(--border)';
+    card.onclick=()=>{ navigate('cardio'); openCardioProtocol(p); };
+  });
+}
+
+function showAddCardioProtocolForClient(client) {
+  showModal('New cardio protocol', `
+    ${field('Protocol name','<input id="cp-name" placeholder="Fat Loss Cardio Phase 1" autofocus/>')}
+    <div class="form-row">
+      ${field('Duration (weeks)','<input id="cp-weeks" type="number" value="8"/>')}
+      ${field('Goal','<input id="cp-goal" placeholder="Fat loss, conditioning, recovery…"/>')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addCardioProtocolForClient(CURRENT_CLIENT)">Create protocol</button>
+    </div>`);
+}
+
+async function addCardioProtocolForClient(client) {
+  const name = document.getElementById('cp-name').value.trim();
+  if(!name) return alert('Name required');
+  const body = { name, weeks:+document.getElementById('cp-weeks').value, goal:document.getElementById('cp-goal').value, client_id:client.id };
+  const data = await sb.insert('cardio_protocols', body);
+  if(data&&data[0]) { closeModal(); renderCardioEmbedded(client); }
+}
+
+// ── Supplements ──────────────────────────────────────────────────
+const SUPPLEMENT_TIMINGS = ['Morning','Pre-workout','Post-workout','With breakfast','With lunch','With dinner','Before bed','Anytime'];
+let SUPP = { items: [] };
+
+async function renderSupplementsEmbedded(client) {
+  const el = document.getElementById('cd-tab-content');
+  SUPP.items = await sb.select('supplements','client_id=eq.'+client.id+'&order=order_index') || [];
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn btn-primary" onclick="showAddSupplement()">+ Add supplement</button>
+    </div>
+    ${SUPP.items.length===0?empty('💊','No supplements assigned yet.'):
+    `<div class="card-grid grid-auto">${SUPP.items.map(s=>`<div class="card" style="cursor:default">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-weight:600;font-size:14px">${esc(s.name)}</div>
+        <button onclick="deleteSupplement('${esc(s.id)}')" style="color:var(--text3);font-size:16px;padding:0 4px;line-height:1">✕</button>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
+        ${s.dosage?badge('blue',s.dosage):''}
+        ${badge('amber',s.timing)}
+      </div>
+      ${s.notes?`<div style="font-size:12px;color:var(--text3)">${esc(s.notes)}</div>`:''}
+    </div>`).join('')}</div>`}`;
+}
+
+function showAddSupplement() {
+  showModal('Add supplement', `
+    ${field('Supplement name','<input id="supp-name" placeholder="Creatine Monohydrate" autofocus/>')}
+    <div class="form-row">
+      ${field('Dosage','<input id="supp-dosage" placeholder="5g"/>')}
+      ${field('Timing',`<select id="supp-timing">${SUPPLEMENT_TIMINGS.map(t=>`<option>${t}</option>`).join('')}</select>`)}
+    </div>
+    ${field('Notes (optional)','<input id="supp-notes" placeholder="Take with food, mix with water…"/>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addSupplement()">Add supplement</button>
+    </div>`);
+}
+
+async function addSupplement() {
+  const name = document.getElementById('supp-name').value.trim();
+  if(!name) return alert('Name required');
+  const body = {
+    name, client_id: CURRENT_CLIENT.id,
+    dosage: document.getElementById('supp-dosage').value,
+    timing: document.getElementById('supp-timing').value,
+    notes: document.getElementById('supp-notes').value,
+    order_index: SUPP.items.length
+  };
+  const data = await sb.insert('supplements', body);
+  if(data&&data[0]) { closeModal(); renderSupplementsEmbedded(CURRENT_CLIENT); }
+}
+
+async function deleteSupplement(id) {
+  await sb.delete('supplements','id=eq.'+id);
+  SUPP.items = SUPP.items.filter(s=>s.id!==id);
+  renderSupplementsEmbedded(CURRENT_CLIENT);
+}
+
+
+function showAddProgram() {
+  showModal('New program', `
+    ${field('Program name','<input id="prog-name" placeholder="Recomp Phase 1" autofocus/>')}
+    ${field('Assign to client',`<select id="prog-client"><option value="">— select client —</option>${STATE.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>`)}
+    <div class="form-row">
+      ${field('Duration (weeks)','<input id="prog-weeks" type="number" value="8"/>')}
+      ${field('Goal','<input id="prog-goal" placeholder="Cut, bulk, recomp…"/>')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addProgram(null)">Create program</button>
+    </div>`);
+}
+
+function showAddProgramForClient(client) {
+  showModal('New program', `
+    ${field('Program name','<input id="prog-name" placeholder="Recomp Phase 1" autofocus/>')}
+    <div class="form-row">
+      ${field('Duration (weeks)','<input id="prog-weeks" type="number" value="8"/>')}
+      ${field('Goal','<input id="prog-goal" placeholder="Cut, bulk, recomp…"/>')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addProgram(CURRENT_CLIENT)">Create program</button>
+    </div>`);
+}
+
+async function addProgram(client) {
+  const name = document.getElementById('prog-name').value.trim();
+  if(!name) return alert('Name required');
+  const body = {
+    name, weeks:+document.getElementById('prog-weeks').value,
+    goal:document.getElementById('prog-goal').value,
+    client_id: client?client.id:(document.getElementById('prog-client')?.value||null)
+  };
+  const data = await sb.insert('programs', body);
+  if(data&&data[0]) {
+    closeModal();
+    if(client) { CD.programs.unshift(data[0]); renderCDTab(client); }
+    else { PG.programs.unshift(data[0]); renderProgramsList(); }
+  }
+}
+
+function showAddWorkout() {
+  const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  showModal('Add workout day', `
+    ${field('Workout name','<input id="w-name" placeholder="Push A, Pull B, Legs…" autofocus/>')}
+    ${field('Day of week',`<select id="w-day">${days.map(d=>`<option>${d}</option>`).join('')}</select>`)}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addWorkout()">Add workout</button>
+    </div>`);
+}
+
+async function addWorkout() {
+  const name = document.getElementById('w-name').value.trim();
+  if(!name) return alert('Name required');
+  const body = { name, day_of_week:document.getElementById('w-day').value, program_id:PG.selected.id, order_index:PG.workouts.length };
+  const data = await sb.insert('workouts', body);
+  if(data&&data[0]) { PG.workouts.push(data[0]); PG.exercises[data[0].id]=[]; closeModal(); renderProgramDetail(); }
+}
+
+function showAddExercise(wid) {
+  showModal('Add exercise', `
+    ${field('Exercise name','<input id="e-name" placeholder="Incline DB Press" autofocus/>')}
+    <div class="form-row3">
+      ${field('Sets','<input id="e-sets" type="number" value="3"/>')}
+      ${field('Reps','<input id="e-reps" value="8-12"/>')}
+      ${field('Rest (sec)','<input id="e-rest" type="number" value="90"/>')}
+    </div>
+    ${field('Note (optional)','<input id="e-note" placeholder="Cue, tempo, variation…"/>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addExercise('${esc(wid)}')">Add exercise</button>
+    </div>`);
+}
+
+async function addExercise(wid) {
+  const body = {
+    workout_id:wid, name:document.getElementById('e-name').value,
+    sets:+document.getElementById('e-sets').value, reps:document.getElementById('e-reps').value,
+    rest_seconds:+document.getElementById('e-rest').value, notes:document.getElementById('e-note').value,
+    order_index:(PG.exercises[wid]||[]).length
+  };
+  const data = await sb.insert('exercises', body);
+  if(data&&data[0]) { if(!PG.exercises[wid])PG.exercises[wid]=[]; PG.exercises[wid].push(data[0]); closeModal(); renderProgramDetail(); }
+}
+
+async function deleteExercise(eid, wid) {
+  await sb.delete('exercises','id=eq.'+eid);
+  PG.exercises[wid] = (PG.exercises[wid]||[]).filter(e=>e.id!==eid);
+  renderProgramDetail();
+}
+
+// ── Cardio Protocols ─────────────────────────────────────────────
+let CP = { protocols:[], selected:null, sessions:[] };
+const CARDIO_MODALITIES = ['Incline Walk','Treadmill Run','Stationary Bike','Elliptical','Stairmaster','Rowing','Outdoor Walk','Outdoor Run','Swimming'];
+const CARDIO_INTENSITIES = ['Zone 2','Zone 3','Easy / Conversational','Moderate','Hard','Max Effort'];
+const DAYS_CARDIO = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+async function renderCardio() {
+  const el = document.getElementById('page-cardio');
+  el.innerHTML = `<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  CP.protocols = await sb.select('cardio_protocols','order=created_at.desc') || [];
+  CP.selected = null;
+  renderCardioList(el);
+}
+
+function renderCardioList(el) {
+  if(!el) el = document.getElementById('page-cardio');
+  el.innerHTML = `
+    <div class="page-header">
+      <h1>Cardio Protocols</h1>
+      <button class="btn btn-primary" onclick="showAddCardioProtocol()">+ New protocol</button>
+    </div>
+    ${CP.protocols.length===0?empty('🏃','No cardio protocols yet.'):
+    `<div class="card-grid grid-auto">${CP.protocols.map((p,i)=>{
+      const cl = STATE.clients.find(c=>c.id===p.client_id);
+      return `<div class="card" style="cursor:pointer" data-cardio-idx="${i}">
+        <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(p.name)}</div>
+        ${cl?`<div style="font-size:12px;color:var(--accent);margin-bottom:6px">${esc(cl.name)}</div>`:''}
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;min-height:18px">${esc(p.goal||'')}</div>
+        ${badge('green',p.weeks+' weeks')}
+      </div>`;}).join('')}</div>`}`;
+  el.querySelectorAll('[data-cardio-idx]').forEach(card=>{
+    const p = CP.protocols[+card.dataset.cardioIdx];
+    card.onmouseenter = ()=>card.style.borderColor='var(--green)';
+    card.onmouseleave = ()=>card.style.borderColor='var(--border)';
+    card.onclick = ()=>openCardioProtocol(p);
+  });
+}
+
+async function openCardioProtocol(p) {
+  CP.selected = p;
+  const el = document.getElementById('page-cardio');
+  el.innerHTML = `<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  CP.sessions = await sb.select('cardio_sessions','protocol_id=eq.'+p.id+'&order=order_index') || [];
+  renderCardioDetail(el);
+}
+
+function renderCardioDetail(el) {
+  if(!el) el = document.getElementById('page-cardio');
+  const p = CP.selected;
+  el.innerHTML = `
+    <div class="breadcrumb">
+      <span class="breadcrumb-link" onclick="renderCardio()">← Cardio Protocols</span>
+      <span class="breadcrumb-sep">›</span>
+      <span style="font-weight:600">${esc(p.name)}</span>
+      ${badge('green',p.weeks+'w')}
+      ${p.goal?`<span style="font-size:12px;color:var(--text2)">— ${esc(p.goal)}</span>`:''}
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn btn-primary btn-sm" onclick="showAddCardioSession()">+ Add session</button>
+    </div>
+    ${CP.sessions.length===0?empty('🏃','No cardio sessions yet. Add your first one.'):`
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px">
+      ${CP.sessions.map((s,si)=>`<div class="workout-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div>
+            <div style="font-weight:600;font-size:14px">${esc(s.name)}</div>
+            <div style="font-size:11px;color:var(--text3)">${esc(s.day_of_week||'')}</div>
+          </div>
+          <button onclick="deleteCardioSession('${esc(s.id)}')" style="color:var(--text3);font-size:16px;padding:0 4px;line-height:1">✕</button>
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
+          ${badge('blue',s.modality)}
+          ${badge('amber',s.intensity)}
+        </div>
+        <div style="font-size:13px;color:var(--text2)">${esc(s.duration_minutes)} minutes</div>
+        ${s.notes?`<div style="font-size:11px;color:var(--text3);margin-top:6px;font-style:italic">${esc(s.notes)}</div>`:''}
+      </div>`).join('')}
+    </div>`}`;
+}
+
+function showAddCardioProtocol() {
+  showModal('New cardio protocol', `
+    ${field('Protocol name','<input id="cp-name" placeholder="Fat Loss Cardio Phase 1" autofocus/>')}
+    ${field('Assign to client',`<select id="cp-client"><option value="">— select client —</option>${STATE.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>`)}
+    <div class="form-row">
+      ${field('Duration (weeks)','<input id="cp-weeks" type="number" value="8"/>')}
+      ${field('Goal','<input id="cp-goal" placeholder="Fat loss, conditioning, recovery…"/>')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addCardioProtocol()">Create protocol</button>
+    </div>`);
+}
+
+async function addCardioProtocol() {
+  const name = document.getElementById('cp-name').value.trim();
+  if(!name) return alert('Name required');
+  const body = {
+    name, weeks:+document.getElementById('cp-weeks').value,
+    goal:document.getElementById('cp-goal').value,
+    client_id:document.getElementById('cp-client').value||null
+  };
+  const data = await sb.insert('cardio_protocols', body);
+  if(data&&data[0]) { CP.protocols.unshift(data[0]); closeModal(); renderCardioList(); }
+}
+
+function showAddCardioSession() {
+  showModal('Add cardio session', `
+    ${field('Session name','<input id="cs-name" placeholder="Morning Cardio, Fasted Walk…" autofocus/>')}
+    <div class="form-row">
+      ${field('Day of week',`<select id="cs-day">${DAYS_CARDIO.map(d=>`<option>${d}</option>`).join('')}</select>`)}
+      ${field('Modality',`<select id="cs-modality">${CARDIO_MODALITIES.map(m=>`<option>${m}</option>`).join('')}</select>`)}
+    </div>
+    <div class="form-row">
+      ${field('Duration (minutes)','<input id="cs-duration" type="number" value="30"/>')}
+      ${field('Intensity',`<select id="cs-intensity">${CARDIO_INTENSITIES.map(i=>`<option>${i}</option>`).join('')}</select>`)}
+    </div>
+    ${field('Notes (optional)','<input id="cs-notes" placeholder="Incline %, pace, heart rate target…"/>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addCardioSession()">Add session</button>
+    </div>`);
+}
+
+async function addCardioSession() {
+  const name = document.getElementById('cs-name').value.trim();
+  if(!name) return alert('Name required');
+  const body = {
+    name, protocol_id:CP.selected.id, day_of_week:document.getElementById('cs-day').value,
+    modality:document.getElementById('cs-modality').value, duration_minutes:+document.getElementById('cs-duration').value,
+    intensity:document.getElementById('cs-intensity').value, notes:document.getElementById('cs-notes').value,
+    order_index:CP.sessions.length
+  };
+  const data = await sb.insert('cardio_sessions', body);
+  if(data&&data[0]) { CP.sessions.push(data[0]); closeModal(); renderCardioDetail(); }
+}
+
+async function deleteCardioSession(sid) {
+  await sb.delete('cardio_sessions','id=eq.'+sid);
+  CP.sessions = CP.sessions.filter(s=>s.id!==sid);
+  renderCardioDetail();
+}
+
+// ── Check-ins ─────────────────────────────────────────────────────
+async function renderCheckIns(filter='') {
+  const el = document.getElementById('page-checkins');
+  el.innerHTML=`<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  const all = await sb.select('check_ins','order=date.desc') || [];
+  const shown = filter?all.filter(c=>c.client_id===filter):all;
+  const gc = id=>STATE.clients.find(c=>c.id===id);
+  el.innerHTML = `
+    <div class="page-header">
+      <h1>Check-ins</h1>
+      <select onchange="renderCheckIns(this.value)" style="width:220px">
+        <option value="">All clients</option>
+        ${STATE.clients.map(c=>`<option value="${esc(c.id)}"${filter===c.id?' selected':''}>${esc(c.name)}</option>`).join('')}
+      </select>
+    </div>
+    ${shown.length===0?empty('📋','No check-ins found.'):shown.map(ci=>{
+      const cl=gc(ci.client_id);
+      return `<div class="ci-item">
+        <div class="ci-date">${esc(ci.date)}</div>
+        ${avatar(cl?.name||'?',34)}
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;margin-bottom:7px">${esc(cl?.name||'Unknown')}</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px">
+            ${ci.weight_kg?badge('blue',ci.weight_kg+' lbs'):''}
+            ${ci.body_fat?badge('gray',ci.body_fat+'% BF'):''}
+            ${ci.energy?badge('green','Energy '+ci.energy+'/10'):''}
+            ${ci.sleep_quality?badge('amber','Sleep '+ci.sleep_quality+'/10'):''}
+          </div>
+          ${ci.notes?`<div style="font-size:13px;color:var(--text2);line-height:1.5">${esc(ci.notes)}</div>`:''}
+        </div>
+      </div>`;}).join('')}`;
+}
+
+// ── Macros (global) ───────────────────────────────────────────────
+async function renderMacros() {
+  const el = document.getElementById('page-macros');
+  el.innerHTML=`<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  const all = await sb.select('macros','order=effective_date.desc') || [];
+  const gc=id=>STATE.clients.find(c=>c.id===id);
+  el.innerHTML = `
+    <h1 style="margin-bottom:22px">Macros</h1>
+    ${all.length===0?empty('🥧','No macro plans yet. Set them from a client profile.'):`
+    <div class="card-grid grid-auto">${all.map(m=>{
+      const cl=gc(m.client_id);
+      return `<div class="card" style="cursor:default">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <div style="font-weight:600;font-size:14px">${esc(cl?.name||'Unknown')}</div>
+          <span style="font-size:11px;color:var(--text3)">${esc(m.effective_date)}</span>
+        </div>
+        <div class="macro-val">${esc(m.calories)} kcal</div>
+        <div class="macro-bars">
+          <div class="macro-bar"><div class="macro-bar-val" style="color:var(--blue)">${esc(m.protein_g)}g</div><div class="macro-bar-label">Protein</div></div>
+          <div class="macro-bar"><div class="macro-bar-val" style="color:var(--accent)">${esc(m.carbs_g)}g</div><div class="macro-bar-label">Carbs</div></div>
+          <div class="macro-bar"><div class="macro-bar-val" style="color:var(--amber)">${esc(m.fat_g)}g</div><div class="macro-bar-label">Fat</div></div>
+        </div>
+        ${m.notes?`<div style="font-size:12px;color:var(--text2);margin-top:10px">${esc(m.notes)}</div>`:''}
+      </div>`;}).join('')}</div>`}`;
+}
+
+// ── Meal Plans ────────────────────────────────────────────────────
+let ML = { plans:[], selected:null, meals:[], foods:{} };
+
+async function renderMeals() {
+  const el = document.getElementById('page-meals');
+  el.innerHTML=`<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  ML.plans = await sb.select('meal_plans','order=created_at.desc') || [];
+  ML.selected = null;
+  renderMealList(el);
+}
+
+function renderMealList(el) {
+  if(!el) el=document.getElementById('page-meals');
+  el.innerHTML=`
+    <div class="page-header">
+      <h1>Meal Plans</h1>
+      <button class="btn btn-primary" onclick="showAddMealPlan()">+ New plan</button>
+    </div>
+    ${ML.plans.length===0?empty('🥗','No meal plans yet.'):`
+    <div class="card-grid grid-auto">${ML.plans.map((p,i)=>{
+      const cl=STATE.clients.find(c=>c.id===p.client_id);
+      return `<div class="card" style="cursor:pointer" data-ml-idx="${i}">
+        <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(p.name)}</div>
+        ${cl?`<div style="font-size:12px;color:var(--accent);margin-bottom:8px">${esc(cl.name)}</div>`:''}
+        ${badge('gray',p.day_label||'Day 1')}
+      </div>`;}).join('')}</div>`}`;
+  el.querySelectorAll('[data-ml-idx]').forEach(card=>{
+    const p=ML.plans[+card.dataset.mlIdx];
+    card.onmouseenter=()=>card.style.borderColor='var(--accent)';
+    card.onmouseleave=()=>card.style.borderColor='var(--border)';
+    card.onclick=()=>openMealPlan(p);
+  });
+}
+
+async function openMealPlan(p) {
+  ML.selected=p; ML.meals=[]; ML.foods={};
+  const el=document.getElementById('page-meals');
+  el.innerHTML=`<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  ML.meals=await sb.select('meals','meal_plan_id=eq.'+p.id+'&order=order_index')||[];
+  await Promise.all(ML.meals.map(async m=>{ML.foods[m.id]=await sb.select('meal_foods','meal_id=eq.'+m.id+'&order=order_index')||[];}));
+  renderMealDetail(el);
+}
+
+function renderMealDetail(el) {
+  if(!el)el=document.getElementById('page-meals');
+  const p=ML.selected;
+  const cl=STATE.clients.find(c=>c.id===p.client_id);
+  el.innerHTML=`
+    <div class="breadcrumb">
+      <span class="breadcrumb-link" onclick="renderMeals()">← Meal Plans</span>
+      <span class="breadcrumb-sep">›</span>
+      <span style="font-weight:600">${esc(p.name)}</span>
+      ${badge('gray',p.day_label||'')}
+      ${cl?`<span style="font-size:12px;color:var(--accent)">— ${esc(cl.name)}</span>`:''}
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn btn-primary btn-sm" onclick="showAddMeal()">+ Add meal</button>
+    </div>
+    ${ML.meals.length===0?empty('🥗','No meals added yet.'):''}
+    ${ML.meals.map(m=>{
+      const fs=ML.foods[m.id]||[];
+      const tot=fs.reduce((s,f)=>({cal:s.cal+Number(f.calories||0),p:s.p+Number(f.protein_g||0),c:s.c+Number(f.carbs_g||0),fat:s.fat+Number(f.fat_g||0)}),{cal:0,p:0,c:0,fat:0});
+      return `<div class="meal-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div><span style="font-weight:600;font-size:14px">${esc(m.name)}</span>${m.time_label?`<span style="font-size:12px;color:var(--text3);margin-left:8px">${esc(m.time_label)}</span>`:''}</div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="font-size:11px;color:var(--text3)">${Math.round(tot.cal)} kcal · P${Math.round(tot.p)}g C${Math.round(tot.c)}g F${Math.round(tot.fat)}g</span>
+            <button class="btn btn-ghost btn-sm" onclick="showAddFood('${esc(m.id)}')">+ Food</button>
+          </div>
+        </div>
+        ${fs.length===0?`<div style="font-size:12px;color:var(--text3);padding:6px 0">No foods added yet</div>`:''}
+        ${fs.map(f=>`<div class="meal-food-row">
+          <span style="font-weight:500">${esc(f.food_name)}</span>
+          <span style="color:var(--text3)">${esc(f.amount_g)}g</span>
+          <span style="color:var(--amber);font-weight:500">${esc(f.calories)} cal</span>
+          <span style="color:var(--blue)">P${esc(f.protein_g)}</span>
+          <span style="color:var(--accent)">C${esc(f.carbs_g)}</span>
+          <span style="color:var(--amber)">F${esc(f.fat_g)}</span>
+        </div>`).join('')}
+      </div>`;}).join('')}`;
+}
+
+function showAddMealPlan() {
+  showModal('New meal plan', `
+    ${field('Plan name','<input id="mp-name" placeholder="Cut Day A, Bulk Day 1…" autofocus/>')}
+    ${field('Client',`<select id="mp-client"><option value="">— select —</option>${STATE.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>`)}
+    ${field('Day label','<input id="mp-day" value="Day 1" placeholder="Day 1, Training Day…"/>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addMealPlan()">Create</button>
+    </div>`);
+}
+async function addMealPlan() {
+  const name=document.getElementById('mp-name').value.trim();
+  if(!name)return alert('Name required');
+  const body={name,client_id:document.getElementById('mp-client').value||null,day_label:document.getElementById('mp-day').value};
+  const data=await sb.insert('meal_plans',body);
+  if(data&&data[0]){ML.plans.unshift(data[0]);closeModal();renderMealList();}
+}
+
+function showAddMeal() {
+  showModal('Add meal', `
+    ${field('Meal name','<input id="ml-name" placeholder="Breakfast, Post-workout…" autofocus/>')}
+    ${field('Time (optional)','<input id="ml-time" placeholder="7:00 AM"/>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addMeal()">Add meal</button>
+    </div>`);
+}
+async function addMeal() {
+  const body={name:document.getElementById('ml-name').value,time_label:document.getElementById('ml-time').value,meal_plan_id:ML.selected.id,order_index:ML.meals.length};
+  const data=await sb.insert('meals',body);
+  if(data&&data[0]){ML.meals.push(data[0]);ML.foods[data[0].id]=[];closeModal();renderMealDetail();}
+}
+
+function showAddFood(mid) {
+  showModal('Add food item', `
+    ${field('Food name','<input id="fd-name" placeholder="Chicken breast, Greek yogurt…" autofocus/>')}
+    <div class="form-row">
+      ${field('Amount (g)','<input id="fd-g" type="number"/>')}
+      ${field('Calories','<input id="fd-cal" type="number"/>')}
+      ${field('Protein (g)','<input id="fd-p" type="number"/>')}
+      ${field('Carbs (g)','<input id="fd-c" type="number"/>')}
+      ${field('Fat (g)','<input id="fd-f" type="number"/>')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addFood('${esc(mid)}')">Add food</button>
+    </div>`);
+}
+async function addFood(mid) {
+  const body={food_name:document.getElementById('fd-name').value,amount_g:document.getElementById('fd-g').value,calories:document.getElementById('fd-cal').value,protein_g:document.getElementById('fd-p').value,carbs_g:document.getElementById('fd-c').value,fat_g:document.getElementById('fd-f').value,meal_id:mid,order_index:(ML.foods[mid]||[]).length};
+  const data=await sb.insert('meal_foods',body);
+  if(data&&data[0]){if(!ML.foods[mid])ML.foods[mid]=[];ML.foods[mid].push(data[0]);closeModal();renderMealDetail();}
+}
+
+// ── Messages ──────────────────────────────────────────────────────
+let MSG = { all:[], selClient:null };
+
+async function renderMessages() {
+  const el=document.getElementById('page-messages');
+  MSG.all=await sb.select('messages','order=created_at.desc')||[];
+  if(!MSG.selClient || !STATE.clients.find(c=>c.id===MSG.selClient.id)) {
+    MSG.selClient=STATE.clients[0]||null;
+  }
+  el.innerHTML=`
+    <div id="msg-layout">
+      <div id="msg-list">
+        <div id="msg-list-header">Messages</div>
+        <div id="msg-clients">${STATE.clients.map(c=>{
+          const unread=MSG.all.filter(m=>m.client_id===c.id&&!m.read&&m.sender==='client').length;
+          const last=MSG.all.filter(m=>m.client_id===c.id).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
+          return `<button class="msg-client-btn${MSG.selClient?.id===c.id?' active':''}" data-cid="${esc(c.id)}">
+            ${avatar(c.name,36)}
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:${MSG.selClient?.id===c.id?600:400};color:${MSG.selClient?.id===c.id?'var(--accent)':'var(--text)'}">${esc(c.name)}</div>
+              <div style="font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">${esc(last?.body||'No messages')}</div>
+            </div>
+            ${unread>0?`<span style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;flex-shrink:0">${unread}</span>`:''}
+          </button>`;}).join('')}
+        </div>
+      </div>
+      <div class="msg-thread-wrap" id="msg-thread-wrap">
+        ${renderThreadHTML()}
+      </div>
+    </div>`;
+  document.querySelectorAll('.msg-client-btn').forEach(b=>{
+    const cid=b.dataset.cid;
+    b.onclick=async ()=>{
+      MSG.selClient=STATE.clients.find(c=>c.id===cid)||null;
+      await markRead(cid);
+      renderMessages();
+    };
+  });
+  const send=()=>{
+    const inp=document.getElementById('msg-input');
+    if(inp&&inp.value.trim()) sendMsg(inp.value.trim());
+  };
+  document.getElementById('msg-send')?.addEventListener('click',send);
+  document.getElementById('msg-input')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+  document.getElementById('msg-thread')?.scrollTo(0,99999);
+}
+
+function renderThreadHTML() {
+  if(!MSG.selClient)return`<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:13px">Select a client to view messages</div>`;
+  const c=MSG.selClient;
+  const thread=[...MSG.all.filter(m=>m.client_id===c.id)].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  return `
+    <div id="msg-thread-header">${avatar(c.name,34)}<span style="font-weight:600;font-size:14px">${esc(c.name)}</span><span style="font-size:11px;color:var(--text3);margin-left:4px">${esc(c.goal||'')}</span></div>
+    <div id="msg-thread">
+      ${thread.length===0?`<div style="text-align:center;color:var(--text3);font-size:13px;margin-top:48px">No messages yet. Send the first one.</div>`:''}
+      ${thread.map(m=>`
+        <div style="display:flex;justify-content:${m.sender==='coach'?'flex-end':'flex-start'}">
+          <div class="bubble bubble-${m.sender}">
+            <div>${esc(m.body)}</div>
+            <div class="bubble-time" style="text-align:${m.sender==='coach'?'right':'left'}">${fmt12(m.created_at)}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div id="msg-input-row">
+      <input id="msg-input" placeholder="Message ${esc(c.name)}… (Enter to send)" style="flex:1"/>
+      <button id="msg-send" class="btn btn-primary">Send ↗</button>
+    </div>`;
+}
+
+async function markRead(cid) {
+  await sb.update('messages',{read:true},'client_id=eq.'+cid+'&sender=eq.client');
+  MSG.all=MSG.all.map(m=>m.client_id===cid&&m.sender==='client'?{...m,read:true}:m);
+  renderNav();
+}
+
+async function sendMsg(body) {
+  if(!MSG.selClient)return;
+  const data=await sb.insert('messages',{client_id:MSG.selClient.id,sender:'coach',body,read:true,created_at:new Date().toISOString()});
+  if(data&&data[0]){MSG.all.push(data[0]);document.getElementById('msg-input').value='';document.getElementById('msg-thread-wrap').innerHTML=renderThreadHTML();document.getElementById('msg-thread')?.scrollTo(0,99999);document.getElementById('msg-send')?.addEventListener('click',()=>{const inp=document.getElementById('msg-input');if(inp&&inp.value.trim())sendMsg(inp.value.trim());});document.getElementById('msg-input')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();const inp=document.getElementById('msg-input');if(inp&&inp.value.trim())sendMsg(inp.value.trim());}});}
+}
+
+// ── Payments ──────────────────────────────────────────────────────
+async function renderPayments() {
+  const el=document.getElementById('page-payments');
+  el.innerHTML=`<div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  const all=await sb.select('payments','order=due_date.desc')||[];
+  const gc=id=>STATE.clients.find(c=>c.id===id);
+  const paid=all.filter(p=>p.status==='paid').reduce((s,p)=>s+Number(p.amount_cad),0);
+  const out=all.filter(p=>p.status!=='paid').reduce((s,p)=>s+Number(p.amount_cad),0);
+  const ov=all.filter(p=>p.status==='overdue').length;
+  el.innerHTML=`
+    <div class="page-header">
+      <h1>Payments</h1>
+      <button class="btn btn-primary" onclick="showAddPayment()">+ New invoice</button>
+    </div>
+    <div class="card-grid grid-3" style="margin-bottom:26px">
+      ${statCard('Total paid',fmtCAD(paid),'✅','var(--green)','CAD collected')}
+      ${statCard('Outstanding',fmtCAD(out),'⏰','var(--amber)','pending + overdue')}
+      ${statCard('Overdue invoices',ov,'⚠️','var(--red)','')}
+    </div>
+    ${all.length===0?empty('💳','No payments yet.'):`
+    <div class="data-table">
+      <div class="table-head" style="grid-template-columns:1.2fr 1.5fr 110px 100px 160px">
+        <span>Client</span><span>Description</span><span>Amount</span><span>Due</span><span>Status</span>
+      </div>
+      ${all.map((p,i)=>{
+        const cl=gc(p.client_id);
+        return `<div class="table-row" style="grid-template-columns:1.2fr 1.5fr 110px 100px 160px">
+          <div style="display:flex;align-items:center;gap:8px">${avatar(cl?.name||'?',28)}<span style="font-weight:500">${esc(cl?.name||'—')}</span></div>
+          <span style="color:var(--text2)">${esc(p.description||'')}</span>
+          <span style="font-weight:600;color:var(--accent)">${fmtCAD(p.amount_cad)}</span>
+          <span style="color:var(--text3);font-size:12px">${esc(p.due_date||'')}</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            ${badge(p.status,p.status)}
+            ${p.status!=='paid'?`<button onclick="markPaymentPaid('${esc(p.id)}',${i})" style="font-size:11px;color:var(--green);cursor:pointer;font-weight:500;font-family:inherit">Mark paid ✓</button>`:''}
+          </div>
+        </div>`;}).join('')}
+    </div>`}`;
+
+  window._pmts = all;
+}
+
+async function markPaymentPaid(id) {
+  await sb.update('payments',{status:'paid',paid_date:today()},'id=eq.'+id);
+  renderPayments();
+}
+
+function showAddPayment() {
+  showModal('New invoice', `
+    ${field('Client',`<select id="pay-client"><option value="">— select —</option>${STATE.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>`)}
+    <div class="form-row">
+      ${field('Amount (CAD)','<input id="pay-amt" type="number" step=".01" value="250"/>')}
+      ${field('Status','<select id="pay-status"><option value="pending">Pending</option><option value="paid">Paid</option><option value="overdue">Overdue</option></select>')}
+    </div>
+    ${field('Description','<input id="pay-desc" value="Monthly coaching"/>')}
+    ${field('Due date','<input id="pay-due" type="date" value="'+today()+'"/>')}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addPayment()">Create invoice</button>
+    </div>`);
+}
+async function addPayment() {
+  const body={client_id:document.getElementById('pay-client').value,amount_cad:document.getElementById('pay-amt').value,status:document.getElementById('pay-status').value,description:document.getElementById('pay-desc').value,due_date:document.getElementById('pay-due').value};
+  const data=await sb.insert('payments',body);
+  if(data&&data[0]){closeModal();renderPayments();}
+}
+
+// ── Progress ──────────────────────────────────────────────────────
+async function renderProgress(clientId) {
+  const el=document.getElementById('page-progress');
+  if(!clientId&&STATE.clients.length>0)clientId=STATE.clients[0].id;
+  el.innerHTML=`
+    <div class="page-header">
+      <h1>Progress</h1>
+      <select onchange="renderProgress(this.value)" style="width:220px">
+        ${STATE.clients.map(c=>`<option value="${esc(c.id)}"${c.id===clientId?' selected':''}>${esc(c.name)}</option>`).join('')}
+      </select>
+    </div>
+    <div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>`;
+  if(!clientId)return;
+  const cis=await sb.select('check_ins','client_id=eq.'+clientId+'&order=date.asc')||[];
+  if(cis.length<2){el.querySelector('div:last-child').outerHTML=empty('📈','Need at least 2 check-ins to show charts. Log them from a client profile.');return;}
+  const first=cis[0],last=cis[cis.length-1];
+  const delta=(a,b)=>{if(!a||!b)return'—';const d=Number(a)-Number(b);return(d>0?'+':'')+d.toFixed(1);};
+  el.innerHTML=`
+    <div class="page-header">
+      <h1>Progress</h1>
+      <select onchange="renderProgress(this.value)" style="width:220px">
+        ${STATE.clients.map(c=>`<option value="${esc(c.id)}"${c.id===clientId?' selected':''}>${esc(c.name)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="card-grid grid-4" style="margin-bottom:24px">
+      ${statCard('Start weight',(first?.weight_kg||'—')+' lbs','⚖','var(--text2)')}
+      ${statCard('Current weight',(last?.weight_kg||'—')+' lbs','⚖','var(--blue)')}
+      ${statCard('Change',delta(last?.weight_kg,first?.weight_kg)+' lbs','📈',Number(delta(last?.weight_kg,first?.weight_kg))<0?'var(--green)':'var(--amber)')}
+      ${statCard('Check-ins',cis.length,'📋','var(--accent)')}
+    </div>
+    <div class="card-grid grid-2">
+      <div class="chart-box"><div class="chart-title">Weight (lbs)</div><canvas id="chart-weight" height="200"></canvas></div>
+      <div class="chart-box"><div class="chart-title">Body fat %</div><canvas id="chart-bf" height="200"></canvas></div>
+    </div>`;
+
+  // Draw charts with Canvas 2D API — no library needed
+  const labels=cis.map(c=>c.date.slice(5));
+  drawLineChart(document.getElementById('chart-weight'),labels,cis.map(c=>c.weight_kg),'#5b9cf6');
+  drawLineChart(document.getElementById('chart-bf'),labels,cis.map(c=>c.body_fat),'#c8f065');
+}
+
+function drawLineChart(canvas, labels, data, color) {
+  const validData=data.map(Number).filter(v=>!isNaN(v));
+  if(!canvas||!validData.length)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth-40;
+  const H=200;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const pad={t:10,r:20,b:32,l:44};
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const vals=data.map(Number);
+  const min=Math.min(...validData),max=Math.max(...validData);
+  const rng=max-min||1;
+  const xStep=cW/(labels.length-1||1);
+  const yPx=v=>pad.t+cH-(((Number(v)||min)-min)/rng)*cH;
+  const xPx=i=>pad.l+i*xStep;
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+cH*(i/4);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();}
+
+  // Axes labels
+  ctx.fillStyle='#5f5f70';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='right';
+  for(let i=0;i<=4;i++){const v=max-rng*(i/4);ctx.fillText(v.toFixed(1),pad.l-6,pad.t+cH*(i/4)+3);}
+  ctx.textAlign='center';
+  const step=Math.ceil(labels.length/6);
+  labels.forEach((l,i)=>{if(i%step===0||i===labels.length-1)ctx.fillText(l,xPx(i),H-pad.b+14);});
+
+  // Fill
+  const gradient=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
+  gradient.addColorStop(0,color+'30');gradient.addColorStop(1,color+'05');
+  ctx.beginPath();
+  vals.forEach((v,i)=>{const x=xPx(i),y=yPx(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.lineTo(xPx(vals.length-1),pad.t+cH);ctx.lineTo(xPx(0),pad.t+cH);ctx.closePath();
+  ctx.fillStyle=gradient;ctx.fill();
+
+  // Line
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';
+  vals.forEach((v,i)=>{const x=xPx(i),y=yPx(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.stroke();
+
+  // Dots
+  vals.forEach((v,i)=>{
+    ctx.beginPath();ctx.arc(xPx(i),yPx(v),4,0,Math.PI*2);
+    ctx.fillStyle='#0f0f11';ctx.fill();
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.stroke();
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init() {
+  const [clients, payments, messages, checkIns, dailyLogs] = await Promise.all([
+    sb.select('clients','order=created_at.desc'),
+    sb.select('payments','order=due_date.desc'),
+    sb.select('messages','order=created_at.desc'),
+    sb.select('check_ins','order=date.desc&limit=30'),
+    sb.select('daily_logs','order=date.desc&limit=500'),
+  ]);
+  STATE.clients = clients||[];
+  STATE.payments = payments||[];
+  STATE.messages = messages||[];
+  STATE.checkIns = checkIns||[];
+  STATE.dailyLogs = dailyLogs||[];
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='flex';
+  renderNav();
+  renderDashboard();
+}
+
+init().catch(e=>{ console.error(e); alert('Failed to connect to Supabase. Check your internet connection.'); });
+</script>
+</body>
+</html>
