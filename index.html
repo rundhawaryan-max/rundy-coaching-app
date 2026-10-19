@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Elite Coach — @ryan.rundy</title>
+<title>Rebuilt by Ryan — Coach</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0f0f11;--bg2:#17171a;--bg3:#1f1f24;--bg4:#27272d;
   --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
-  --text:#f0f0f2;--text2:#9191a0;--text3:#5f5f70;
+  --text:#f0f0f2;--text2:#9191a0;--text3:#8b8b9b;
   --accent:#c8f065;--adim:rgba(200,240,101,0.12);
   --red:#ff5c5c;--rdim:rgba(255,92,92,0.15);
   --blue:#5b9cf6;--bdim:rgba(91,156,246,0.12);
@@ -27,19 +27,21 @@ textarea{resize:vertical;min-height:72px}
 #app{display:flex;height:100vh;overflow:hidden}
 /* Sidebar */
 #sidebar{width:var(--sb);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;flex-shrink:0}
-.sb-logo{padding:16px 14px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10}
+.sb-logo{padding:16px 14px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .sb-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
 .sb-brand{font-weight:700;font-size:14px;color:var(--accent);letter-spacing:-.5px}
-.sb-sub{font-size:10px;color:var(--text3)}
+.sb-sub{font-size:12px;color:var(--text3)}
 nav{flex:1;padding:8px 6px;overflow-y:auto}
-.nav-btn{width:100%;display:flex;align-items:center;gap:10;padding:8px 11px;border-radius:9px;margin-bottom:2px;font-size:13px;text-align:left;transition:all .15s;color:var(--text2);cursor:pointer;border:none;background:transparent}
+.nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;margin-bottom:2px;font-size:13px;text-align:left;transition:all .15s;color:var(--text2);cursor:pointer;border:none;background:transparent}
 .nav-btn:hover{background:rgba(255,255,255,0.04);color:var(--text)}
 .nav-btn.active{background:var(--adim);color:var(--accent);font-weight:600}
 .nav-icon{font-size:17px;flex-shrink:0;width:20px;text-align:center}
 .nav-label{flex:1}
-.nav-badge{border-radius:12px;padding:1px 7px;font-size:10px;font-weight:700}
-.sb-status{padding:10px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--green);display:flex;align-items:center;gap:6}
+.nav-badge{border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700}
+.sb-status{padding:10px 14px;border-top:1px solid var(--border);font-size:12px;color:var(--green);display:flex;align-items:center;gap:6px}
+.sb-status.off{color:var(--red)}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sb-status.off .dot{background:var(--red)}
 /* Main */
 #main{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .page{padding:28px 32px;overflow-y:auto;flex:1;display:none;min-height:0}
@@ -69,11 +71,11 @@ h2{font-size:15px;font-weight:600;margin-bottom:14px}
 .grid-auto{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
 /* Stat cards */
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
-.stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.stat-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
 .stat-value{font-size:26px;font-weight:700;letter-spacing:-.5px}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.stat-sub{font-size:12px;color:var(--text3);margin-top:3px}
 /* Badge */
-.badge{border-radius:6px;padding:2px 9px;font-size:11px;font-weight:500;white-space:nowrap;display:inline-block}
+.badge{border-radius:6px;padding:2px 9px;font-size:12px;font-weight:500;white-space:nowrap;display:inline-block}
 .badge-green{background:var(--gdim);color:var(--green)}
 .badge-blue{background:var(--bdim);color:var(--blue)}
 .badge-amber{background:var(--ambdim);color:var(--amber)}
@@ -90,7 +92,7 @@ h2{font-size:15px;font-weight:600;margin-bottom:14px}
 .avatar{border-radius:50%;background:var(--adim);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);flex-shrink:0;letter-spacing:-.5px}
 /* Form */
 .field{margin-bottom:14px}
-.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
 .form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 12px}
 /* Modal */
@@ -103,7 +105,7 @@ h2{font-size:15px;font-weight:600;margin-bottom:14px}
 .modal-body{padding:20px 22px}
 /* Table */
 .data-table{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
-.table-head{display:grid;padding:10px 18px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.table-head{display:grid;padding:10px 18px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 .table-row{display:grid;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center;font-size:13px;transition:background .1s;cursor:default}
 .table-row:hover{background:var(--bg3)}
 .table-row:last-child{border-bottom:none}
@@ -124,14 +126,14 @@ h2{font-size:15px;font-weight:600;margin-bottom:14px}
 .empty-msg{font-size:13px}
 /* Checkin item */
 .ci-item{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:15px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
-.ci-date{font-size:11px;color:var(--text3);min-width:92px;padding-top:2px}
+.ci-date{font-size:12px;color:var(--text3);min-width:92px;padding-top:2px}
 /* Macro card */
 .macro-card{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:18px;margin-bottom:10px}
 .macro-val{font-size:24px;font-weight:700;color:var(--accent);letter-spacing:-.5px;margin-bottom:12px}
 .macro-bars{display:flex;gap:10px}
 .macro-bar{flex:1;background:var(--bg3);border-radius:9px;padding:9px;text-align:center}
 .macro-bar-val{font-size:16px;font-weight:700;letter-spacing:-.3px}
-.macro-bar-label{font-size:10px;color:var(--text3);margin-top:2px}
+.macro-bar-label{font-size:11px;color:var(--text3);margin-top:2px}
 /* Message layout */
 #msg-layout{display:flex;flex:1;overflow:hidden;min-height:0}
 #msg-list{width:240px;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;min-height:0}
@@ -147,10 +149,10 @@ h2{font-size:15px;font-weight:600;margin-bottom:14px}
 .bubble{max-width:70%;border-radius:14px;padding:9px 13px;font-size:13px;line-height:1.5}
 .bubble-coach{background:var(--accent);color:#0f0f11;border-radius:14px 14px 3px 14px;align-self:flex-end}
 .bubble-client{background:var(--bg3);color:var(--text);border-radius:14px 14px 14px 3px;align-self:flex-start}
-.bubble-time{font-size:10px;opacity:.55;margin-top:4px}
+.bubble-time{font-size:11px;opacity:.6;margin-top:4px}
 /* Progress chart placeholder */
 .chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px}
-.chart-title{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;font-weight:600}
+.chart-title{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;font-weight:600}
 canvas{display:block}
 /* Loading */
 #loading{display:flex;height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--text3)}
@@ -160,7 +162,7 @@ canvas{display:block}
 .workout-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
 .ex-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border)}
 .ex-name{font-size:12px;font-weight:500}
-.ex-meta{font-size:11px;color:var(--text3);margin-top:1px}
+.ex-meta{font-size:12px;color:var(--text3);margin-top:1px}
 /* Meal plan */
 .meal-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
 .meal-food-row{display:grid;grid-template-columns:1fr 55px 64px 44px 44px 44px;gap:8px;padding:5px 0;border-top:1px solid var(--border);font-size:12px;align-items:center}
@@ -168,6 +170,12 @@ canvas{display:block}
 .roster-btn{width:100%;display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);text-align:left;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;transition:opacity .15s}
 .roster-btn:hover{opacity:.75}
 select option{background:var(--bg3)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* Feedback */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--accent);color:#0f0f11;padding:11px 16px;border-radius:30px;font-size:13px;font-weight:600;z-index:400;display:flex;gap:16px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:toastIn .2s ease;max-width:calc(100% - 40px)}
+.toast button{text-decoration:underline;text-underline-offset:3px;font-weight:700;color:inherit}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+#init-error{display:none;height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text2);text-align:center;padding:24px}
 </style>
 </head>
 <body>
@@ -175,7 +183,13 @@ select option{background:var(--bg3)}
 <div id="loading">
   <div style="width:40px;height:40px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:4px">⚡</div>
   <div class="spinner"></div>
-  <span style="font-size:13px">Loading Elite Coach…</span>
+  <span style="font-size:13px">Loading your dashboard…</span>
+</div>
+
+<div id="init-error">
+  <div style="font-size:15px;font-weight:600;color:var(--text)">Couldn’t reach the database</div>
+  <div style="font-size:13px">Check your connection, then try again.</div>
+  <button class="btn btn-primary" onclick="location.reload()">Try again</button>
 </div>
 
 <div id="app" style="display:none">
@@ -184,12 +198,12 @@ select option{background:var(--bg3)}
     <div class="sb-logo">
       <div class="sb-icon">⚡</div>
       <div>
-        <div class="sb-brand">Elite Coach</div>
+        <div class="sb-brand">Rebuilt by Ryan</div>
         <div class="sb-sub">@ryan.rundy</div>
       </div>
     </div>
     <nav id="nav"></nav>
-    <div class="sb-status"><div class="dot"></div>Live · Supabase connected</div>
+    <div class="sb-status" id="sb-status"><div class="dot"></div>Connecting…</div>
   </div>
   <!-- Main -->
   <div id="main">
@@ -215,6 +229,20 @@ select option{background:var(--bg3)}
 const SB_URL='https://emrtizvqzjkfrpgyrljn.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtcnRpenZxemprZnJwZ3lybGpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTA0NjAsImV4cCI6MjA5NzMyNjQ2MH0.n11s1EOwPRBP934TY4sZrMWuh-A7aUGLh3VZ0yZOtww';
 
+// Every write tells Ryan whether it worked: a toast on success, a toast on failure. Reads fail quietly (the UI shows empty).
+let TOAST_T = null;
+function toast(msg, undo) {
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role','status');
+  t.innerHTML = `<span>${esc(msg)}</span>${undo?'<button type="button">Undo</button>':''}`;
+  if (undo) t.querySelector('button').onclick = () => { t.remove(); undo(); };
+  document.body.appendChild(t);
+  clearTimeout(TOAST_T); TOAST_T = setTimeout(()=>t.remove(), undo?6000:2200);
+}
+// The sidebar dot reflects the last request, not a static label.
+let NET_OK = true;
+function setStatus(ok) { NET_OK = ok; const el = document.getElementById('sb-status'); if (el) { el.className = 'sb-status' + (ok?'':' off'); el.innerHTML = `<div class="dot"></div>${ok?'Connected':'Connection lost'}`; } }
+
 async function sbFetch(path, opts={}) {
   const url = SB_URL + '/rest/v1/' + path;
   const headers = {
@@ -224,18 +252,41 @@ async function sbFetch(path, opts={}) {
     'Prefer': opts.prefer || 'return=representation',
     ...(opts.headers||{})
   };
-  const r = await fetch(url, { method: opts.method||'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
-  if (!r.ok) { const t = await r.text(); console.error('SB error', r.status, t); return null; }
+  const write = (opts.method||'GET') !== 'GET';
+  let r;
+  try {
+    r = await fetch(url, { method: opts.method||'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined, keepalive: write });
+  } catch(e) {
+    console.error('SB network error', e); setStatus(false);
+    if (write) toast('No connection. Nothing was saved.');
+    return null;
+  }
+  setStatus(true);
+  if (!r.ok) { const t = await r.text(); console.error('SB error', r.status, t); if (write) toast('Couldn’t save. Try again.'); return null; }
   if (r.status === 204) return true;
   return r.json();
 }
 
 const sb = {
   async select(table, params='') { return await sbFetch(table + '?' + params + '&apikey=' + SB_KEY) || []; },
-  async insert(table, body) { return await sbFetch(table, { method:'POST', body, prefer:'return=representation' }); },
-  async update(table, body, match) { return await sbFetch(table + '?' + match, { method:'PATCH', body, prefer:'return=representation' }); },
+  async insert(table, body, o={}) { const d = await sbFetch(table, { method:'POST', body, prefer:'return=representation' }); if (d && d[0] && !o.quiet) toast(o.msg||'Saved'); return d; },
+  async update(table, body, match, o={}) { const d = await sbFetch(table + '?' + match, { method:'PATCH', body, prefer:'return=representation' }); if (d && d[0] && !o.quiet) toast(o.msg||'Saved'); return d; },
   async delete(table, match) { return await sbFetch(table + '?' + match, { method:'DELETE', prefer:'return=minimal' }); }
 };
+
+// Deletes wait six seconds behind an Undo toast before they reach the database, so a mis-tap on a 16px ✕ costs nothing.
+// ponytail: one pending delete at a time; starting another, navigating, or leaving the page commits the previous one.
+let PENDING_DELETE = null;
+function softDelete(label, table, id, removeLocal, restoreLocal) {
+  commitPendingDelete();
+  removeLocal();
+  const p = { commit: async () => { if (PENDING_DELETE !== p) return; PENDING_DELETE = null; const ok = await sb.delete(table, 'id=eq.'+id); if (!ok) { restoreLocal(); toast('Couldn’t delete ' + label + '. It’s back.'); } } };
+  p.timer = setTimeout(p.commit, 6000);
+  PENDING_DELETE = p;
+  toast(label + ' removed', () => { clearTimeout(p.timer); PENDING_DELETE = null; restoreLocal(); });
+}
+function commitPendingDelete() { if (PENDING_DELETE) { clearTimeout(PENDING_DELETE.timer); PENDING_DELETE.commit(); } }
+window.addEventListener('beforeunload', commitPendingDelete);
 
 // ── State ─────────────────────────────────────────────────────────
 let STATE = { clients:[], payments:[], messages:[], checkIns:[], dailyLogs:[], currentView:'dashboard', selectedClient:null, charts:{} };
@@ -255,7 +306,7 @@ function getWeekDates() {
   const monday = new Date(now);
   monday.setDate(now.getDate() + mondayOffset);
   const dates = [];
-  for (let i=0;i<7;i++) { const d = new Date(monday); d.setDate(monday.getDate()+i); dates.push(d.toISOString().split('T')[0]); }
+  for (let i=0;i<7;i++) { const d = new Date(monday); d.setDate(monday.getDate()+i); dates.push(localDate(d)); }
   return dates;
 }
 const fmt12 = ts => new Date(ts).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
@@ -291,22 +342,38 @@ function field(label, input) {
 }
 
 // ── Modal ─────────────────────────────────────────────────────────
+let MODAL_RETURN = null;   // where focus goes back to when the dialog closes
 function showModal(title, bodyHtml, wide=false, onShow=null) {
+  MODAL_RETURN = document.activeElement;
   const root = document.getElementById('modal-root');
   root.innerHTML = `
     <div class="modal-overlay" id="modal-overlay">
-      <div class="modal${wide?' modal-wide':''}">
+      <div class="modal${wide?' modal-wide':''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
         <div class="modal-header">
           <span>${esc(title)}</span>
-          <button class="modal-close" onclick="closeModal()">✕</button>
+          <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
         </div>
         <div class="modal-body">${bodyHtml}</div>
       </div>
     </div>`;
   document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target.id==='modal-overlay') closeModal(); });
-  if(onShow) setTimeout(onShow, 10);
+  // Escape closes; Tab stays inside the dialog.
+  root.onkeydown = e => {
+    if (e.key === 'Escape') { e.preventDefault(); closeModal(); return; }
+    if (e.key !== 'Tab') return;
+    const f = [...root.querySelectorAll('button,input,select,textarea,[tabindex]')].filter(x => !x.disabled && x.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length-1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  setTimeout(() => { (root.querySelector('.modal-body input,.modal-body select,.modal-body textarea') || root.querySelector('.modal-close')).focus(); if (onShow) onShow(); }, 10);
 }
-function closeModal() { document.getElementById('modal-root').innerHTML=''; }
+function closeModal() {
+  const root = document.getElementById('modal-root'); root.innerHTML=''; root.onkeydown = null;
+  if (MODAL_RETURN && MODAL_RETURN.focus && document.contains(MODAL_RETURN)) MODAL_RETURN.focus();
+  MODAL_RETURN = null;
+}
 
 // ── Navigation ────────────────────────────────────────────────────
 const NAV = [
@@ -327,7 +394,7 @@ function renderNav() {
   document.getElementById('nav').innerHTML = NAV.map(n => {
     const isActive = STATE.currentView===n.id || (STATE.currentView==='client-detail'&&n.id==='clients');
     let badge2 = '';
-    if(n.id==='clients') badge2 = `<span class="nav-badge" style="background:var(--adim);color:var(--accent)">${STATE.clients.length}</span>`;
+    if(n.id==='clients') badge2 = `<span class="nav-badge" style="background:var(--adim);color:var(--accent)">${STATE.clients.filter(c=>c.status==='active').length}</span>`;
     if(n.id==='messages'&&unread>0) badge2 = `<span class="nav-badge" style="background:var(--rdim);color:var(--red)">${unread}</span>`;
     return `<button class="nav-btn${isActive?' active':''}" onclick="navigate('${n.id}')">
       <span class="nav-icon">${n.icon}</span>
@@ -338,6 +405,7 @@ function renderNav() {
 }
 
 function navigate(view) {
+  commitPendingDelete();
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const target = document.getElementById('page-'+view);
   if(target) { target.classList.add('active'); STATE.currentView=view; renderNav(); renderPage(view); }
@@ -401,7 +469,7 @@ function renderDailyCheckinCard() {
       r.delta <= -0.2 ? `<span class="badge badge-green">▼ ${Math.abs(r.delta).toFixed(1)} lbs/wk</span>`
     : r.delta >=  0.2 ? `<span class="badge badge-amber">▲ ${r.delta.toFixed(1)} lbs/wk</span>`
     : `<span class="badge badge-gray">flat</span>`;
-    return `<button class="daily-btn" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 0;background:transparent;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left">
+    return `<div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)"><button class="daily-btn" style="flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:9px 0;background:transparent;border:none;cursor:pointer;text-align:left">
       ${avatar(r.client.name,32)}
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:500;color:var(--text)">${esc(r.client.name)}</div>
@@ -419,7 +487,7 @@ function renderDailyCheckinCard() {
         ${d&&d.untracked_food?badge('gray','Untracked'):''}
         ${d?'':badge('gray','—')}
       </div>
-    </button>`;
+    </button><button class="btn btn-filled btn-sm" data-msg="${esc(r.client.id)}" aria-label="Message ${esc(r.client.name)}">Message</button></div>`;
   };
   return `<div class="card" style="cursor:default;margin-bottom:26px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -430,9 +498,39 @@ function renderDailyCheckinCard() {
   </div>`;
 }
 
+// Weekly check-in rhythm, the same rule the client app uses: due by Sunday night, late from Monday until it's in.
+const addDays = (ymd, n) => { const d = new Date(ymd+'T00:00:00'); d.setDate(d.getDate()+n); return localDate(d); };
+function weeklyStatus(cid) {
+  const t = today(), wk = getWeekDates(), dow = new Date(t+'T00:00:00').getDay();
+  const mine = STATE.checkIns.filter(c=>c.client_id===cid);
+  const since = from => mine.some(c=>c.date>=from && c.date<=t);
+  if (dow>=5 || dow===0) return { state:'due', done: since(addDays(wk[6], -2)) };
+  return { state:'late', done: since(addDays(wk[0], -3)) };   // last week's, allowed from its Friday
+}
+function renderWeeklyCheckinCard() {
+  const rows = STATE.clients.filter(c=>c.status==='active' && !/coach test/i.test(c.name||'')).map(c => ({ client:c, ...weeklyStatus(c.id) }))
+    .sort((a,b) => (a.done-b.done) || a.client.name.localeCompare(b.client.name));
+  if (!rows.length) return '';
+  const late = rows.filter(r=>r.state==='late' && !r.done).length, done = rows.filter(r=>r.done).length;
+  return `<div class="card" style="cursor:default;margin-bottom:26px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600">Weekly check-ins · ${rows[0].state==='due'?'due Sunday':'last week'}</div>
+      <span class="badge badge-${late?'red':(done===rows.length?'green':'amber')}">${late?late+' late':done+'/'+rows.length+' in'}</span>
+    </div>
+    ${rows.map(r => `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      ${avatar(r.client.name,32)}
+      <div style="flex:1;min-width:0;font-size:13px;font-weight:500">${esc(r.client.name)}</div>
+      ${r.done ? badge('green','In ✓') : r.state==='late' ? badge('red','Late') : badge('gray','Not yet')}
+      ${r.done ? '' : `<button class="btn btn-filled btn-sm" data-msg="${esc(r.client.id)}" aria-label="Message ${esc(r.client.name)}">Message</button>`}
+    </div>`).join('')}
+  </div>`;
+}
+
 function renderDashboard() {
   const el = document.getElementById('page-dashboard');
-  const active = STATE.clients.filter(c=>c.status==='active').length;
+  const dow = new Date().getDay();
+  const checkinCards = (dow===0 || dow===1) ? renderWeeklyCheckinCard()+renderDailyCheckinCard() : renderDailyCheckinCard()+renderWeeklyCheckinCard();
+  const active = STATE.clients.filter(c=>c.status==='active' && !/coach test/i.test(c.name||'')).length;   // Ryan's own test profile doesn't count
   const revenue = STATE.payments.filter(p=>p.status==='paid').reduce((s,p)=>s+Number(p.amount_cad),0);
   const overdue = STATE.payments.filter(p=>p.status==='overdue').length;
   const unread = STATE.messages.filter(m=>!m.read&&m.sender==='client').length;
@@ -451,7 +549,7 @@ function renderDashboard() {
       ${statCard('Overdue', overdue, '⚠️', 'var(--red)', 'invoices')}
       ${statCard('Unread msgs', unread, '💬', 'var(--blue)')}
     </div>
-    ${renderDailyCheckinCard()}
+    ${checkinCards}
     <div class="card-grid grid-2">
       <div class="card" style="cursor:default">
         <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:14px">Recent check-ins</div>
@@ -463,7 +561,7 @@ function renderDashboard() {
               <div style="font-size:13px;font-weight:500">${esc(cl?.name||'Unknown')}</div>
               <div style="font-size:11px;color:var(--text3)">${esc(ci.date)} · ${esc(ci.weight_kg)} lbs</div>
             </div>
-            ${badge('blue','E '+ci.energy+'/10')}
+            ${ci.energy?badge('blue','Energy '+ci.energy+'/10'):''}
           </div>`;
         }).join('')}
       </div>
@@ -490,6 +588,7 @@ function renderDashboard() {
   el.querySelectorAll('.daily-btn').forEach((btn, i) => {
     btn.onclick = () => navToClientDetail(dailyRows[i].client);
   });
+  el.querySelectorAll('[data-msg]').forEach(b => { b.onclick = () => openThread(b.dataset.msg); });
 }
 
 // ── Clients ───────────────────────────────────────────────────────
@@ -569,7 +668,7 @@ function showAddClient() {
 
 async function addClient() {
   const name = document.getElementById('f-name').value.trim();
-  if(!name) return alert('Name is required');
+  if(!name) { toast('Name is required'); return document.getElementById('f-name').focus(); }
   const body = {
     name, email:document.getElementById('f-email').value, phone:document.getElementById('f-phone').value,
     goal:document.getElementById('f-goal').value, status:document.getElementById('f-status').value,
@@ -581,9 +680,12 @@ async function addClient() {
 }
 
 async function deleteClient(c) {
-  if(!confirm(`Delete ${c.name}? This removes all their data.`)) return;
-  await sb.delete('clients', 'id=eq.'+c.id);
+  if(!confirm(`Delete ${c.name} and everything logged for them? This can’t be undone.`)) return;
+  await sb.delete('daily_logs', 'client_id=eq.'+c.id);   // the one table without ON DELETE CASCADE; without this the client delete fails
+  const ok = await sb.delete('clients', 'id=eq.'+c.id);
+  if (!ok) return;                                         // sbFetch already said "Couldn't save"; keep the client on screen
   STATE.clients = STATE.clients.filter(x=>x.id!==c.id);
+  toast(c.name + ' deleted');
   renderClients(); renderNav();
 }
 
@@ -643,10 +745,13 @@ function renderCDPage(client) {
           <span>📅 Since ${esc(client.start_date||'')}</span>
         </div>
       </div>
-      <div class="card" style="cursor:default">
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Goal</div>
-        <div style="font-size:14px;margin-bottom:16px;line-height:1.6">${esc(client.goal||'—')}</div>
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Coach notes</div>
+      <div class="card" style="cursor:default;position:relative">
+        <button class="btn btn-filled btn-sm" style="position:absolute;top:14px;right:14px" onclick="showEditClient()">Edit</button>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Goal</div>
+        <div style="font-size:14px;margin-bottom:16px;line-height:1.6;padding-right:60px">${esc(client.goal||'—')}</div>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Note on their Today screen</div>
+        <div style="font-size:13px;line-height:1.6;margin-bottom:16px;white-space:pre-line">${esc(client.special_note||'—')}</div>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Coach notes · only you see these</div>
         <div style="font-size:13px;color:var(--text2);line-height:1.6">${esc(client.notes||'—')}</div>
       </div>
     </div>
@@ -661,6 +766,33 @@ function renderCDPage(client) {
   renderCDTab(client);
 }
 
+// The things the client sees that had no coach UI until now: the note on their Today screen, their water goal, plus goal and status.
+function showEditClient() {
+  const c = CURRENT_CLIENT;
+  showModal('Edit ' + c.name, `
+    ${field('Goal', `<input id="ec-goal" value="${esc(c.goal||'')}" placeholder="Lose 15 lbs and get stronger"/>`)}
+    ${field('Note on their Today screen', `<textarea id="ec-note" placeholder="Huge week. Keep RDLs at 105 and own the stretch.">${esc(c.special_note||'')}</textarea>`)}
+    <div class="form-row">
+      ${field('Water goal (litres a day)', `<input id="ec-water" type="number" step=".5" min="0.5" value="${esc(c.water_goal_l||4)}"/>`)}
+      ${field('Status', `<select id="ec-status">${['active','paused','inactive'].map(s=>`<option value="${s}"${c.status===s?' selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}</select>`)}
+    </div>
+    ${field('Coach notes (only you see these)', `<textarea id="ec-notes" placeholder="Injuries, preferences, anything to remember">${esc(c.notes||'')}</textarea>`)}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditClient()">Save</button>
+    </div>`, true);
+}
+async function saveEditClient() {
+  const c = CURRENT_CLIENT, v = id => document.getElementById(id).value.trim();
+  const water = parseFloat(v('ec-water'));
+  if (!(water > 0)) { toast('Water goal needs to be above zero'); return document.getElementById('ec-water').focus(); }
+  const d = await sb.update('clients', { goal: v('ec-goal'), special_note: v('ec-note')||null, water_goal_l: water, status: v('ec-status'), notes: v('ec-notes') }, 'id=eq.'+c.id);
+  if (!(d&&d[0])) return;
+  Object.assign(c, d[0]);
+  const i = STATE.clients.findIndex(x=>x.id===c.id); if (i>=0) STATE.clients[i] = c;
+  closeModal(); renderCDPage(c); renderNav();
+}
+
 function setCDTab(tab, client) {
   CD.tab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent===tab));
@@ -671,17 +803,17 @@ function renderCDTab(client) {
   const el = document.getElementById('cd-tab-content');
   if(!el) return;
   if(CD.tab==='overview') {
-    const totalAssigned = CD.weekWorkouts.length*5 + CD.weekCardio.length*5 + (CD.weekMeals.length?7:0); // rough weekly total: workouts/cardio assumed ~5x/wk relevance, meals daily
     const totalDone = CD.checklist.filter(c=>c.completed).length;
     const waterDaysHit = CD.checklist.filter(c=>c.item_type==='water'&&c.completed).length;
+    const waterGoal = Number(client.water_goal_l) || 4;
     el.innerHTML = `<div class="card-grid grid-3">
       ${statCard('Current calories', CD.macros[0]?CD.macros[0].calories+' kcal':'Not set','🥧','var(--accent)', CD.macros[0]?`P${CD.macros[0].protein_g}g · C${CD.macros[0].carbs_g}g · F${CD.macros[0].fat_g}g`:'')}
       ${statCard('Latest weight', CD.checkIns[0]?CD.checkIns[0].weight_kg+' lbs':'No data','⚖','var(--blue)', CD.checkIns[0]?CD.checkIns[0].date:'')}
       ${statCard('Programs', CD.programs.length,'🏋️','var(--amber)', CD.programs[0]?.name||'None assigned')}
     </div>
     <div class="card-grid grid-3" style="margin-top:13px">
-      ${statCard('This week checklist', totalDone+' items done','✅','var(--green)','workouts, cardio & meals checked off')}
-      ${statCard('Water goal hit', waterDaysHit+'/7 days','💧','var(--blue)','4L target')}
+      ${statCard('This week checklist', totalDone+' items done','✅','var(--green)','ticked off in the client app this week')}
+      ${statCard('Water goal hit', waterDaysHit+'/7 days','💧','var(--blue)', waterGoal+' L a day')}
     </div>`;
   } else if(CD.tab==='check-ins') {
     el.innerHTML = `
@@ -793,7 +925,7 @@ function renderStepsTab() {
   const sorted = [...CD.dailySteps].sort((a,b)=>new Date(a.date)-new Date(b.date));
   const last7 = sorted.slice(-7);
   const avg7 = last7.length ? Math.round(last7.reduce((s,d)=>s+d.steps,0)/last7.length) : null;
-  const today_ = CD.dailySteps.find(d=>d.date===new Date().toISOString().split('T')[0]);
+  const today_ = CD.dailySteps.find(d=>d.date===today());
   const goal = CURRENT_CLIENT.step_goal || 8000;
   const daysHitGoal = last7.filter(d=>d.steps>=goal).length;
 
@@ -819,7 +951,7 @@ function renderStepsTab() {
 
 async function saveStepGoal() {
   const val = +document.getElementById('step-goal-input').value;
-  if (!val || val <= 0) return alert('Enter a valid step goal');
+  if (!val || val <= 0) return toast('Enter a step goal above zero');
   const data = await sb.update('clients', { step_goal: val }, 'id=eq.'+CURRENT_CLIENT.id);
   if (data && data[0]) {
     CURRENT_CLIENT.step_goal = val;
@@ -1085,7 +1217,7 @@ function showAddCardioProtocolForClient(client) {
 
 async function addCardioProtocolForClient(client) {
   const name = document.getElementById('cp-name').value.trim();
-  if(!name) return alert('Name required');
+  if(!name) return toast('Name required');
   const body = { name, weeks:+document.getElementById('cp-weeks').value, goal:document.getElementById('cp-goal').value, client_id:client.id };
   const data = await sb.insert('cardio_protocols', body);
   if(data&&data[0]) { closeModal(); renderCardioEmbedded(client); }
@@ -1096,8 +1228,12 @@ const SUPPLEMENT_TIMINGS = ['Morning','Pre-workout','Post-workout','With breakfa
 let SUPP = { items: [] };
 
 async function renderSupplementsEmbedded(client) {
-  const el = document.getElementById('cd-tab-content');
   SUPP.items = await sb.select('supplements','client_id=eq.'+client.id+'&order=order_index') || [];
+  renderSupplementsList();
+}
+function renderSupplementsList() {
+  const el = document.getElementById('cd-tab-content');
+  if (!el || CD.tab!=='supplements') return;
   el.innerHTML = `
     <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
       <button class="btn btn-primary" onclick="showAddSupplement()">+ Add supplement</button>
@@ -1132,7 +1268,7 @@ function showAddSupplement() {
 
 async function addSupplement() {
   const name = document.getElementById('supp-name').value.trim();
-  if(!name) return alert('Name required');
+  if(!name) return toast('Name required');
   const body = {
     name, client_id: CURRENT_CLIENT.id,
     dosage: document.getElementById('supp-dosage').value,
@@ -1144,10 +1280,12 @@ async function addSupplement() {
   if(data&&data[0]) { closeModal(); renderSupplementsEmbedded(CURRENT_CLIENT); }
 }
 
-async function deleteSupplement(id) {
-  await sb.delete('supplements','id=eq.'+id);
-  SUPP.items = SUPP.items.filter(s=>s.id!==id);
-  renderSupplementsEmbedded(CURRENT_CLIENT);
+function deleteSupplement(id) {
+  const s = SUPP.items.find(x=>x.id===id), idx = SUPP.items.indexOf(s);
+  if (!s) return;
+  softDelete(s.name, 'supplements', id,
+    () => { SUPP.items = SUPP.items.filter(x=>x.id!==id); renderSupplementsList(); },
+    () => { SUPP.items.splice(idx, 0, s); renderSupplementsList(); });
 }
 
 
@@ -1180,7 +1318,7 @@ function showAddProgramForClient(client) {
 
 async function addProgram(client) {
   const name = document.getElementById('prog-name').value.trim();
-  if(!name) return alert('Name required');
+  if(!name) return toast('Name required');
   const body = {
     name, weeks:+document.getElementById('prog-weeks').value,
     goal:document.getElementById('prog-goal').value,
@@ -1207,7 +1345,7 @@ function showAddWorkout() {
 
 async function addWorkout() {
   const name = document.getElementById('w-name').value.trim();
-  if(!name) return alert('Name required');
+  if(!name) return toast('Name required');
   const body = { name, day_of_week:document.getElementById('w-day').value, program_id:PG.selected.id, order_index:PG.workouts.length };
   const data = await sb.insert('workouts', body);
   if(data&&data[0]) { PG.workouts.push(data[0]); PG.exercises[data[0].id]=[]; closeModal(); renderProgramDetail(); }
@@ -1239,10 +1377,12 @@ async function addExercise(wid) {
   if(data&&data[0]) { if(!PG.exercises[wid])PG.exercises[wid]=[]; PG.exercises[wid].push(data[0]); closeModal(); renderProgramDetail(); }
 }
 
-async function deleteExercise(eid, wid) {
-  await sb.delete('exercises','id=eq.'+eid);
-  PG.exercises[wid] = (PG.exercises[wid]||[]).filter(e=>e.id!==eid);
-  renderProgramDetail();
+function deleteExercise(eid, wid) {
+  const ex = (PG.exercises[wid]||[]).find(e=>e.id===eid), idx = (PG.exercises[wid]||[]).indexOf(ex);
+  if (!ex) return;
+  softDelete(ex.name, 'exercises', eid,
+    () => { PG.exercises[wid] = PG.exercises[wid].filter(e=>e.id!==eid); renderProgramDetail(); },
+    () => { PG.exercises[wid].splice(idx, 0, ex); renderProgramDetail(); });
 }
 
 // ── Cardio Protocols ─────────────────────────────────────────────
@@ -1341,7 +1481,7 @@ function showAddCardioProtocol() {
 
 async function addCardioProtocol() {
   const name = document.getElementById('cp-name').value.trim();
-  if(!name) return alert('Name required');
+  if(!name) return toast('Name required');
   const body = {
     name, weeks:+document.getElementById('cp-weeks').value,
     goal:document.getElementById('cp-goal').value,
@@ -1371,7 +1511,7 @@ function showAddCardioSession() {
 
 async function addCardioSession() {
   const name = document.getElementById('cs-name').value.trim();
-  if(!name) return alert('Name required');
+  if(!name) return toast('Name required');
   const body = {
     name, protocol_id:CP.selected.id, day_of_week:document.getElementById('cs-day').value,
     modality:document.getElementById('cs-modality').value, duration_minutes:+document.getElementById('cs-duration').value,
@@ -1382,10 +1522,12 @@ async function addCardioSession() {
   if(data&&data[0]) { CP.sessions.push(data[0]); closeModal(); renderCardioDetail(); }
 }
 
-async function deleteCardioSession(sid) {
-  await sb.delete('cardio_sessions','id=eq.'+sid);
-  CP.sessions = CP.sessions.filter(s=>s.id!==sid);
-  renderCardioDetail();
+function deleteCardioSession(sid) {
+  const s = CP.sessions.find(x=>x.id===sid), idx = CP.sessions.indexOf(s);
+  if (!s) return;
+  softDelete(s.name, 'cardio_sessions', sid,
+    () => { CP.sessions = CP.sessions.filter(x=>x.id!==sid); renderCardioDetail(); },
+    () => { CP.sessions.splice(idx, 0, s); renderCardioDetail(); });
 }
 
 // ── Check-ins ─────────────────────────────────────────────────────
@@ -1416,7 +1558,9 @@ async function renderCheckIns(filter='') {
             ${ci.energy?badge('green','Energy '+ci.energy+'/10'):''}
             ${ci.sleep_quality?badge('amber','Sleep '+ci.sleep_quality+'/10'):''}
           </div>
-          ${ci.notes?`<div style="font-size:13px;color:var(--text2);line-height:1.5">${esc(ci.notes)}</div>`:''}
+          ${ci.win_of_week?`<div style="font-size:13px;color:var(--text2);line-height:1.5"><b style="color:var(--text)">Win:</b> ${esc(ci.win_of_week)}</div>`:''}
+          ${ci.improve_next_week?`<div style="font-size:13px;color:var(--text2);line-height:1.5"><b style="color:var(--text)">Improve:</b> ${esc(ci.improve_next_week)}</div>`:''}
+          ${ci.notes?`<div style="font-size:13px;color:var(--text2);line-height:1.5;margin-top:4px">${esc(ci.notes)}</div>`:''}
         </div>
       </div>`;}).join('')}`;
 }
@@ -1541,7 +1685,7 @@ function showAddMealPlan() {
 }
 async function addMealPlan() {
   const name=document.getElementById('mp-name').value.trim();
-  if(!name)return alert('Name required');
+  if(!name)return toast('Name required');
   const body={name,client_id:document.getElementById('mp-client').value||null,day_label:document.getElementById('mp-day').value};
   const data=await sb.insert('meal_plans',body);
   if(data&&data[0]){ML.plans.unshift(data[0]);closeModal();renderMealList();}
@@ -1584,28 +1728,33 @@ async function addFood(mid) {
 }
 
 // ── Messages ──────────────────────────────────────────────────────
-let MSG = { all:[], selClient:null };
+let MSG = { all:[], selClient:null, timer:null };
+
+// Opens Messages on one client's thread (the dashboard's "Message" buttons).
+function openThread(cid) { MSG.selClient = STATE.clients.find(c=>c.id===cid) || null; navigate('messages'); }
 
 async function renderMessages() {
   const el=document.getElementById('page-messages');
   MSG.all=await sb.select('messages','order=created_at.desc')||[];
-  if(!MSG.selClient || !STATE.clients.find(c=>c.id===MSG.selClient.id)) {
-    MSG.selClient=STATE.clients[0]||null;
-  }
+  STATE.messages = MSG.all;
+  const unreadOf = cid => MSG.all.filter(m=>m.client_id===cid&&!m.read&&m.sender==='client').length;
+  const lastOf = cid => MSG.all.find(m=>m.client_id===cid);   // MSG.all is newest first
+  // Threads with unread messages first, then by most recent message, so the one that needs Ryan is on top and already open.
+  const ordered = [...STATE.clients].sort((a,b) => ((unreadOf(b.id)>0)-(unreadOf(a.id)>0)) || ((lastOf(b.id)||{}).created_at||'').localeCompare((lastOf(a.id)||{}).created_at||''));
+  if(!MSG.selClient || !STATE.clients.find(c=>c.id===MSG.selClient.id)) MSG.selClient = ordered[0]||null;
   el.innerHTML=`
     <div id="msg-layout">
       <div id="msg-list">
         <div id="msg-list-header">Messages</div>
-        <div id="msg-clients">${STATE.clients.map(c=>{
-          const unread=MSG.all.filter(m=>m.client_id===c.id&&!m.read&&m.sender==='client').length;
-          const last=MSG.all.filter(m=>m.client_id===c.id).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
-          return `<button class="msg-client-btn${MSG.selClient?.id===c.id?' active':''}" data-cid="${esc(c.id)}">
+        <div id="msg-clients">${ordered.map(c=>{
+          const unread=unreadOf(c.id), last=lastOf(c.id), sel = MSG.selClient?.id===c.id;
+          return `<button class="msg-client-btn${sel?' active':''}" data-cid="${esc(c.id)}">
             ${avatar(c.name,36)}
             <div style="flex:1;min-width:0">
-              <div style="font-size:13px;font-weight:${MSG.selClient?.id===c.id?600:400};color:${MSG.selClient?.id===c.id?'var(--accent)':'var(--text)'}">${esc(c.name)}</div>
-              <div style="font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">${esc(last?.body||'No messages')}</div>
+              <div style="font-size:13px;font-weight:${sel?600:400};color:${sel?'var(--accent)':'var(--text)'}">${esc(c.name)}</div>
+              <div class="msg-preview" style="font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">${esc(last?.body||'No messages')}</div>
             </div>
-            ${unread>0?`<span style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;flex-shrink:0">${unread}</span>`:''}
+            ${unread>0?`<span class="unread-pill" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:11px;font-weight:700;flex-shrink:0">${unread}</span>`:''}
           </button>`;}).join('')}
         </div>
       </div>
@@ -1614,20 +1763,26 @@ async function renderMessages() {
       </div>
     </div>`;
   document.querySelectorAll('.msg-client-btn').forEach(b=>{
-    const cid=b.dataset.cid;
-    b.onclick=async ()=>{
-      MSG.selClient=STATE.clients.find(c=>c.id===cid)||null;
-      await markRead(cid);
-      renderMessages();
-    };
+    b.onclick=()=>{ MSG.selClient=STATE.clients.find(c=>c.id===b.dataset.cid)||null; renderMessages(); };
   });
-  const send=()=>{
-    const inp=document.getElementById('msg-input');
-    if(inp&&inp.value.trim()) sendMsg(inp.value.trim());
-  };
+  bindThread();
+  if (MSG.selClient && unreadOf(MSG.selClient.id)) markRead(MSG.selClient.id);   // showing the thread is what reads it
+  clearInterval(MSG.timer); MSG.timer = setInterval(pollMessages, 15000);
+}
+function bindThread() {
+  const send=()=>{ const inp=document.getElementById('msg-input'); if(inp&&inp.value.trim()) sendMsg(inp.value.trim()); };
   document.getElementById('msg-send')?.addEventListener('click',send);
   document.getElementById('msg-input')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
   document.getElementById('msg-thread')?.scrollTo(0,99999);
+}
+// Client replies show up without a reload while Messages is open; the draft survives the refresh.
+async function pollMessages() {
+  if (STATE.currentView!=='messages') { clearInterval(MSG.timer); MSG.timer=null; return; }
+  const fresh = await sb.select('messages','order=created_at.desc');
+  if (!fresh.length || (fresh.length===MSG.all.length && fresh[0].id===(MSG.all[0]||{}).id)) return;
+  const inp = document.getElementById('msg-input'), draft = inp?inp.value:'', hadFocus = inp && document.activeElement===inp;
+  await renderMessages();
+  const inp2 = document.getElementById('msg-input'); if (inp2) { inp2.value = draft; if (hadFocus) inp2.focus(); }
 }
 
 function renderThreadHTML() {
@@ -1653,15 +1808,24 @@ function renderThreadHTML() {
 }
 
 async function markRead(cid) {
-  await sb.update('messages',{read:true},'client_id=eq.'+cid+'&sender=eq.client');
+  await sb.update('messages',{read:true},'client_id=eq.'+cid+'&sender=eq.client&read=eq.false',{quiet:true});
   MSG.all=MSG.all.map(m=>m.client_id===cid&&m.sender==='client'?{...m,read:true}:m);
+  STATE.messages = MSG.all;
   renderNav();
+  document.querySelector(`.msg-client-btn[data-cid="${cid}"] .unread-pill`)?.remove();
 }
 
 async function sendMsg(body) {
   if(!MSG.selClient)return;
-  const data=await sb.insert('messages',{client_id:MSG.selClient.id,sender:'coach',body,read:true,created_at:new Date().toISOString()});
-  if(data&&data[0]){MSG.all.push(data[0]);document.getElementById('msg-input').value='';document.getElementById('msg-thread-wrap').innerHTML=renderThreadHTML();document.getElementById('msg-thread')?.scrollTo(0,99999);document.getElementById('msg-send')?.addEventListener('click',()=>{const inp=document.getElementById('msg-input');if(inp&&inp.value.trim())sendMsg(inp.value.trim());});document.getElementById('msg-input')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();const inp=document.getElementById('msg-input');if(inp&&inp.value.trim())sendMsg(inp.value.trim());}});}
+  const btn = document.getElementById('msg-send'); if (btn) btn.disabled = true;
+  const data=await sb.insert('messages',{client_id:MSG.selClient.id,sender:'coach',body,read:true,created_at:new Date().toISOString()},{msg:'Sent'});
+  if (btn) btn.disabled = false;
+  if(!(data&&data[0])) return;   // the draft stays in the box; the toast already said it didn't send
+  MSG.all.unshift(data[0]); STATE.messages = MSG.all;
+  document.getElementById('msg-thread-wrap').innerHTML=renderThreadHTML();
+  bindThread();
+  document.getElementById('msg-input')?.focus();
+  const prev = document.querySelector(`.msg-client-btn[data-cid="${MSG.selClient.id}"] .msg-preview`); if (prev) prev.textContent = body;
 }
 
 // ── Payments ──────────────────────────────────────────────────────
@@ -1697,17 +1861,19 @@ async function renderPayments() {
           <span style="color:var(--text3);font-size:12px">${esc(p.due_date||'')}</span>
           <div style="display:flex;gap:8px;align-items:center">
             ${badge(p.status,p.status)}
-            ${p.status!=='paid'?`<button onclick="markPaymentPaid('${esc(p.id)}',${i})" style="font-size:11px;color:var(--green);cursor:pointer;font-weight:500;font-family:inherit">Mark paid ✓</button>`:''}
+            <select aria-label="Status for ${esc(cl?.name||'invoice')}" onchange="setPaymentStatus('${esc(p.id)}',this.value)" style="width:auto;padding:4px 26px 4px 8px;font-size:12px">
+              ${['pending','paid','overdue'].map(s=>`<option value="${s}"${p.status===s?' selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}
+            </select>
           </div>
         </div>`;}).join('')}
     </div>`}`;
-
-  window._pmts = all;
 }
 
-async function markPaymentPaid(id) {
-  await sb.update('payments',{status:'paid',paid_date:today()},'id=eq.'+id);
-  renderPayments();
+// A status can move both ways, so a mis-click on "paid" is one more click to undo.
+async function setPaymentStatus(id, status) {
+  const d = await sb.update('payments', { status, paid_date: status==='paid' ? today() : null }, 'id=eq.'+id, { msg: status==='paid' ? 'Marked paid' : 'Marked '+status });
+  if (d && d[0]) { const p = STATE.payments.find(x=>x.id===id); if (p) Object.assign(p, d[0]); }
+  renderPayments(); renderNav();
 }
 
 function showAddPayment() {
@@ -1731,9 +1897,11 @@ async function addPayment() {
 }
 
 // ── Progress ──────────────────────────────────────────────────────
+let PROG_CLIENT = null;   // the client last viewed on Progress, so the page doesn't reset on every visit
 async function renderProgress(clientId) {
   const el=document.getElementById('page-progress');
-  if(!clientId&&STATE.clients.length>0)clientId=STATE.clients[0].id;
+  if(!clientId) clientId = PROG_CLIENT || (STATE.clients[0]||{}).id;
+  PROG_CLIENT = clientId;
   el.innerHTML=`
     <div class="page-header">
       <h1>Progress</h1>
@@ -1765,10 +1933,11 @@ async function renderProgress(clientId) {
       <div class="chart-box"><div class="chart-title">Body fat %</div><canvas id="chart-bf" height="200"></canvas></div>
     </div>`;
 
-  // Draw charts with Canvas 2D API — no library needed
-  const labels=cis.map(c=>c.date.slice(5));
-  drawLineChart(document.getElementById('chart-weight'),labels,cis.map(c=>c.weight_kg),'#5b9cf6');
-  drawLineChart(document.getElementById('chart-bf'),labels,cis.map(c=>c.body_fat),'#c8f065');
+  // Draw charts with Canvas 2D API — no library needed. Check-ins without a reading are skipped, never drawn as 0.
+  const w = cis.filter(c=>c.weight_kg!=null), bf = cis.filter(c=>c.body_fat!=null);
+  drawLineChart(document.getElementById('chart-weight'), w.map(c=>c.date.slice(5)), w.map(c=>c.weight_kg), '#5b9cf6');
+  if (bf.length >= 2) drawLineChart(document.getElementById('chart-bf'), bf.map(c=>c.date.slice(5)), bf.map(c=>c.body_fat), '#c8f065');
+  else document.getElementById('chart-bf').outerHTML = `<div style="color:var(--text3);font-size:13px;padding:24px 0">${bf.length?'One body-fat reading so far. The line needs two.':'No body-fat readings yet. They come from the weekly check-in.'}</div>`;
 }
 
 function drawLineChart(canvas, labels, data, color) {
@@ -1823,14 +1992,19 @@ function drawLineChart(canvas, labels, data, color) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────
+function showInitError() {
+  document.getElementById('loading').style.display='none';
+  document.getElementById('init-error').style.display='flex';
+}
 async function init() {
   const [clients, payments, messages, checkIns, dailyLogs] = await Promise.all([
     sb.select('clients','order=created_at.desc'),
     sb.select('payments','order=due_date.desc'),
     sb.select('messages','order=created_at.desc'),
-    sb.select('check_ins','order=date.desc&limit=30'),
+    sb.select('check_ins','order=date.desc&limit=200'),
     sb.select('daily_logs','order=date.desc&limit=500'),
   ]);
+  if (!NET_OK) return showInitError();
   STATE.clients = clients||[];
   STATE.payments = payments||[];
   STATE.messages = messages||[];
@@ -1843,7 +2017,7 @@ async function init() {
   renderDashboard();
 }
 
-init().catch(e=>{ console.error(e); alert('Failed to connect to Supabase. Check your internet connection.'); });
+init().catch(e=>{ console.error(e); showInitError(); });
 </script>
 </body>
 </html>
