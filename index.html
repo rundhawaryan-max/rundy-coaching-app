@@ -867,7 +867,8 @@ function renderCDTab(client) {
     const waterGoal = Number(client.water_goal_l) || 4;
     const waterDaysHit = CD.checklist.filter(c=>c.item_type==='water'&&c.completed).length;
     const best = {};
-    CD.exerciseLogs.forEach(l => { if (l.weight_kg==null) return; const w = Number(l.weight_kg), k = CD.exerciseNames[l.exercise_id]||'Exercise'; if (isNaN(w)) return; if (!best[k] || w > best[k].top) best[k] = { top:w, reps:l.reps_completed, date:l.date }; });
+    const firstRep = r => parseFloat(String(r||'').split(',')[0]) || 0;   // "7" per set, or "8,8,7" on legacy rows
+    CD.exerciseLogs.forEach(l => { if (l.weight_kg==null) return; const w = Number(l.weight_kg), k = CD.exerciseNames[l.exercise_id]||'Exercise'; if (isNaN(w)) return; if (!best[k] || w > best[k].top || (w === best[k].top && firstRep(l.reps_completed) > firstRep(best[k].reps))) best[k] = { top:w, reps:l.reps_completed, date:l.date }; });
     const pbs = Object.entries(best).map(([name,b]) => ({ name, ...b })).sort((a,b)=>b.top-a.top).slice(0,6);
     const unit = `<span style="font-family:var(--font);font-size:13px;font-weight:600;color:var(--text2);margin-left:4px;letter-spacing:0;text-transform:none">`;
     el.innerHTML = `
@@ -1853,7 +1854,8 @@ async function markRead(cid) {
 async function sendMsg(body) {
   if(!MSG.selClient)return;
   const btn = document.getElementById('msg-send'); if (btn) btn.disabled = true;
-  const data=await sb.insert('messages',{client_id:MSG.selClient.id,sender:'coach',body,read:true,created_at:new Date().toISOString()},{msg:'Sent'});
+  // read:false so the client app shows the unread dot; the client flips it when they open the thread. The coach's own unread count only looks at sender='client'.
+  const data=await sb.insert('messages',{client_id:MSG.selClient.id,sender:'coach',body,read:false,created_at:new Date().toISOString()},{msg:'Sent'});
   if (btn) btn.disabled = false;
   if(!(data&&data[0])) return;   // the draft stays in the box; the toast already said it didn't send
   MSG.all.unshift(data[0]); STATE.messages = MSG.all;
