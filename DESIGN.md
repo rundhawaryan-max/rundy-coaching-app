@@ -58,6 +58,11 @@ typography:
     letterSpacing: "0.14em"
 rounded:
   none: "0px"
+  xs: "4px"
+  sm: "6px"
+  md: "10px"
+  lg: "16px"
+  pill: "999px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -70,17 +75,17 @@ components:
   button-primary:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     padding: "0 20px"
     height: "50px"
   button-secondary:
     backgroundColor: "transparent"
     textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     padding: "0 20px"
     height: "50px"
   button-small:
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     padding: "0 14px"
     height: "40px"
   button-text:
@@ -91,7 +96,7 @@ components:
   input:
     backgroundColor: "{colors.ground-field}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     padding: "12px 14px"
   input-focus:
     backgroundColor: "{colors.ground-field}"
@@ -99,12 +104,12 @@ components:
   segment:
     backgroundColor: "{colors.ground-field}"
     textColor: "{colors.ink-secondary}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     height: "46px"
   segment-selected:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     height: "46px"
   check-row:
     backgroundColor: "transparent"
@@ -114,61 +119,61 @@ components:
     height: "62px"
   check-mark:
     backgroundColor: "transparent"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.sm}"
     size: "28px"
   check-mark-done:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.sm}"
     size: "28px"
   set-check:
     backgroundColor: "transparent"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.sm}"
     size: "44px"
   set-check-done:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.sm}"
     size: "44px"
   done-card:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.lg}"
     padding: "24px 20px"
   notice:
     backgroundColor: "transparent"
     textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     padding: "14px 16px"
   tag:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.xs}"
     padding: "3px 6px"
   toast:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.pill}"
     padding: "12px 16px"
   sheet:
     backgroundColor: "{colors.ground}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.lg}"
     padding: "26px 20px"
   sheet-inverted:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.lg}"
     padding: "26px 20px"
   bubble-coach:
     backgroundColor: "{colors.ground-field}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.lg}"
     padding: "11px 14px"
   bubble-client:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.lg}"
     padding: "11px 14px"
   nav-bar:
     backgroundColor: "{colors.ground}"
@@ -187,7 +192,7 @@ components:
 
 **Creative North Star: "The Gym Chalkboard"**
 
-A black surface, white chalk, and nothing else. The client app is pure type on true black: no imagery, no colour, no gradient, no shadow, no rounded corner. The only things that are white at full strength are the words that matter right now and the marks that say something got done. Everything secondary steps down through two greys. The coach's words sit in the largest body size on the screen, and the client's day is a vertical list of rows separated by hairlines, each ending in a square that fills white when ticked.
+A black surface, white chalk, and nothing else. The client app is pure type on true black: no imagery, no colour, no gradient, no shadow; corners are softly rounded on a small scale so the black reads friendly rather than severe. The only things that are white at full strength are the words that matter right now and the marks that say something got done. Everything secondary steps down through two greys. The coach's words sit in the largest body size on the screen, and the client's day is a vertical list of rows separated by hairlines, each ending in a square that fills white when ticked.
 
 Density is phone-first and one-handed: a single 560px column with 20px gutters, 62px tap rows, 44px set checks, 50px buttons, and a fixed 62px bottom bar. The condensed display face (Big Shoulders Display at 800) is reserved for screen titles and big numbers; it is what makes a date, a count, or a personal best read like a poster rather than a form. The system sans does all the reading.
 
@@ -196,7 +201,7 @@ State is expressed by inversion. A done check, a selected segment, the current d
 **Key Characteristics:**
 - True black ground (`#000`) with white text and two greys; no tonal surfaces apart from a near-black field fill for inputs
 - One condensed display face at weight 800, uppercase, for titles and numbers only
-- Square corners on every element, including checks, inputs, sheets, toasts and bubbles
+- Rounded corners on one small scale: 6px checks and set cells, 10px inputs, buttons, chips and the today cell, 16px cards, sheets and bubbles, a pill toast
 - Hairline dividers (12% white) carry structure; cards are the exception, not the container
 - Done means inverted: white square, black check, the same mark on Today, Train and the week strip
 - Red (`#ff5a5a`) is a status, not an accent, and it means "late"
@@ -264,15 +269,15 @@ No shadows anywhere. Depth is flat and tonal: the ground is `#000`, input fields
 
 ## Shapes
 
-Square everything. Border radius is 0 on buttons, inputs, checks, segments, sheets, toasts, tags, bubbles and cards; the global button and input resets set it explicitly. The only circles are the 5px "logged" dot in the week strip and the 7px unread dot on the Messages tab. Check marks are squares: 28px with a 1.5px 42% outline in checklist rows, 44px in the set table; when done, the square fills white and a 3px black check stroke scales in. Photo slots use a dashed 42% border on a 3:4 aspect.
+Rounded, lightly. One radius scale, held in `--r-sm` (6px), `--r` (10px) and `--r-lg` (16px): 4px on tags; 6px on check squares and set-table cells; 10px on buttons, inputs, segments, tabs, the week strip's today cell, notices and photo tiles; 16px on the Day done card, the top corners of sheets, and message bubbles (4px on the tail corner so the side is readable); a full pill on the toast. The only circles are the 5px "logged" dot in the week strip and the 7px unread dot on the Messages tab. Check marks stay squares in proportion: 28px with a 1.5px 42% outline in checklist rows, 44px in the set table; when done, the square fills white and a 3px black check stroke scales in. Photo slots use a dashed 42% border on a 3:4 aspect.
 
 Line icons are authored in-file as 24-viewBox SVGs with 1.75px stroke, round caps and joins, 22px in the bottom bar; chevrons at 20px with a 2px stroke. No icon fonts, no emoji, no glyph characters as icons.
 
 ## Components
 
 ### Buttons
-Confident, square, full width by default.
-- **Shape:** Square (0px), 50px tall, 1px white border on both main variants.
+Confident, softly rounded, full width by default.
+- **Shape:** 10px radius, 50px tall, 1px white border on both main variants.
 - **Primary:** White fill, black text, 600 weight at 15px, `0 20px` padding, full width. One per screen area ("Finish workout", "Keep going", "Send"). Inside an inverted sheet it flips to black fill, white text.
 - **Secondary:** Transparent fill, white text, same white 1px border. Paired next to a primary in a 10px-gap `btn-row`.
 - **Small:** 40px tall, auto width, `0 14px`, 14px text, for inline actions ("Got it").
@@ -280,7 +285,7 @@ Confident, square, full width by default.
 - **States:** Disabled at 40% opacity. Focus-visible is a 2px white outline at 2px offset. There is no hover state; this is a touch surface.
 
 ### Inputs / Fields
-- **Style:** Field Black fill, 1px hairline border, 0px radius, `12px 14px` padding, 15px inherited type, white caret, Tertiary Grey placeholder. Native appearance removed; selects carry an inline 16px grey chevron on the right. Number spinners hidden.
+- **Style:** Field Black fill, 1px hairline border, 10px radius, `12px 14px` padding, 15px inherited type, white caret, Tertiary Grey placeholder. Native appearance removed; selects carry an inline 16px grey chevron on the right. Number spinners hidden.
 - **Row input:** 118px wide, 46px tall, right-aligned 16px text with a grey unit label beside it (weight, steps).
 - **Set input:** 44px tall, centered 16px text, in the set-table grid.
 - **Focus:** Border turns white. No glow.
@@ -306,7 +311,7 @@ A square that fills white with a black 3px check. Identical in behaviour at 28px
 Inline 11.5px/700 uppercase at 0.1em, `3px 6px`, white on black ("PR" beside a value). Red variant on Late Red with black text.
 
 ### Messages
-Bubbles at 82% max width, `11px 14px`, 15px, 0px radius. Coach bubbles are Field Black left-aligned; client bubbles are white on black right-aligned. Day separators are 12px uppercase Tertiary Grey. The composer is pinned above the nav with a 48px input, a 48px "Suggest" toggle (strong hairline outline; inverted when on) and a 48px primary Send.
+Bubbles at 82% max width, `11px 14px`, 15px, 16px radius with a 4px corner on the tail side. Coach bubbles are Field Black left-aligned; client bubbles are white on black right-aligned. Day separators are 12px uppercase Tertiary Grey. The composer is pinned above the nav with a 48px input, a 48px "Suggest" toggle (strong hairline outline; inverted when on) and a 48px primary Send.
 
 ### Navigation
 Fixed 62px bottom bar on black with a hairline top edge; five equal items (Today, Train, Plan, Progress, Messages), each a 22px line icon over a 12px label at 0.03em. Inactive items are Tertiary Grey; the current item is white (`aria-current="page"`). A 7px white dot marks unread messages. No fill, no indicator bar.
@@ -324,7 +329,7 @@ Fixed 62px bottom bar on black with a hairline top edge; five equal items (Today
 
 ### Don't:
 - **Don't** add an accent colour. Lime was removed; red is for "late" only.
-- **Don't** round a corner. Every radius is 0, including checks, inputs, sheets and bubbles.
+- **Don't** invent a radius. Use the scale (4 / 6 / 10 / 16 px, pill for the toast) and nothing larger than 16px.
 - **Don't** use shadows, glows, gradients or blurred backdrops; depth is black, Field Black and inversion.
 - **Don't** box content in cards or nest cards; use hairlines and whitespace.
 - **Don't** set the display face on buttons, labels, body text or inputs.
