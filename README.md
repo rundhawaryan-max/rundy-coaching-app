@@ -21,6 +21,7 @@ This folder is an exact copy of the live site as of **2026-10-18** (Netlify depl
 | `_headers` | Security headers, plus the manifest content type. |
 | `supabase/schema.sql` | Full DB schema (structure only, no client data). Run it on a fresh Supabase project to get a sandbox. |
 | `supabase/migrations/` | Schema changes made after the snapshot, one file each, in date order. Run each one in the SQL editor on the test project first, then on the live project when the matching app change goes live. `2026-10-19-per-set-logs.sql` adds `exercise_logs.set_index` and `rpe` for the new Train tab. `2026-10-19-row-level-security.sql` turns on RLS everywhere (see "Security" below); create the coach's login **before** running it. |
+| `scripts/build-preview.py` | Builds `dist-preview/`: both apps pointed at a **test** Supabase project (URL and anon key passed on the command line), with relative asset paths so the folder works from a sub-path. The `preview` branch holds that output for GitHub Pages (Settings → Pages → branch `preview`), so a phone can try the app against fake data: `…/client.html?t=<token>` and `…/index.html`. |
 | `supabase/test-rls.sh` | Applies the schema and every migration to a throwaway local Postgres and checks the RLS policies (a client sees only their rows, forged writes fail, no token sees nothing). Run it after any schema change. |
 | `supabase/functions/steps/` | Edge function for Apple Health step sync. Built but **dormant**: Ryan chose not to roll it out. |
 
