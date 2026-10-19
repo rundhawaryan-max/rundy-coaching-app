@@ -1015,6 +1015,9 @@ function renderProgramDetail(el) {
           exs.map(e=>{
             const logs = (PG.exerciseLogs||[]).filter(l=>l.exercise_id===e.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
             const last = logs[0];
+            // The client app logs one row per set (set_index, rpe); older rows are one per day with reps as "8,8,7". Show the whole latest session either way.
+            const session = last ? logs.filter(l=>l.date===last.date).sort((a,b)=>(a.set_index||0)-(b.set_index||0)) : [];
+            const sets = session.map(l=>`${l.weight_kg!=null?esc(l.weight_kg):'—'}${l.reps_completed?'×'+esc(l.reps_completed):''}${l.rpe!=null?' @'+esc(l.rpe):''}`).join(', ');
             return `<div class="ex-row" style="flex-direction:column;align-items:stretch;gap:4px">
               <div style="display:flex;justify-content:space-between;align-items:center">
                 <div style="flex:1">
@@ -1023,7 +1026,7 @@ function renderProgramDetail(el) {
                 </div>
                 <button onclick="deleteExercise('${esc(e.id)}','${esc(w.id)}')" style="color:var(--text3);font-size:16px;padding:0 4px;line-height:1">✕</button>
               </div>
-              ${last?`<div style="font-size:11px;color:var(--accent)">Last logged: ${esc(last.weight_kg)} lbs${last.reps_completed?' × '+esc(last.reps_completed):''} on ${esc(last.date)}${logs.length>1?` · ${logs.length} entries`:''}</div>`:`<div style="font-size:11px;color:var(--text3)">No weight logged yet</div>`}
+              ${last?`<div style="font-size:11px;color:var(--accent)">Last session ${esc(last.date)}: ${sets} lbs${session.length>1?` · ${session.length} sets`:''}</div>`:`<div style="font-size:11px;color:var(--text3)">No weight logged yet</div>`}
             </div>`;
           }).join('')}
         </div>`;
