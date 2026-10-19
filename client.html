@@ -764,7 +764,10 @@ function renderProgress() {
   const byEx = groupLogsByExercise();
   const ids = Object.keys(byEx).sort((a,b)=> byEx[b][byEx[b].length-1].date.localeCompare(byEx[a][byEx[a].length-1].date));
   const wk = weekOf(today());
-  let html = `<header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">Progress</h1><p class="sub">Your bests, your trend, your check-ins.</p></header>`;
+  let html = `<header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">Progress</h1><p class="sub">Your photos, your bests, your trend.</p></header>`;
+
+  // Photos first: then-vs-now is the proof people open this tab for, and it's the one section with something to do each week.
+  html += `<section id="photos"><span class="eyebrow">Progress photos</span>${renderPhotos()}</section>`;
 
   // Personal bests
   const prs = ids.map(id => {
@@ -818,8 +821,6 @@ function renderProgress() {
   const recent = DATA.checkIns.slice(0,6);
   if (recent.length) html += `<div style="margin-top:18px">${recent.map(ci=>`<div class="ci"><div class="d">${esc(fmtLong(ci.date))}</div><div class="facts">${[ci.weight_kg!=null?fmtW(ci.weight_kg)+' '+UNIT:'', ci.body_fat?ci.body_fat+'% BF':'', ci.waist_cm?'Waist '+ci.waist_cm+' cm':'', ci.energy?'Energy '+ci.energy+'/10':'', ci.sleep_quality?'Sleep '+ci.sleep_quality+'/10':''].filter(Boolean).join(' · ')}</div>${ci.win_of_week?`<div class="q"><b>Win</b> ${esc(ci.win_of_week)}</div>`:''}${ci.improve_next_week?`<div class="q"><b>Improve</b> ${esc(ci.improve_next_week)}</div>`:''}${ci.notes?`<div class="q">${esc(ci.notes)}</div>`:''}</div>`).join('')}</div>`;
   html += `</section>`;
-
-  html += `<section id="photos"><span class="eyebrow">Progress photos</span>${renderPhotos()}</section>`;
   return html;
 }
 function drawExerciseSparklines() {
