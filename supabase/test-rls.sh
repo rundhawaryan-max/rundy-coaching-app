@@ -15,6 +15,7 @@ Q <<'SQL'
 create extension if not exists pgcrypto;
 create role anon nologin; create role authenticated nologin;
 create schema storage;
+create table storage.buckets(id text primary key, name text, public boolean default false);
 create table storage.objects(id uuid default gen_random_uuid(), bucket_id text, name text);
 alter table storage.objects enable row level security;
 create policy "old loose policy" on storage.objects for all to anon using (bucket_id = 'progress-photos');   -- what the live project has today
@@ -23,9 +24,9 @@ create function storage.foldername(name text) returns text[] language sql immuta
 grant usage on schema public, storage to anon, authenticated;
 SQL
 echo "== schema.sql";            Q -f "$REPO/supabase/schema.sql" && echo ok
-echo "== per-set migration";     Q -f "$REPO/supabase/migrations/2026-10-19-per-set-logs.sql" && echo ok
-echo "== RLS migration";         Q -f "$REPO/supabase/migrations/2026-10-19-row-level-security.sql" && echo ok
+# Supabase's default: both roles may do anything to every table; the migrations then narrow that.
 Q -c "grant all on all tables in schema public, storage to anon, authenticated; grant usage, select on all sequences in schema public to anon, authenticated;"
+for f in "$REPO"/supabase/migrations/*.sql; do echo "== $(basename "$f")"; Q -f "$f" && echo ok; done
 echo "== tables without RLS (should be none):"
 Q -Atc "select string_agg(tablename, ', ') from pg_tables where schemaname='public' and not rowsecurity"
 echo "== policy test"
@@ -56,6 +57,10 @@ select name from storage.objects;
 insert into messages(client_id, sender, body) select id, 'client', 'from alice' from clients where name='Alice' returning body;
 \echo '-- Alice tries to write for Bob (expect a policy error):'
 insert into messages(client_id, sender, body) values (:'bob', 'client', 'forged');
+\echo '-- Alice sets her own goals (expect 1 row):'
+update clients set goal_short_term='Lose 5 lb', goal_long_term='Run a 10k', goals_set_at=now() returning name;
+\echo '-- Alice tries to change her status (expect a permission error):'
+update clients set status='inactive';
 \echo '-- Alice reads payments (expect 0):'
 select count(*) from payments;
 \echo '-- Alice tries to change her plan (expect 0 rows):'

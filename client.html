@@ -178,6 +178,10 @@ details.week-list .body{padding:4px 0 14px;border-bottom:1px solid var(--line)}
 .lift .gain{font-size:15px;color:var(--text2);margin-top:8px}
 .lift .btn{margin-top:14px}
 .lift.empty{color:var(--text2);font-size:15px}
+.goals .g{padding:12px 0;border-bottom:1px solid var(--line)}
+.goals .k{font-size:13px;color:var(--text3)}
+.goals .v{font-size:17px;line-height:1.4;margin-top:2px;white-space:pre-line}
+.goals .btn-text{margin-top:12px}
 .sheet.invert .btn-secondary{color:#000;border-color:#000}
 .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 6px;background:#fff;color:#000;border-radius:4px;vertical-align:middle;margin-left:8px}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
@@ -363,6 +367,7 @@ const TABS = [['today','Today'],['train','Train'],['plan','Plan'],['progress','P
 let CLIENT = null;
 let DATA = { checkIns:[], macros:[], programs:[], workouts:[], exercises:{}, mealPlans:[], meals:[], mealsByPlan:{}, foods:{}, messages:[], dailySteps:[], cardioProtocols:[], cardioSessions:[], exerciseLogs:[], exerciseNames:{}, checklistCompletions:[], supplements:[], dailyLogs:[], photos:[] };
 let TAB = 'today';
+let GOALS_OPEN = false;       // the welcome / goals screen covers the app until the client has set (or skipped) their goals
 let VIEW_DATE = today();      // the day shown on Today (week strip)
 let FEEL_OPEN = false;        // "how you feel" row expanded
 let CI_OPEN = false;          // weekly check-in form open on Progress
@@ -448,6 +453,7 @@ async function init() {
   document.getElementById('content').addEventListener('keydown', e => { if (e.key==='Enter' && e.target.matches('input[data-field]')) e.target.blur(); });
   document.getElementById('nav-inner').addEventListener('click', e => { const b = e.target.closest('button'); if (b) go(b.dataset.tab); });
   setInterval(pollMessages, 15000);
+  if (!CLIENT.goals_set_at) GOALS_OPEN = true;   // first open: goals before anything else
   render();
 }
 function showError() {
@@ -597,6 +603,8 @@ function todayItems(date) {
 // ── render ──────────────────────────────────────────────────────────
 function render() {
   const el = document.getElementById('content');
+  document.getElementById('nav').style.display = GOALS_OPEN ? 'none' : 'flex';
+  if (GOALS_OPEN) { el.innerHTML = renderGoals(); return; }
   const views = { today:renderToday, train:renderTrain, plan:renderPlan, progress:renderProgress, messages:renderMessages };
   el.innerHTML = views[TAB]();
   renderNav();
@@ -761,9 +769,34 @@ function renderTrain() {
 function macrosHTML(m) {
   return `<div class="macros">${[['kcal',m.calories],['Protein',m.protein_g+'g'],['Carbs',m.carbs_g+'g'],['Fat',m.fat_g+'g']].map(([k,v])=>`<div class="m"><div class="v">${esc(v)}</div><div class="k">${k}</div></div>`).join('')}</div>`;
 }
+// ── Goals ──────────────────────────────────────────────────────────
+// Shown full-screen on the first open (and from Plan → Edit afterwards). Ryan reads these on the client's page.
+function renderGoals() {
+  const first = !CLIENT.goals_set_at, name = (CLIENT.name||'').split(' ')[0];
+  return `<header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">${first ? 'Welcome, '+esc(name) : 'Your goals'}</h1><p class="sub">${first ? 'Before anything else: what are you here for? Ryan reads this.' : 'Ryan sees these on your page.'}</p></header>
+    <section class="tight">
+      <div class="field"><label for="g-short">In the next 8 weeks</label><textarea id="g-short" placeholder="Drop 8 lb and bench 125 for 5">${esc(CLIENT.goal_short_term||'')}</textarea></div>
+      <div class="field"><label for="g-long">This year</label><textarea id="g-long" placeholder="Feel strong at the wedding in June">${esc(CLIENT.goal_long_term||'')}</textarea></div>
+      <div class="btn-row"><button type="button" class="btn btn-primary" data-act="goals-save">${first ? 'Start' : 'Save'}</button></div>
+      <p style="margin-top:16px;text-align:center"><button type="button" class="btn-text" data-act="goals-skip">${first ? 'Skip for now' : 'Cancel'}</button></p>
+    </section>`;
+}
+async function saveGoals(skip) {
+  const first = !CLIENT.goals_set_at;
+  const body = skip ? {} : { goal_short_term: document.getElementById('g-short').value.trim() || null, goal_long_term: document.getElementById('g-long').value.trim() || null };
+  if (!skip && !body.goal_short_term && !body.goal_long_term) { toast('Write at least one goal, or skip for now.'); return; }
+  if (first) body.goals_set_at = new Date().toISOString();
+  const data = Object.keys(body).length ? await sb.update('clients', body, 'id=eq.'+CLIENT.id) : [CLIENT];
+  if (data && data[0]) { Object.assign(CLIENT, data[0]); if (!skip) toast(first ? 'Goals saved. Welcome in.' : 'Goals saved'); }
+  GOALS_OPEN = false; render(); window.scrollTo(0, 0);   // a failed save never locks them out; they're asked again next open
+}
+
 function renderPlan() {
   const m = DATA.macros[0];
   let html = `<header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">Plan</h1><p class="sub">What Ryan wrote for you. Tick things off on Today.</p></header>`;
+  html += `<section><span class="eyebrow">Your goals</span>${(CLIENT.goal_short_term||CLIENT.goal_long_term)
+    ? `<div class="goals"><div class="g"><div class="k">Next 8 weeks</div><div class="v">${esc(CLIENT.goal_short_term||'—')}</div></div><div class="g"><div class="k">This year</div><div class="v">${esc(CLIENT.goal_long_term||'—')}</div></div><button type="button" class="btn-text" data-act="goals-edit">Edit</button></div>`
+    : `<div class="rows" style="margin-top:0"><button type="button" class="row" data-act="goals-edit"><span class="row-main"><span class="row-label">Set your goals</span><span class="row-sub">Short term and long term. Ryan reads them.</span></span>${ICON.chev}</button></div>`}</section>`;
   html += `<section><span class="eyebrow">Daily targets</span>${m ? macrosHTML(m) + (m.notes?`<p class="small" style="color:var(--text2);margin-top:10px">${esc(m.notes)}</p>`:'') : `<div class="empty">Not set yet.</div>`}</section>`;
 
   html += `<section><span class="eyebrow">Meal plan</span>`;
@@ -1057,6 +1090,9 @@ async function onClick(e) {
   if (act === 'suggest') { SUGGEST = !SUGGEST; render(); document.getElementById('msg-input')?.focus(); return; }
   if (act === 'sheet-close') return;
   if (act === 'share-pr') return sharePR(prFromEl(el));
+  if (act === 'goals-edit') { GOALS_OPEN = true; render(); window.scrollTo(0, 0); return; }
+  if (act === 'goals-save') return saveGoals(false);
+  if (act === 'goals-skip') return saveGoals(true);
 
   if (act === 'tick') {
     const type = el.dataset.type, id = el.dataset.id, wasDone = el.classList.contains('done');
