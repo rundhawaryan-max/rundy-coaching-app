@@ -135,6 +135,11 @@ components:
     textColor: "{colors.ground}"
     rounded: "{rounded.sm}"
     size: "44px"
+  day-ring:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.pill}"
+    size: "108px"
   done-card:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
@@ -219,7 +224,7 @@ A monochrome system: black ground, white ink, two grey steps for secondary and t
 - **Field Black** (`{colors.ground-field}`): The fill of inputs, selects, textareas, segment buttons, the coach's message bubble, photo slots and skeletons. It is the one step above the ground, and it is never used as a card.
 - **Secondary Grey** (`{colors.ink-secondary}`): Eyebrows, the brand line, subtitles, done-row labels, field labels, text buttons, the unit suffix on a big number, and logged days in the week strip.
 - **Tertiary Grey** (`{colors.ink-tertiary}`): Row sub-lines, placeholders, column headers, timestamps, future days, inactive bottom-bar items and chevrons. The quietest text that still passes on black.
-- **Hairline** (`{colors.hairline}`): Every divider: row bottoms, section rules, the nav top, input borders at rest, the progress-bar track.
+- **Hairline** (`{colors.hairline}`): Every divider: row bottoms, section rules, the nav top, input borders at rest; at 16% it is also the unfilled segment of the day ring.
 - **Strong Hairline** (`{colors.hairline-strong}`): The border of an unticked check square (1.5px), a sheet's top edge, a notice box, the "Suggest" toggle, dashed photo-slot borders and underline colour on text buttons.
 - **Inverted Secondary** (`{colors.inverted-ink-secondary}`): Secondary text inside the inverted sheet (eyebrow, subtitle, muted).
 
@@ -240,7 +245,7 @@ A monochrome system: black ground, white ink, two grey steps for secondary and t
 
 ### Hierarchy
 - **Display** (800, 40px, 0.92, uppercase): Screen titles ("Sunday Oct 18", "Train", "Progress") and the title line in a sheet. Also the "Day done" card at 48px.
-- **Display Number** (800, 60px, 0.92): The large count in a sheet or PR announcement (64px inside sheets). The day count on Today is 34px, the week-strip day numbers 21px, stat values 40px, macro values 30px, PR values 28px. All in the display face; the size steps with the importance of the number.
+- **Display Number** (800, 60px, 0.92): The large count in a sheet or PR announcement (64px inside sheets). The day count inside the Today ring is 30px (its "/12" 15px in Secondary Grey), the week-strip day numbers 21px, stat values 40px, macro values 30px, PR values 28px. All in the display face; the size steps with the importance of the number.
 - **Headline** (800, 30px, 0.92, uppercase): Secondary display title (error screen).
 - **Title** (600, 16px, 1.3): Row labels, exercise names (17px), meal names, accordion summaries.
 - **Body** (400, 15px, 1.45): Default text. The coach's note runs at 17px; notice copy and list rows at 14px.
@@ -269,7 +274,7 @@ No shadows anywhere. Depth is flat and tonal: the ground is `#000`, input fields
 
 ## Shapes
 
-Rounded, lightly. One radius scale, held in `--r-sm` (6px), `--r` (10px) and `--r-lg` (16px): 4px on tags; 6px on check squares and set-table cells; 10px on buttons, inputs, segments, tabs, the week strip's today cell, notices and photo tiles; 16px on the Day done card, the top corners of sheets, and message bubbles (4px on the tail corner so the side is readable); a full pill on the toast. The only circles are the 5px "logged" dot in the week strip and the 7px unread dot on the Messages tab. Check marks stay squares in proportion: 28px with a 1.5px 42% outline in checklist rows, 44px in the set table; when done, the square fills white and a 3px black check stroke scales in. Photo slots use a dashed 42% border on a 3:4 aspect.
+Rounded, lightly. One radius scale, held in `--r-sm` (6px), `--r` (10px) and `--r-lg` (16px): 4px on tags; 6px on check squares and set-table cells; 10px on buttons, inputs, segments, tabs, the week strip's today cell, notices and photo tiles; 16px on the Day done card, the top corners of sheets, and message bubbles (4px on the tail corner so the side is readable); a full pill on the toast. The only circles are the day ring on Today (108px, a 9-unit stroke on a 100-unit viewBox, one segment per checklist row with 4° gaps), the 5px "logged" dot in the week strip and the 7px unread dot on the Messages tab. Check marks stay squares in proportion: 28px with a 1.5px 42% outline in checklist rows, 44px in the set table; when done, the square fills white and a 3px black check stroke scales in. Photo slots use a dashed 42% border on a 3:4 aspect.
 
 Line icons are authored in-file as 24-viewBox SVGs with 1.75px stroke, round caps and joins, 22px in the bottom bar; chevrons at 20px with a 2px stroke. No icon fonts, no emoji, no glyph characters as icons.
 
@@ -297,6 +302,8 @@ The signature component. A full-width button, 62px minimum, 14px gap, hairline b
 
 ### Done Mark
 A square that fills white with a black 3px check. Identical in behaviour at 28px (Today rows), 44px (set checks on Train) and as the inverted current-day cell in the week strip. A pending set check shows a white border at 50% opacity while saving. Transition 150ms on the custom ease.
+
+**Day ring.** The day's progress drawn as the checklist it is: a 108px SVG ring beside the date on Today, one segment per row in row order, 16%-white at rest and white once that row is ticked (300ms stroke transition), with the count inside in the display face ("4" at 30px, "/12" at 15px Secondary Grey) over a 11.5px tracked "DONE". With every row ticked the ring reads as a solid white circle and the inverted Day done card appears below the list. It carries `role="img"` with the count as its label. It is the only ring in the system; no other progress is drawn circular.
 
 ### Week Strip
 7 equal columns, 4px gap. Each day: 11.5px tracked weekday letter, a 21px display-face number, and a 5px dot that appears when the day has logs. Today is inverted white; a selected non-today day gets a 1px white border; future days drop to Tertiary Grey. Beneath it, a 4px progress bar on the hairline track fills white by `scaleX` over 400ms.

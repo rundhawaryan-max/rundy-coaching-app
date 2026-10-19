@@ -76,9 +76,15 @@ section>.eyebrow{display:block;margin-bottom:10px}
 .day.logged .dot{opacity:1}
 .day.logged{color:var(--text2)}
 .day.future,.day.future b{color:var(--text3)}
-.count{display:flex;align-items:baseline;gap:10px;margin-top:8px}
-.count .display{font-size:34px}
-.count span:last-child{font-size:15px;color:var(--text2)}
+.today-head{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.today-head .t1{font-size:38px}
+.ring{position:relative;width:108px;height:108px;flex-shrink:0}
+.ring svg{width:100%;height:100%;display:block}
+.ring .seg{fill:none;stroke:rgba(255,255,255,.16);stroke-width:9;transition:stroke .3s var(--ease)}
+.ring .seg.on{stroke:#fff}
+.ring-n{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:30px;line-height:1}
+.ring-n em{font-style:normal;font-size:15px;color:var(--text2);letter-spacing:0;margin-left:1px}
+.ring-n small{font-family:var(--font);font-size:11.5px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
 .day.today{background:#fff;color:#000}
 .day.today b{color:#000}
 .day.sel:not(.today){border-color:#fff}
@@ -542,6 +548,16 @@ function renderNav() {
     `<button type="button" data-tab="${id}"${TAB===id?' aria-current="page"':''}>${ICON[id]}<span>${label}</span>${id==='messages'&&unread?'<span class="unread" aria-label="unread"></span>':''}</button>`).join('');
 }
 const chk = () => `<span class="chk" aria-hidden="true">${ICON.check}</span>`;
+// The day's progress drawn as the checklist it is: one ring segment per row, in row order, filled white once ticked.
+function ringHTML(flags) {
+  const total = flags.length, done = flags.filter(Boolean).length, c = 50, r = 42;
+  const gap = total > 1 ? 4 : 0, span = 360/total - gap;
+  const pt = a => { const t = (a-90)*Math.PI/180; return [(c + r*Math.cos(t)).toFixed(2), (c + r*Math.sin(t)).toFixed(2)]; };
+  const segs = total === 1
+    ? `<circle class="seg${flags[0]?' on':''}" cx="${c}" cy="${c}" r="${r}"/>`
+    : flags.map((on, i) => { const a0 = i*360/total + gap/2, [x0,y0] = pt(a0), [x1,y1] = pt(a0+span); return `<path class="seg${on?' on':''}" d="M${x0} ${y0} A${r} ${r} 0 ${span>180?1:0} 1 ${x1} ${y1}"/>`; }).join('');
+  return `<div class="ring" role="img" aria-label="${done} of ${total} done"><svg viewBox="0 0 100 100" aria-hidden="true">${segs}</svg><span class="ring-n display"><span>${done}<em>/${total}</em></span><small>done</small></span></div>`;
+}
 
 function renderToday() {
   const date = VIEW_DATE;
@@ -554,8 +570,7 @@ function renderToday() {
   const strip = `<div class="week" role="list">${wk.map(d => {
     const cls = ['day', d===today()?'today':'', d>today()?'future':'', d===date?'sel':'', dayLogged(d)?'logged':''].filter(Boolean).join(' ');
     return `<button type="button" class="${cls}" data-act="day" data-date="${d}" ${d>today()?'disabled':''} aria-label="${esc(fmtLong(d))}">${DAY_NAMES[wk.indexOf(d)].slice(0,1)}<b>${+d.slice(8)}</b><span class="dot"></span></button>`;
-  }).join('')}</div>
-  <div class="bar" aria-hidden="true"><i style="transform:scaleX(${total?(done/total).toFixed(3):0})"></i></div>`;
+  }).join('')}</div>`;
 
   let nudge = '';
   if (isToday) {
@@ -595,10 +610,14 @@ function renderToday() {
   const doneCard = isToday && total>0 && done===total ? `<div class="done-card"><div class="display">Day done</div><p>${esc(fmtLong(date))}. Every box ticked. Ryan will see it.</p></div>` : '';
   const viewing = !isToday ? `<div class="notice" style="margin-top:20px"><p>Viewing ${esc(fmtLong(date))}.</p><button type="button" class="btn-text" data-act="day" data-date="${today()}">Back to today</button></div>` : '';
 
-  return `<header class="screen-head">
-    <div class="brand">Rebuilt by Ryan</div>
-    <h1 class="display t1">${esc(fmtLong(date).replace(',', ''))}</h1>
-    ${total ? `<p class="count"><span class="display">${done}/${total}</span><span>done${isToday ? ' · ' + esc(first) : ''}</span></p>` : `<p class="sub">${esc(first)}, nothing to log yet.</p>`}
+  const status = !total ? `${esc(first)}, nothing to log yet.` : !isToday ? `${esc(first)} · ${done} of ${total} done` : done===total ? `${esc(first)}, everything is done.` : done ? `${esc(first)}, ${total-done} to go.` : `${esc(first)}, a fresh page.`;
+  return `<header class="screen-head today-head">
+    <div>
+      <div class="brand">Rebuilt by Ryan</div>
+      <h1 class="display t1">${esc(dayName(date))}<br>${esc(fmtDay(date))}</h1>
+      <p class="sub">${status}</p>
+    </div>
+    ${total ? ringHTML(items.map(i=>i.done)) : ''}
   </header>
   ${strip}${viewing}${nudge}${isToday?note:''}
   <div class="rows">${rows || `<div class="empty">Nothing to log yet. Ryan is setting up your plan.</div>`}</div>
