@@ -188,9 +188,12 @@ details.week-list .body{padding:4px 0 14px;border-bottom:1px solid var(--line)}
 .intro .sub,.intro .field,.intro .btn-row,.intro .skip{animation:fade-up .55s cubic-bezier(.2,.7,.2,1) both}
 .intro .sub{animation-delay:2.75s}
 .intro .field:nth-of-type(1){animation-delay:2.9s}
-.intro .field:nth-of-type(2){animation-delay:3.05s}
-.intro .btn-row{animation-delay:3.2s}
-.intro .skip{animation-delay:3.35s}
+.intro .field:nth-of-type(2){animation-delay:3s}
+.intro .field:nth-of-type(3){animation-delay:3.1s}
+.intro .field:nth-of-type(4){animation-delay:3.2s}
+.intro .field:nth-of-type(5){animation-delay:3.3s}
+.intro .btn-row{animation-delay:3.45s}
+.intro .skip{animation-delay:3.55s}
 @keyframes rise{from{opacity:0;transform:translateY(calc(34vh + 28px))}to{opacity:1;transform:translateY(34vh)}}
 @keyframes settle{from{transform:translateY(34vh)}to{transform:translateY(0)}}
 @keyframes fade{from{opacity:0}}
@@ -786,18 +789,22 @@ function macrosHTML(m) {
 // Shown full-screen on the first open (and from Plan → Edit afterwards). Ryan reads these on the client's page.
 function renderGoals() {
   const first = !CLIENT.goals_set_at, name = (CLIENT.name||'').split(' ')[0];
-  return `<div class="${first ? 'intro' : ''}"><header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">${first ? 'Goal setting' : 'Your goals'}</h1><p class="sub">${first ? 'Welcome, '+esc(name)+'. Before anything else: what are you here for? Ryan reads this.' : 'Ryan sees these on your page.'}</p></header>
+  return `<div class="${first ? 'intro' : ''}"><header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">${first ? 'Goal setting' : 'Your goals'}</h1><p class="sub">${first ? 'Welcome, '+esc(name)+'. Five questions before anything else. Ryan reads every answer.' : 'Ryan sees these on your page.'}</p></header>
     <section class="tight">
-      <div class="field"><label for="g-short">In the next 8 weeks</label><textarea id="g-short" placeholder="Drop 8 lb and bench 125 for 5">${esc(CLIENT.goal_short_term||'')}</textarea></div>
-      <div class="field"><label for="g-long">This year</label><textarea id="g-long" placeholder="Feel strong at the wedding in June">${esc(CLIENT.goal_long_term||'')}</textarea></div>
+      <div class="field"><label for="g-purpose">What is your specific goal or purpose for training with Ryan?</label><textarea id="g-purpose" placeholder="Lose 15 lb and feel strong again">${esc(CLIENT.goal_purpose||'')}</textarea></div>
+      <div class="field"><label for="g-measure">How is that goal measurable? Weight, pain-free, posture, a lift…</label><textarea id="g-measure" placeholder="Scale weight each morning, and squat without knee pain">${esc(CLIENT.goal_measure||'')}</textarea></div>
+      <div class="field"><label for="g-relevance">Why does it matter in your life right now, and what is in the way?</label><textarea id="g-relevance" placeholder="Wedding in June. Late shifts and takeout on work nights.">${esc(CLIENT.goal_relevance||'')}</textarea></div>
+      <div class="field"><label for="g-end">When do you want your transformation done by?</label><input id="g-end" type="date" value="${esc(CLIENT.goal_end_date||'')}" min="${today()}"/></div>
+      <div class="field"><label>How willing are you to commit to changing, 1 to 5?</label><div class="seg" id="g-commit">${[1,2,3,4,5].map(n=>`<button type="button" data-val="${n}" class="${CLIENT.goal_commitment===n?'sel':''}">${n}</button>`).join('')}</div></div>
       <div class="btn-row"><button type="button" class="btn btn-primary" data-act="goals-save">${first ? 'Start' : 'Save'}</button></div>
       <p class="skip" style="margin-top:16px;text-align:center"><button type="button" class="btn-text" data-act="goals-skip">${first ? 'Skip for now' : 'Cancel'}</button></p>
     </section></div>`;
 }
 async function saveGoals(skip) {
   const first = !CLIENT.goals_set_at;
-  const body = skip ? {} : { goal_short_term: document.getElementById('g-short').value.trim() || null, goal_long_term: document.getElementById('g-long').value.trim() || null };
-  if (!skip && !body.goal_short_term && !body.goal_long_term) { toast('Write at least one goal, or skip for now.'); return; }
+  const v = id => document.getElementById(id).value.trim() || null;
+  const body = skip ? {} : { goal_purpose: v('g-purpose'), goal_measure: v('g-measure'), goal_relevance: v('g-relevance'), goal_end_date: v('g-end'), goal_commitment: +(document.querySelector('#g-commit .sel')||{dataset:{}}).dataset.val || null };
+  if (!skip && !body.goal_purpose) { toast('Start with your goal. Ryan reads it first.'); document.getElementById('g-purpose').focus(); return; }
   if (first) body.goals_set_at = new Date().toISOString();
   const data = Object.keys(body).length ? await sb.update('clients', body, 'id=eq.'+CLIENT.id) : [CLIENT];
   if (data && data[0]) { Object.assign(CLIENT, data[0]); if (!skip) toast(first ? 'Goals saved. Welcome in.' : 'Goals saved'); }
@@ -807,9 +814,10 @@ async function saveGoals(skip) {
 function renderPlan() {
   const m = DATA.macros[0];
   let html = `<header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">Plan</h1><p class="sub">What Ryan wrote for you. Tick things off on Today.</p></header>`;
-  html += `<section><span class="eyebrow">Your goals</span>${(CLIENT.goal_short_term||CLIENT.goal_long_term)
-    ? `<div class="goals"><div class="g"><div class="k">Next 8 weeks</div><div class="v">${esc(CLIENT.goal_short_term||'—')}</div></div><div class="g"><div class="k">This year</div><div class="v">${esc(CLIENT.goal_long_term||'—')}</div></div><button type="button" class="btn-text" data-act="goals-edit">Edit</button></div>`
-    : `<div class="rows" style="margin-top:0"><button type="button" class="row" data-act="goals-edit"><span class="row-main"><span class="row-label">Set your goals</span><span class="row-sub">Short term and long term. Ryan reads them.</span></span>${ICON.chev}</button></div>`}</section>`;
+  const goalRows = [['Goal', CLIENT.goal_purpose], ['Measured by', CLIENT.goal_measure], ['Why now, and what is in the way', CLIENT.goal_relevance], ['Target date', CLIENT.goal_end_date && fmtLong(CLIENT.goal_end_date)], ['Commitment', CLIENT.goal_commitment && CLIENT.goal_commitment+' / 5']].filter(([,v])=>v);
+  html += `<section><span class="eyebrow">Your goals</span>${goalRows.length
+    ? `<div class="goals">${goalRows.map(([k,v])=>`<div class="g"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join('')}<button type="button" class="btn-text" data-act="goals-edit">Edit</button></div>`
+    : `<div class="rows" style="margin-top:0"><button type="button" class="row" data-act="goals-edit"><span class="row-main"><span class="row-label">Set your goals</span><span class="row-sub">Five questions from Ryan. He reads every answer.</span></span>${ICON.chev}</button></div>`}</section>`;
   html += `<section><span class="eyebrow">Daily targets</span>${m ? macrosHTML(m) + (m.notes?`<p class="small" style="color:var(--text2);margin-top:10px">${esc(m.notes)}</p>`:'') : `<div class="empty">Not set yet.</div>`}</section>`;
 
   html += `<section><span class="eyebrow">Meal plan</span>`;
