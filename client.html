@@ -172,6 +172,13 @@ details.week-list .body{padding:4px 0 14px;border-bottom:1px solid var(--line)}
 .pr .when{font-size:13px;color:var(--text3);margin-top:2px}
 .pr .val{font-family:var(--display);font-weight:800;font-size:28px;line-height:1;white-space:nowrap}
 .pr .val small{font-family:var(--font);font-weight:600;font-size:14px;color:var(--text2);margin-left:4px}
+.lift .name{font-size:17px;font-weight:600}
+.lift .val{font-family:var(--display);font-weight:800;font-size:64px;line-height:.95;margin-top:6px;letter-spacing:.01em}
+.lift .val small{font-family:var(--font);font-weight:600;font-size:15px;color:var(--text2);margin-left:6px;letter-spacing:0}
+.lift .gain{font-size:15px;color:var(--text2);margin-top:8px}
+.lift .btn{margin-top:14px}
+.lift.empty{color:var(--text2);font-size:15px}
+.sheet.invert .btn-secondary{color:#000;border-color:#000}
 .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 6px;background:#fff;color:#000;border-radius:4px;vertical-align:middle;margin-left:8px}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
 .stat .v{font-family:var(--display);font-weight:800;font-size:40px;line-height:1}
@@ -380,7 +387,7 @@ function sheet(html, invert) {
   bg.innerHTML = `<div class="sheet${invert?' invert':''}" role="dialog" aria-modal="true">${html}</div>`;
   document.body.appendChild(bg);
   const close = () => bg.remove();
-  bg.addEventListener('click', e => { if (e.target===bg || e.target.closest('[data-act=sheet-close]')) close(); });
+  bg.addEventListener('click', e => { const s = e.target.closest('[data-act=share-pr]'); if (s) return sharePR(prFromEl(s)); if (e.target===bg || e.target.closest('[data-act=sheet-close]')) close(); });
   document.addEventListener('keydown', function esc_(e){ if(e.key==='Escape'){ close(); document.removeEventListener('keydown', esc_);} });
   const b = bg.querySelector('.btn'); if (b) b.focus();
   return close;
@@ -482,6 +489,56 @@ function lastSession(exId, date) {
 // Old logs hold a whole session's reps as "8,8,7"; per-set logs hold one number. Either way, give set i its reps.
 const repsAt = (log, i) => { if (!log || !log.reps_completed) return ''; const p = String(log.reps_completed).split(',').map(s=>s.trim()).filter(Boolean); return p.length>1 ? (p[i] ?? p[p.length-1]) : (p[0]||''); };
 const bestOf = (exId, excludeId) => Math.max(0, ...DATA.exerciseLogs.filter(l=>l.exercise_id===exId && l.id!==excludeId && l.weight_kg!=null).map(l=>Number(l.weight_kg)));
+
+// ── Sharing a personal best ────────────────────────────────────────
+// A black PR card (4:5, fits Instagram and iMessage) drawn on a canvas, handed to the phone's share sheet. The card is
+// drawn ahead of the tap so navigator.share() is called straight from the gesture, which Safari insists on.
+// Falls back to sharing text, then to copying it.
+const repsOf = r => String(r||'').split(',')[0];
+const prLabel = p => `${fmtW(p.top)} ${UNIT}${p.reps ? ' × ' + repsOf(p.reps) : ''}`;
+let PR_FILE = null, PR_KEY = '';
+async function prCard(p) {
+  try { await document.fonts.load('800 100px "Big Shoulders Display"'); } catch(e) {}
+  const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  const disp = s => `800 ${s}px "Big Shoulders Display","Arial Narrow",Impact,sans-serif`;
+  const sys = (s, w) => `${w||600} ${s}px -apple-system,"Helvetica Neue",Arial,sans-serif`;
+  x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#b9b9b9'; x.font = sys(34); x.letterSpacing = '6px'; x.fillText('NEW PERSONAL BEST', 80, 200);
+  x.letterSpacing = '0px'; x.fillStyle = '#fff';
+  let s = 120; x.font = disp(s); const name = String(p.name||'').toUpperCase();
+  while (x.measureText(name).width > W - 160 && s > 56) { s -= 6; x.font = disp(s); }
+  x.fillText(name, 76, 340);
+  const num = String(fmtW(p.top)); x.font = disp(400); x.fillText(num, 68, 780);
+  const nw = x.measureText(num).width;
+  x.font = disp(120); x.fillText(UNIT.toUpperCase() + (p.reps ? ' × ' + repsOf(p.reps) : ''), 68 + nw + 28, 780);
+  x.fillStyle = '#b9b9b9'; x.font = sys(38, 500);
+  x.fillText((p.prev ? `Previous best ${fmtW(p.prev)} ${UNIT} · ` : '') + fmtDay(p.date), 80, 880);
+  x.strokeStyle = 'rgba(255,255,255,.22)'; x.lineWidth = 2; x.beginPath(); x.moveTo(80, 1170); x.lineTo(W - 80, 1170); x.stroke();
+  x.fillStyle = '#fff'; x.font = disp(76); x.fillText('REBUILT BY RYAN', 80, 1265);
+  return new Promise(res => c.toBlob(res, 'image/png'));
+}
+async function preparePRCard(p) {
+  const key = JSON.stringify(p); if (PR_KEY === key) return;
+  PR_KEY = key; PR_FILE = null;
+  const blob = await prCard(p);
+  if (blob && PR_KEY === key) PR_FILE = new File([blob], 'personal-best.png', { type: 'image/png' });
+}
+const shareBtn = (p, cls) => `<button type="button" class="btn btn-secondary ${cls||''}" data-act="share-pr" data-name="${esc(p.name)}" data-top="${p.top}" data-reps="${esc(p.reps||'')}" data-date="${esc(p.date)}" data-prev="${p.prev||0}">Share</button>`;
+const prFromEl = el => ({ name: el.dataset.name, top: Number(el.dataset.top), reps: el.dataset.reps || null, date: el.dataset.date, prev: Number(el.dataset.prev) || 0 });
+async function sharePR(p) {
+  const text = `New personal best: ${p.name} ${prLabel(p)}. Rebuilt by Ryan.`;
+  const file = PR_KEY === JSON.stringify(p) ? PR_FILE : null;
+  const copy = async () => { await navigator.clipboard.writeText(text); toast('Copied. Paste it anywhere.'); };
+  try {
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], text });
+    else if (navigator.share) await navigator.share({ text });
+    else await copy();
+  } catch(e) {
+    if (e && e.name === 'AbortError') return;   // they closed the share sheet
+    try { await copy(); } catch(_) { toast('Sharing isn’t available here.'); }
+  }
+}
 
 // Weekly check-in rhythm: due by Sunday night, late from Monday until it's in.
 // ponytail: one window either side of Sunday; a per-client due day can replace this later.
@@ -770,6 +827,21 @@ function renderProgress() {
   // Photos first: then-vs-now is the proof people open this tab for, and it's the one section with something to do each week.
   html += `<section id="photos"><span class="eyebrow">Progress photos</span>${renderPhotos()}</section>`;
 
+  // Lift of the week: the biggest gain over a previous best, set this week. First-time lifts don't count as a gain.
+  let lift = null;
+  ids.forEach(id => {
+    const arr = byEx[id], thisWeek = arr.filter(s=>s.date>=wk[0]); if (!thisWeek.length) return;
+    const top = thisWeek.reduce((b,s)=>s.top>b.top?s:b, thisWeek[0]);
+    const before = arr.filter(s=>s.date<wk[0]), prev = before.length ? Math.max(...before.map(s=>s.top)) : 0;
+    const gain = top.top - prev;
+    if (prev > 0 && gain > 0 && (!lift || gain > lift.gain)) lift = { name: DATA.exerciseNames[id]||'Exercise', top: top.top, reps: top.reps, date: top.date, prev, gain };
+  });
+  const sessions = new Set(DATA.exerciseLogs.filter(l=>l.date>=wk[0]).map(l=>l.date)).size;
+  if (lift) preparePRCard({ name: lift.name, top: lift.top, reps: lift.reps, date: lift.date, prev: lift.prev });
+  html += `<section><span class="eyebrow">Lift of the week</span>${lift
+    ? `<div class="lift"><div class="name">${esc(lift.name)}</div><div class="val">${fmtW(lift.top)}<small>${UNIT}${lift.reps?' × '+esc(repsOf(lift.reps)):''}</small></div><div class="gain">Up ${fmtW(lift.gain)} ${UNIT} on your previous best · ${esc(fmtDay(lift.date))}</div>${shareBtn({ name: lift.name, top: lift.top, reps: lift.reps, date: lift.date, prev: lift.prev }, 'btn-sm')}</div>`
+    : `<div class="lift empty">${sessions ? `No new best yet this week. ${sessions} session${sessions>1?'s':''} logged.` : 'Log a session on Train and your best lift of the week shows up here.'}</div>`}</section>`;
+
   // Personal bests
   const prs = ids.map(id => {
     const arr = byEx[id]; const best = arr.reduce((b,s)=>s.top>b.top?s:b, arr[0]);
@@ -984,6 +1056,7 @@ async function onClick(e) {
   if (act === 'plan') { ACTIVE_MEAL_PLAN = +el.dataset.idx; render(); return; }
   if (act === 'suggest') { SUGGEST = !SUGGEST; render(); document.getElementById('msg-input')?.focus(); return; }
   if (act === 'sheet-close') return;
+  if (act === 'share-pr') return sharePR(prFromEl(el));
 
   if (act === 'tick') {
     const type = el.dataset.type, id = el.dataset.id, wasDone = el.classList.contains('done');
@@ -1049,7 +1122,9 @@ async function saveSet(btn) {
   row.innerHTML = setRowHTML(e, i, log, date, null);
   announce('Set ' + (i+1) + ' logged');
   if (log.weight_kg != null && Number(log.weight_kg) > prevBest && prevBest > 0) {
-    sheet(`<div class="eyebrow">New personal best</div><div class="display" style="margin-top:8px">${esc(e.name||'')}</div><div class="display num">${fmtW(log.weight_kg)}<span style="font-family:var(--font);font-size:20px;font-weight:600;letter-spacing:0;margin-left:6px">${UNIT}${log.reps_completed?' × '+esc(log.reps_completed):''}</span></div><p class="sub">Previous best ${fmtW(prevBest)} ${UNIT}.</p><div class="btn-row"><button type="button" class="btn btn-primary" data-act="sheet-close">Keep going</button></div>`, true);
+    const pr = { name: e.name||'', top: Number(log.weight_kg), reps: log.reps_completed||null, date, prev: prevBest };
+    preparePRCard(pr);
+    sheet(`<div class="eyebrow">New personal best</div><div class="display" style="margin-top:8px">${esc(e.name||'')}</div><div class="display num">${fmtW(log.weight_kg)}<span style="font-family:var(--font);font-size:20px;font-weight:600;letter-spacing:0;margin-left:6px">${UNIT}${log.reps_completed?' × '+esc(log.reps_completed):''}</span></div><p class="sub">Previous best ${fmtW(prevBest)} ${UNIT}.</p><div class="btn-row">${shareBtn(pr)}<button type="button" class="btn btn-primary" data-act="sheet-close">Keep going</button></div>`, true);
   }
 }
 async function deleteSet(btn) {
