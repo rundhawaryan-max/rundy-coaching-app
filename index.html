@@ -873,6 +873,10 @@ function renderCDTab(client) {
     const unit = `<span style="font-family:var(--font);font-size:13px;font-weight:600;color:var(--text2);margin-left:4px;letter-spacing:0;text-transform:none">`;
     el.innerHTML = `
       ${client.special_note ? `<section class="block"><span class="eyebrow">On their Today screen</span><p style="font-size:17px;line-height:1.5;white-space:pre-line;max-width:720px">${esc(client.special_note)}</p></section>` : ''}
+      ${client.goals_set_at ? `<section class="block"><span class="eyebrow">Their goals · set ${esc(fmtDay(client.goals_set_at.slice(0,10)))}</span><div class="rows">
+        <div class="row"><span class="row-main"><span class="row-sub">Next 8 weeks</span><span class="row-label" style="font-weight:500;white-space:normal">${esc(client.goal_short_term||'Not set')}</span></span></div>
+        <div class="row"><span class="row-main"><span class="row-sub">This year</span><span class="row-label" style="font-weight:500;white-space:normal">${esc(client.goal_long_term||'Not set')}</span></span></div>
+      </div></section>` : ''}
       <div class="cols">
         <div>
           <section class="block"><span class="eyebrow">This week</span>
