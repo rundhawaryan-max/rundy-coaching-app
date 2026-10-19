@@ -748,6 +748,7 @@ function renderPlan() {
 // ── Progress ────────────────────────────────────────────────────────
 // Groups every logged lift by exercise, one entry per training day using that day's heaviest set,
 // so a warm-up set never reads as a drop. Works for old one-row-per-day logs and new per-set rows.
+const firstRep = r => parseFloat(String(r||'').split(',')[0]) || 0;   // reps are "7" per set, or "8,8,7" on legacy rows
 function groupLogsByExercise() {
   const byEx = {};
   DATA.exerciseLogs.filter(l => l.exercise_id && l.weight_kg != null && l.weight_kg !== '').forEach(l => {
@@ -755,7 +756,7 @@ function groupLogsByExercise() {
     const ex = byEx[l.exercise_id] = byEx[l.exercise_id] || {};
     const s = ex[l.date];
     if (!s) ex[l.date] = { date:l.date, top:w, sets:1, reps:l.reps_completed||null };
-    else { s.sets++; if (w > s.top) { s.top = w; s.reps = l.reps_completed || s.reps; } }
+    else { s.sets++; if (w > s.top || (w === s.top && firstRep(l.reps_completed) > firstRep(s.reps))) { s.top = w; s.reps = l.reps_completed || s.reps; } }   // same weight: the set with more reps is the best
   });
   Object.keys(byEx).forEach(id => { byEx[id] = Object.values(byEx[id]).sort((a,b)=>a.date<b.date?-1:1); });
   return byEx;
