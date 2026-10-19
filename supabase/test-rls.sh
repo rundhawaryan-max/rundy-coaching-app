@@ -58,7 +58,7 @@ insert into messages(client_id, sender, body) select id, 'client', 'from alice' 
 \echo '-- Alice tries to write for Bob (expect a policy error):'
 insert into messages(client_id, sender, body) values (:'bob', 'client', 'forged');
 \echo '-- Alice sets her own goals (expect 1 row):'
-update clients set goal_short_term='Lose 5 lb', goal_long_term='Run a 10k', goals_set_at=now() returning name;
+update clients set goal_purpose='Lose 5 lb', goal_measure='Scale weight', goal_end_date='2027-06-01', goal_commitment=4, goals_set_at=now() returning name;
 \echo '-- Alice tries to change her status (expect a permission error):'
 update clients set status='inactive';
 \echo '-- Alice reads payments (expect 0):'

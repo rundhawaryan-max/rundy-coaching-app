@@ -697,7 +697,7 @@ function renderClients(search='') {
       <div class="row" style="padding:0">
         <button class="row" style="border:0;flex:1;min-width:0" data-idx="${i}" data-action="view">
           ${avatar(c.name,38)}
-          <span class="row-main"><span class="row-label">${esc(c.name)}${c.status==='active'&&ws.state==='late'&&!ws.done?' <span class="tag red">Late</span>':''}</span><span class="row-sub">${esc(c.goal||'No goal set')}${ll?' · last logged '+esc(fmtDay(ll)):''}</span></span>
+          <span class="row-main"><span class="row-label">${esc(c.name)}${c.status==='active'&&ws.state==='late'&&!ws.done?' <span class="tag red">Late</span>':''}</span><span class="row-sub">${esc(c.goal_purpose||c.goal||'No goal set')}${ll?' · last logged '+esc(fmtDay(ll)):''}</span></span>
           <span class="row-tags"><span class="badge badge-${esc(c.status)} cap">${esc(c.status)}</span></span>
         </button>
         <button class="btn btn-ghost btn-sm" data-idx="${i}" data-action="link" aria-label="Portal link for ${esc(c.name)}">Link</button>
@@ -873,10 +873,10 @@ function renderCDTab(client) {
     const unit = `<span style="font-family:var(--font);font-size:13px;font-weight:600;color:var(--text2);margin-left:4px;letter-spacing:0;text-transform:none">`;
     el.innerHTML = `
       ${client.special_note ? `<section class="block"><span class="eyebrow">On their Today screen</span><p style="font-size:17px;line-height:1.5;white-space:pre-line;max-width:720px">${esc(client.special_note)}</p></section>` : ''}
-      ${client.goals_set_at ? `<section class="block"><span class="eyebrow">Their goals · set ${esc(fmtDay(client.goals_set_at.slice(0,10)))}</span><div class="rows">
-        <div class="row"><span class="row-main"><span class="row-sub">Next 8 weeks</span><span class="row-label" style="font-weight:500;white-space:normal">${esc(client.goal_short_term||'Not set')}</span></span></div>
-        <div class="row"><span class="row-main"><span class="row-sub">This year</span><span class="row-label" style="font-weight:500;white-space:normal">${esc(client.goal_long_term||'Not set')}</span></span></div>
-      </div></section>` : ''}
+      ${client.goals_set_at ? `<section class="block"><span class="eyebrow">Onboarding · answered ${esc(fmtDay(client.goals_set_at.slice(0,10)))}</span><div class="rows">${[
+        ['Goal', client.goal_purpose], ['Measured by', client.goal_measure], ['Why now, and what is in the way', client.goal_relevance],
+        ['Target date', client.goal_end_date && fmtDay(client.goal_end_date)], ['Commitment', client.goal_commitment && client.goal_commitment+' / 5']
+      ].map(([k,v]) => `<div class="row"><span class="row-main"><span class="row-sub">${k}</span><span class="row-label" style="font-weight:500;white-space:normal">${v ? esc(v) : '<span class=\"muted\">Not answered</span>'}</span></span></div>`).join('')}</div></section>` : ''}
       <div class="cols">
         <div>
           <section class="block"><span class="eyebrow">This week</span>
