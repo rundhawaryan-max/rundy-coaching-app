@@ -19,7 +19,7 @@
   --bg:#000;--bg2:#0f0f0f;--bg3:#191919;
   --line:rgba(255,255,255,.12);--line2:rgba(255,255,255,.42);
   --text:#fff;--text2:#b9b9b9;--text3:#8f8f8f;
-  --red:#ff5a5a;--rdim:rgba(255,90,90,.14);
+  --red:#ff5a5a;
   --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --display:'Big Shoulders Display','Arial Narrow',Impact,sans-serif;
   --nav:62px;--ease:cubic-bezier(.2,.7,.2,1);
@@ -125,7 +125,6 @@ button.row:active{background:var(--bg2)}
 .btn-sm{height:40px;width:auto;padding:0 14px;font-size:14px}
 .btn:disabled{opacity:.4;cursor:default}
 .btn-text{display:inline;height:auto;width:auto;padding:0;border:0;background:none;color:var(--text2);font-size:14px;font-weight:500;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line2)}
-.btn-text.danger{color:var(--red);text-decoration-color:var(--red)}
 .btn-row{display:flex;gap:10px;margin-top:16px}
 
 /* ── done card ── */
@@ -167,7 +166,6 @@ details.week-list .body{padding:4px 0 14px;border-bottom:1px solid var(--line)}
 .pr .val{font-family:var(--display);font-weight:800;font-size:28px;line-height:1;white-space:nowrap}
 .pr .val small{font-family:var(--font);font-weight:600;font-size:14px;color:var(--text2);margin-left:4px}
 .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 6px;background:#fff;color:#000;vertical-align:middle;margin-left:8px}
-.tag.red{background:var(--red);color:#000}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
 .stat .v{font-family:var(--display);font-weight:800;font-size:40px;line-height:1}
 .stat .v small{font-family:var(--font);font-size:14px;font-weight:600;color:var(--text2);margin-left:4px}
@@ -855,7 +853,7 @@ function renderMessages() {
     <div id="msg-thread">${thread}</div>
     <div id="msg-bar"><div class="inner">
       ${SUGGEST?'<div class="sug-note">Goes to Ryan as an idea for the app.</div>':''}
-      <div class="line"><button type="button" class="sug${SUGGEST?' on':''}" data-act="suggest" aria-pressed="${SUGGEST}" aria-label="Send as a suggestion for the app">Idea</button><input id="msg-input" placeholder="${SUGGEST?'What would make the app better?':'Message Ryan'}" autocomplete="off"/><button type="button" class="btn btn-primary btn-sm" style="height:48px" id="msg-send">Send</button></div>
+      <div class="line"><button type="button" class="sug${SUGGEST?' on':''}" data-act="suggest" aria-pressed="${SUGGEST}" aria-label="Send as a suggestion for the app">Suggest</button><input id="msg-input" placeholder="${SUGGEST?'What would make the app better?':'Message Ryan'}" autocomplete="off"/><button type="button" class="btn btn-primary btn-sm" style="height:48px" id="msg-send">Send</button></div>
     </div></div>`;
 }
 function attachMessageHandlers() {
@@ -1185,7 +1183,7 @@ function openLightbox(id) {
   const p = DATA.photos.find(x=>x.id===id); if (!p) return;
   const box = document.createElement('div'); box.id = 'lightbox';
   box.innerHTML = `<div class="muted">${esc(p.label||'')} · ${esc(fmtLong(p.taken_at))}</div><img src="${esc(PHOTO_URLS[p.url]||'')}" alt=""/>
-    <div class="btn-row" style="width:100%;max-width:360px"><button type="button" class="btn btn-secondary" id="lb-close">Close</button><button type="button" class="btn btn-secondary" id="lb-delete" style="color:var(--red);border-color:var(--red)">Delete</button></div>`;
+    <div class="btn-row" style="width:100%;max-width:360px"><button type="button" class="btn btn-secondary" id="lb-close">Close</button><button type="button" class="btn btn-secondary" id="lb-delete">Delete</button></div>`;
   document.body.appendChild(box);
   box.onclick = e => { if (e.target===box) box.remove(); };
   box.querySelector('#lb-close').onclick = () => box.remove();

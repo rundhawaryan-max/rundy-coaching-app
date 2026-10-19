@@ -15,11 +15,12 @@ This folder is an exact copy of the live site as of **2026-10-18** (Netlify depl
 | File | What it is |
 |---|---|
 | `index.html` | **Coach dashboard** (~105 KB). Every path serves it, via `_redirects`. Clients list, client detail tabs, program/meal/cardio builders, payments, messages, and the "Daily check-ins · today" roll-up. |
-| `client.html` | **Client app** (~93 KB). Opened as `client.html?t=<access_token>`; the token comes from `clients.access_token`. Tabs: Home, Workout, Progress, Nutrition, Steps, Photos, Check-in, Messages. Installable as a PWA, and it saves the token in localStorage under `rc_token`. |
+| `client.html` | **Client app**, shown on screen as "Rebuilt by Ryan". Opened as `client.html?t=<access_token>`; the token comes from `clients.access_token`. Five tabs: **Today** (the day's checklist: session, morning weight, how you feel, steps, water, supplements, meal plan, and the weekly check-in when it's due), **Train** (one row per set: weight × reps × RPE, "Same as last time", finish-workout summary, personal-best sheet), **Plan** (what the coach wrote: macros, meals, supplements, cardio), **Progress** (personal bests, strength trends, weight, weekly check-in form, photos), **Messages** (with a "Suggest" toggle for app ideas). Installable as a PWA, and it saves the token in localStorage under `rc_token`. Titles use the self-hosted font in `fonts/`; the design system is in `DESIGN.md`, product context in `PRODUCT.md`. |
 | `manifest.webmanifest`, `sw.js`, `icons/` | PWA install. The manifest deliberately has **no `start_url`**, so the installed app keeps its `?t=` token. `sw.js` is network-first and only touches same-origin requests. |
 | `_redirects` | `/*  /index.html  200` |
 | `_headers` | Security headers, plus the manifest content type. |
 | `supabase/schema.sql` | Full DB schema (structure only, no client data). Run it on a fresh Supabase project to get a sandbox. |
+| `supabase/migrations/` | Schema changes made after the snapshot, one file each, in date order. Run each one in the SQL editor on the test project first, then on the live project when the matching app change goes live. `2026-10-19-per-set-logs.sql` adds `exercise_logs.set_index` and `rpe` for the new Train tab. |
 | `supabase/functions/steps/` | Edge function for Apple Health step sync. Built but **dormant**: Ryan chose not to roll it out. |
 
 Backend: Supabase project `emrtizvqzjkfrpgyrljn`. `SB_URL` / `SB_KEY` are near the top of each HTML file's `<script>` (index.html ~line 215, client.html ~line 187). The key is the **anon** key; no service-role key appears anywhere in this code.
@@ -72,7 +73,7 @@ The client app always loads the **newest program** by `created_at`, and meal-pla
 ---
 
 ## Data model cheat sheet
-`clients` → `programs` → `workouts` → `exercises` → `exercise_logs`
+`clients` → `programs` → `workouts` → `exercises` → `exercise_logs` (since Oct 2026 one row per set with `set_index` and `rpe`; older rows are one per exercise per day with reps as a comma list like `"8,8,7"`, and both apps read both shapes)
 `clients` → `meal_plans` → `meals` → `meal_foods`; plus `macros` and `supplements`
 `clients` → `cardio_protocols` → `cardio_sessions`
 Per-client tracking: `check_ins`, `daily_logs`, `daily_steps`, `checklist_completions`, `progress_photos` (storage path in the private `progress-photos` bucket, under `<access_token>/`), `messages`, `payments`.
