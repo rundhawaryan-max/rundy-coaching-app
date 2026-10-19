@@ -78,7 +78,7 @@ section>.eyebrow{display:block;margin-bottom:10px}
 .day.today b{color:#000}
 .day.sel:not(.today){border-color:#fff}
 .bar{height:2px;background:var(--line);margin-top:12px}
-.bar i{display:block;height:100%;background:#fff;transition:width .4s var(--ease)}
+.bar i{display:block;height:100%;width:100%;background:#fff;transform-origin:left center;transition:transform .4s var(--ease)}
 
 /* ── notice + note ── */
 .notice{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;margin-top:20px;border:1px solid var(--line2)}
@@ -236,7 +236,7 @@ canvas{display:block;width:100%}
 #loading,#errorscreen{display:flex;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:18px;text-align:center;padding:24px}
 #loading .bar{width:120px;margin:0}
 #loading .bar i{width:40%;animation:slide 1s var(--ease) infinite alternate}
-@keyframes slide{from{margin-left:0}to{margin-left:60%}}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(150%)}}
 .empty{padding:28px 0;color:var(--text2);font-size:15px;line-height:1.5}
 .skeleton{height:14px;background:var(--bg3);margin-top:10px}
 .tabs{display:flex;gap:6px;margin-top:12px}
@@ -256,13 +256,13 @@ canvas{display:block;width:100%}
 </div>
 
 <div id="errorscreen" style="display:none">
-  <div class="brand">Rebuilt by Ryan</div>
   <h1 class="display t2">Link not recognized</h1>
   <p class="sub" style="max-width:300px">This link may be wrong or expired. Check with Ryan for your personal link, or paste it here.</p>
   <div class="stack" style="width:100%;max-width:320px">
     <input id="token-input" placeholder="Paste your link or code" autocomplete="off" autocapitalize="off"/>
     <button class="btn btn-primary" id="token-submit">Open my plan</button>
   </div>
+  <div class="brand" style="margin-top:8px">Rebuilt by Ryan</div>
 </div>
 
 <div id="shell" style="display:none">
@@ -548,7 +548,7 @@ function renderToday() {
     const cls = ['day', d===today()?'today':'', d>today()?'future':'', d===date?'sel':'', dayLogged(d)?'logged':''].filter(Boolean).join(' ');
     return `<button type="button" class="${cls}" data-act="day" data-date="${d}" ${d>today()?'disabled':''} aria-label="${esc(fmtLong(d))}">${DAY_NAMES[wk.indexOf(d)].slice(0,1)}<b>${+d.slice(8)}</b><span class="dot"></span></button>`;
   }).join('')}</div>
-  <div class="bar" aria-hidden="true"><i style="width:${total?Math.round(done/total*100):0}%"></i></div>`;
+  <div class="bar" aria-hidden="true"><i style="transform:scaleX(${total?(done/total).toFixed(3):0})"></i></div>`;
 
   let nudge = '';
   if (isToday) {
