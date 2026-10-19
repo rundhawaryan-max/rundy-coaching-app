@@ -57,15 +57,16 @@ Deploys were manual drag-and-drops, and each one **replaces the whole site**. Th
 ### 4. 🟡 Unit mismatch: `weight_kg` columns hold pounds
 The UI shows **lbs**, but the columns are named `weight_kg` (clients, check_ins, exercise_logs, daily_logs). This was a deliberate relabel, not a conversion: each row holds whatever number the client typed. **Don't run a kg→lbs conversion on old rows.** Renaming the columns (e.g. to `weight`) would be a good cleanup, but it touches both HTML files. The client app has `const UNIT='lbs'` and `fmtW()` helpers.
 
-### 5. 🟡 Settings that can only be changed with SQL
-The coach UI has no way to edit these: `clients.water_goal_l`, `clients.special_note` (the speech bubble on the client Home/Workout tabs). Worth adding to the client-detail screen.
+### 5. ✅ Settings that could only be changed with SQL (fixed Oct 2026)
+The client-detail screen has an **Edit** button for the goal, the note shown on the client's Today screen (`special_note`), the water goal (`water_goal_l`), status and coach notes.
 
 ### 6. 🟡 "Newest wins" ordering
 The client app always loads the **newest program** by `created_at`, and meal-plan tabs are ordered `created_at DESC`. There's no "active" flag, so swapping a client back to an older plan means editing timestamps.
 
 ### 7. 🟢 Smaller things
-- `daily_logs.client_id` is the only FK **without** `on delete cascade`, so deleting a client who has daily logs will fail.
-- Date logic must stay **local time**: both files use a `localDate()` helper. `index.html` used UTC until Aug 2026, which made "logged today" show nobody in the evening. Don't reintroduce `toISOString().slice(0,10)`.
+- `daily_logs.client_id` is the only FK **without** `on delete cascade`. The coach dashboard deletes a client's daily logs first so the delete works; a migration adding the cascade would still be cleaner.
+- Date logic must stay **local time**: both files use a `localDate()` helper. `index.html` used UTC until Aug 2026, which made "logged today" show nobody in the evening; two leftovers (the week range and the Steps tab) were fixed in Oct 2026. Don't reintroduce `toISOString().slice(0,10)`.
+- Deletes in the coach dashboard (exercises, supplements, cardio sessions) wait six seconds behind an Undo toast before reaching the database; navigating away or closing the tab commits them.
 - One row, "Ryan Rundhawa (coach test)" (status `inactive`), is Ryan's test profile. Exclude it from client counts.
 - Apple Health sync: `HEALTH_SHORTCUT_URL` in client.html is intentionally empty, which keeps the Steps-tab sync card hidden. The `steps` edge function, `log_steps()` and `daily_steps.source` are unused but harmless.
 - Both files are very large single files. Splitting them into JS/CSS modules (or a small Vite app) would make review much easier, but it's optional.
