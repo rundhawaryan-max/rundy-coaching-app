@@ -73,11 +73,14 @@ section>.eyebrow{display:block;margin-bottom:10px}
 .day .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:0}
 .day.logged .dot{opacity:1}
 .day.logged{color:var(--text2)}
-.day.future{opacity:.45}
+.day.future,.day.future b{color:var(--text3)}
+.count{display:flex;align-items:baseline;gap:10px;margin-top:8px}
+.count .display{font-size:34px}
+.count span:last-child{font-size:15px;color:var(--text2)}
 .day.today{background:#fff;color:#000}
 .day.today b{color:#000}
 .day.sel:not(.today){border-color:#fff}
-.bar{height:2px;background:var(--line);margin-top:12px}
+.bar{height:4px;background:var(--line);margin-top:12px}
 .bar i{display:block;height:100%;width:100%;background:#fff;transform-origin:left center;transition:transform .4s var(--ease)}
 
 /* ── notice + note ── */
@@ -104,7 +107,7 @@ button.row:active{background:var(--bg2)}
 .chev{width:20px;height:20px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .row-input{width:118px;flex-shrink:0;padding:10px 12px;text-align:right;font-size:16px;height:46px}
 .row-input-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.row-input-wrap .unit{font-size:13px;color:var(--text3);min-width:22px}
+.row-input-wrap .unit{font-size:13px;color:var(--text3);min-width:40px}
 .row-tools{display:flex;gap:18px;padding:10px 0 2px}
 .expand{padding:6px 0 18px;border-bottom:1px solid var(--line)}
 .field{margin-top:14px}
@@ -171,6 +174,8 @@ details.week-list .body{padding:4px 0 14px;border-bottom:1px solid var(--line)}
 canvas{display:block;width:100%}
 .ex-card{padding:16px 0;border-bottom:1px solid var(--line)}
 .ex-card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ex-card .val{font-family:var(--display);font-weight:800;font-size:28px;line-height:1;white-space:nowrap;text-transform:uppercase}
+.ex-card .val small{font-family:var(--font);font-weight:600;font-size:14px;color:var(--text2);margin-left:4px;text-transform:none}
 .ex-card .delta{font-size:13px;color:var(--text2);margin-top:2px}
 .hist{margin-top:10px}
 .hist summary{list-style:none;cursor:pointer;font-size:14px;color:var(--text2);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line2);display:inline}
@@ -227,7 +232,7 @@ canvas{display:block;width:100%}
 .sheet{background:#000;color:#fff;border-top:1px solid var(--line2);width:100%;max-width:560px;padding:26px 20px calc(26px + env(safe-area-inset-bottom));animation:up .2s var(--ease)}
 .sheet.invert{background:#fff;color:#000;border-top-color:#fff}
 .sheet.invert .btn-primary{background:#000;color:#fff;border-color:#000}
-.sheet.invert .muted,.sheet.invert .sub{color:#555}
+.sheet.invert .muted,.sheet.invert .sub,.sheet.invert .eyebrow{color:#555}
 .sheet .display{font-size:40px}
 .sheet .num{font-size:64px;margin-top:14px}
 @keyframes up{from{transform:translateY(20px);opacity:0}}
@@ -502,14 +507,16 @@ function todayItems(date) {
   const lastW = (DATA.dailyLogs.find(d=>d.date<date && d.weight_kg!=null)||{}).weight_kg ?? (DATA.checkIns.find(c=>c.weight_kg!=null)||{}).weight_kg ?? null;
   items.push({ key:'weight', kind:'weight', label:'Morning weight', sub: lastW!=null ? `Last ${fmtW(lastW)} ${UNIT}` : 'Before food or water', done: !!(dl && dl.weight_kg!=null), value: dl&&dl.weight_kg!=null ? fmtW(dl.weight_kg) : '' });
   const feelDone = !!(dl && dl.refreshed!=null && dl.desire_to_train!=null);
-  items.push({ key:'feel', kind:'feel', label:'How you feel today', sub: feelDone ? `${dl.refreshed?'Rested':'Not rested'} · drive ${dl.desire_to_train}/5${dl.digestive_issue?' · '+dl.digestive_issue:''}` : 'Rested, drive to train, digestion, untracked food', done: feelDone, log: dl });
+  items.push({ key:'feel', kind:'feel', label:'How you feel today', sub: feelDone ? `${dl.refreshed?'Rested':'Not rested'} · desire to train ${dl.desire_to_train}/5${dl.digestive_issue?' · '+dl.digestive_issue:''}` : 'Rested? Desire to train? Digestion, untracked food', done: feelDone, log: dl });
   const st = stepsOn(date);
   items.push({ key:'steps', kind:'steps', label:'Steps', sub: st ? (st.steps>=sGoal ? `Goal of ${num(sGoal)} hit` : `${num(st.steps)} of ${num(sGoal)}`) : `Goal ${num(sGoal)}`, done: !!st, value: st ? st.steps : '' });
   items.push({ key:'water', kind:'tick', type:'water', id:'water-'+date, label:`Drank ${waterGoal()} L of water`, sub:'Daily goal', done:isCompleted('water','water-'+date,date) });
   DATA.supplements.forEach(s => items.push({ key:'s-'+s.id, kind:'tick', type:'supplement', id:s.id, label:s.name, sub:[s.dosage, s.timing].filter(Boolean).join(' · ')||'Supplement', done:isCompleted('supplement',s.id,date), supp:true }));
   if (DATA.mealPlans.length) {
-    const m = DATA.mealPlans[0];
-    items.push({ key:'meal', kind:'tick', type:'meal', id:m.id, label:'Followed the meal plan', sub: DATA.mealPlans.length>1 ? DATA.mealPlans.map(p=>p.day_label||p.name).join(' or ') : (m.day_label||m.name), done:isCompleted('meal',m.id,date) });
+    // With a training-day and a rest-day plan, name the one that applies today.
+    const training = workoutsOn(date).length>0 || cardioOn(date).length>0;
+    const m = DATA.mealPlans.find(p=>new RegExp(training?'train':'rest','i').test(p.day_label||p.name)) || DATA.mealPlans[0];
+    items.push({ key:'meal', kind:'tick', type:'meal', id:m.id, label:'Followed the meal plan', sub:(m.day_label||m.name)+(DATA.mealPlans.length>1?' plan':''), done:isCompleted('meal',m.id,date) });
   }
   if (date===today()) {
     const cs = checkinStatus();
@@ -560,14 +567,14 @@ function renderToday() {
 
   const note = CLIENT.special_note ? `<div class="note"><span class="eyebrow">From Ryan</span><p>${esc(CLIENT.special_note)}</p></div>` : '';
 
-  const rows = items.map(it => {
+  const rowList = items.map(it => {
     const cls = `row${it.done?' done':''}`;
     const main = `<span class="row-main"><span class="row-label">${esc(it.label)}</span><span class="row-sub">${it.late?`<span class="late">Late</span>`:esc(it.sub)}</span></span>`;
     if (!isToday) return `<div class="${cls}">${main}${it.kind==='weight'||it.kind==='steps' ? `<span class="muted">${it.value!==''?esc(it.kind==='weight'?it.value+' '+UNIT:num(it.value)):'—'}</span>` : chk()}</div>`;
     if (it.kind==='tick') return `<button type="button" class="${cls}" data-act="tick" data-type="${it.type}" data-id="${esc(it.id)}" aria-pressed="${it.done}">${main}${chk()}</button>`;
     if (it.kind==='link') return `<button type="button" class="${cls}" data-act="link" data-tab="${it.tab}"${it.ci?' data-ci="1"':''}${it.anchor?` data-anchor="${it.anchor}"`:''}>${main}${it.done?chk():ICON.chev}</button>`;
     if (it.kind==='weight') return `<div class="${cls}"><label class="row-main" for="f-weight"><span class="row-label">${esc(it.label)}</span><span class="row-sub">${esc(it.sub)}</span></label><span class="row-input-wrap"><input id="f-weight" class="row-input" type="number" step=".1" inputmode="decimal" data-field="weight" value="${esc(it.value)}" placeholder="0.0"/><span class="unit">${UNIT}</span></span></div>`;
-    if (it.kind==='steps') return `<div class="${cls}"><label class="row-main" for="f-steps"><span class="row-label">${esc(it.label)}</span><span class="row-sub">${esc(it.sub)}</span></label><span class="row-input-wrap"><input id="f-steps" class="row-input" type="number" inputmode="numeric" data-field="steps" value="${esc(it.value)}" placeholder="0"/></span></div>`;
+    if (it.kind==='steps') return `<div class="${cls}"><label class="row-main" for="f-steps"><span class="row-label">${esc(it.label)}</span><span class="row-sub">${esc(it.sub)}</span></label><span class="row-input-wrap"><input id="f-steps" class="row-input" type="number" inputmode="numeric" data-field="steps" value="${esc(it.value)}" placeholder="0"/><span class="unit">steps</span></span></div>`;
     if (it.kind==='feel') {
       const l = it.log||{};
       const open = FEEL_OPEN ? `<div class="expand">
@@ -579,8 +586,11 @@ function renderToday() {
       </div>` : '';
       return `<button type="button" class="${cls}" data-act="feel-toggle" aria-expanded="${FEEL_OPEN}">${main}${it.done?chk():ICON.down}</button>${open}`;
     }
-  }).join('');
+  });
   const suppTools = isToday && DATA.supplements.length>1 && !DATA.supplements.every(s=>isCompleted('supplement',s.id,date)) ? `<div class="row-tools"><button type="button" class="btn-text" data-act="tick-all-supps">Mark all supplements taken</button></div>` : '';
+  const lastSupp = items.map(i=>!!i.supp).lastIndexOf(true);
+  if (suppTools && lastSupp >= 0) rowList.splice(lastSupp+1, 0, suppTools);   // sits right under the supplements it acts on
+  const rows = rowList.join('');
 
   const doneCard = isToday && total>0 && done===total ? `<div class="done-card"><div class="display">Day done</div><p>${esc(fmtLong(date))}. Every box ticked. Ryan will see it.</p></div>` : '';
   const viewing = !isToday ? `<div class="notice" style="margin-top:20px"><p>Viewing ${esc(fmtLong(date))}.</p><button type="button" class="btn-text" data-act="day" data-date="${today()}">Back to today</button></div>` : '';
@@ -588,11 +598,11 @@ function renderToday() {
   return `<header class="screen-head">
     <div class="brand">Rebuilt by Ryan</div>
     <h1 class="display t1">${esc(fmtLong(date).replace(',', ''))}</h1>
-    <p class="sub">${isToday ? `${esc(first)}, ${total ? (done===total ? 'everything is done.' : `${done} of ${total} done.`) : 'nothing to log yet.'}` : `${esc(first)} · ${done} of ${total} done`}</p>
+    ${total ? `<p class="count"><span class="display">${done}/${total}</span><span>done${isToday ? ' · ' + esc(first) : ''}</span></p>` : `<p class="sub">${esc(first)}, nothing to log yet.</p>`}
   </header>
   ${strip}${viewing}${nudge}${isToday?note:''}
   <div class="rows">${rows || `<div class="empty">Nothing to log yet. Ryan is setting up your plan.</div>`}</div>
-  ${suppTools}${doneCard}${isToday?renderInstallCard():''}`;
+  ${doneCard}${isToday?renderInstallCard():''}`;
 }
 
 // ── Train ───────────────────────────────────────────────────────────
@@ -613,7 +623,10 @@ function setRowHTML(e, i, log, date, last) {
     <button type="button" class="set-chk" data-act="set-save" data-ex="${esc(e.id)}" data-idx="${i}" aria-label="Log set ${n}">${ICON.check}</button>`;
 }
 function exerciseHTML(e, date) {
-  const logs = logsOn(date, e.id).sort((a,b)=>(a.set_index||0)-(b.set_index||0) || a.created_at.localeCompare(b.created_at));
+  // Rows logged before per-set logging (no set_index) hold a whole session; show them as a line, never as "set 1".
+  const todayAll = logsOn(date, e.id);
+  const legacy = todayAll.filter(l=>l.set_index==null);
+  const logs = todayAll.filter(l=>l.set_index!=null).sort((a,b)=>a.set_index-b.set_index || a.created_at.localeCompare(b.created_at));
   const last = lastSession(e.id, date);
   const count = Math.max(Number(e.sets)||1, logs.length) + (EXTRA_SETS[e.id]||0);
   const rx = [e.sets&&e.reps ? `${e.sets} sets × ${e.reps}` : e.reps ? e.reps : '', e.rest_seconds ? `${e.rest_seconds} s rest` : ''].filter(Boolean).join(' · ');
@@ -621,6 +634,7 @@ function exerciseHTML(e, date) {
     <div class="ex-name">${esc(e.name)}</div>
     ${rx?`<div class="ex-rx">${esc(rx)}${last?` · last ${esc(fmtDay(last.date))}`:''}</div>`:''}
     ${e.notes?`<div class="ex-note">${esc(e.notes)}</div>`:''}
+    ${legacy.length?`<div class="ex-note">Logged earlier today: ${legacy.map(l=>`${l.weight_kg!=null?fmtW(l.weight_kg)+' '+UNIT:''}${l.reps_completed?' × '+esc(l.reps_completed):''}`.trim()).join(', ')}</div>`:''}
     <div class="sets"><div class="hd">Set</div><div class="hd">${UNIT}</div><div class="hd">Reps</div><div class="hd">RPE</div><div class="hd"><span class="sr">Logged</span></div>
       ${Array.from({length:count},(_,i)=>`<div class="set-row" style="display:contents" data-row="${i}">${setRowHTML(e,i,logs[i],date,last)}</div>`).join('')}
     </div>
@@ -636,12 +650,11 @@ function renderTrain() {
     return html;
   }
   html += `<p class="sub">${ws.length||cs.length ? `${esc(dayName(date))}. ${ws.map(w=>w.name).concat(cs.map(c=>c.name)).join(' and ')}.` : `${esc(dayName(date))} is a rest day. Steps and water still count.`}</p></header>`;
-  if (CLIENT.special_note) html += `<div class="note"><span class="eyebrow">From Ryan</span><p>${esc(CLIENT.special_note)}</p></div>`;
 
   ws.forEach(w => {
     const exs = DATA.exercises[w.id]||[];
     const done = sessionDone(w, date);
-    html += `<section><span class="eyebrow">Today · ${esc(w.name)}</span>
+    html += `<section>${ws.length>1?`<span class="eyebrow">${esc(w.name)}</span>`:''}
       ${exs.map(e=>exerciseHTML(e,date)).join('') || `<div class="empty">No exercises in this session yet.</div>`}
       <div class="btn-row">${done ? `<div class="row done" style="border:0;min-height:0;padding:14px 0 0">${chk()}<span class="row-main"><span class="row-label">Session done</span></span></div>` : `<button type="button" class="btn btn-primary" data-act="finish" data-w="${esc(w.id)}">Finish workout</button>`}</div>
     </section>`;
@@ -743,7 +756,7 @@ function renderProgress() {
       const arr = byEx[id], latest = arr[arr.length-1], prev = arr.length>1 ? arr[arr.length-2] : null;
       const d = prev ? latest.top - prev.top : null;
       const delta = d===null ? 'First session' : d>0 ? `Up ${fmtW(d)} ${UNIT} from last time` : d<0 ? `Down ${fmtW(-d)} ${UNIT} from last time` : 'Same as last time';
-      return `<div class="ex-card"><div class="top"><div><div class="ex-name">${esc(DATA.exerciseNames[id]||'Exercise')}</div><div class="delta">${delta} · ${arr.length} session${arr.length>1?'s':''}</div></div><div class="val display" style="font-size:28px">${fmtW(latest.top)}<small style="font-family:var(--font);font-size:14px;font-weight:600;color:var(--text2);margin-left:4px">${UNIT}${latest.reps?' × '+esc(latest.reps):''}</small></div></div>
+      return `<div class="ex-card"><div class="top"><div><div class="ex-name">${esc(DATA.exerciseNames[id]||'Exercise')}</div><div class="delta">${delta} · ${arr.length} session${arr.length>1?'s':''}</div></div><div class="val">${fmtW(latest.top)}<small>${UNIT}</small></div></div>
         ${arr.length>1?`<canvas class="ex-spark" data-ex="${esc(id)}" height="56" style="margin-top:12px"></canvas>`:''}
         <details class="hist"><summary>History</summary><div class="body">${[...arr].reverse().map(s=>`<div class="list-row"><span>${esc(fmtDay(s.date))}${s.sets>1?` <span class="muted">· ${s.sets} sets</span>`:''}</span><span>${fmtW(s.top)} ${UNIT}${s.reps?' × '+esc(s.reps):''}</span></div>`).join('')}</div></details>
       </div>`;
@@ -840,7 +853,7 @@ function renderMessages() {
   return `<header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">Messages</h1></header>
     <div id="msg-thread">${thread}</div>
     <div id="msg-bar"><div class="inner">
-      <div class="sug"><button type="button" class="${SUGGEST?'on':''}" data-act="suggest" aria-pressed="${SUGGEST}">Suggestion</button><span>${SUGGEST?'Sent to Ryan as an idea for the app.':'Have an idea for the app? Send it as a suggestion.'}</span></div>
+      <div class="sug"><button type="button" class="${SUGGEST?'on':''}" data-act="suggest" aria-pressed="${SUGGEST}">Suggestion</button>${SUGGEST?'<span>Goes to Ryan as an idea for the app.</span>':''}</div>
       <div class="line"><input id="msg-input" placeholder="${SUGGEST?'What would make the app better?':'Message Ryan'}" autocomplete="off"/><button type="button" class="btn btn-primary btn-sm" style="height:48px" id="msg-send">Send</button></div>
     </div></div>`;
 }
@@ -1011,7 +1024,7 @@ async function saveSet(btn) {
   row.innerHTML = setRowHTML(e, i, log, date, null);
   announce('Set ' + (i+1) + ' logged');
   if (log.weight_kg != null && Number(log.weight_kg) > prevBest && prevBest > 0) {
-    sheet(`<div class="eyebrow" style="color:#555">New personal best</div><div class="display" style="margin-top:8px">${esc(e.name||'')}</div><div class="display num">${fmtW(log.weight_kg)}<span style="font-family:var(--font);font-size:20px;font-weight:600;letter-spacing:0;margin-left:6px">${UNIT}${log.reps_completed?' × '+esc(log.reps_completed):''}</span></div><p class="sub">Previous best ${fmtW(prevBest)} ${UNIT}.</p><div class="btn-row"><button type="button" class="btn btn-primary" data-act="sheet-close">Keep going</button></div>`, true);
+    sheet(`<div class="eyebrow">New personal best</div><div class="display" style="margin-top:8px">${esc(e.name||'')}</div><div class="display num">${fmtW(log.weight_kg)}<span style="font-family:var(--font);font-size:20px;font-weight:600;letter-spacing:0;margin-left:6px">${UNIT}${log.reps_completed?' × '+esc(log.reps_completed):''}</span></div><p class="sub">Previous best ${fmtW(prevBest)} ${UNIT}.</p><div class="btn-row"><button type="button" class="btn btn-primary" data-act="sheet-close">Keep going</button></div>`, true);
   }
 }
 async function deleteSet(btn) {
