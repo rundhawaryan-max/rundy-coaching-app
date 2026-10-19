@@ -182,6 +182,19 @@ details.week-list .body{padding:4px 0 14px;border-bottom:1px solid var(--line)}
 .goals .k{font-size:13px;color:var(--text3)}
 .goals .v{font-size:17px;line-height:1.4;margin-top:2px;white-space:pre-line}
 .goals .btn-text{margin-top:12px}
+/* First open: the title holds centre stage, then drops into place as the questions rise under it. */
+.intro h1{font-size:56px;animation:rise .8s .25s cubic-bezier(.2,.7,.2,1) both,settle .9s 2.3s cubic-bezier(.2,.7,.2,1) both}
+.intro .brand{animation:fade .6s .1s both}
+.intro .sub,.intro .field,.intro .btn-row,.intro .skip{animation:fade-up .55s cubic-bezier(.2,.7,.2,1) both}
+.intro .sub{animation-delay:2.75s}
+.intro .field:nth-of-type(1){animation-delay:2.9s}
+.intro .field:nth-of-type(2){animation-delay:3.05s}
+.intro .btn-row{animation-delay:3.2s}
+.intro .skip{animation-delay:3.35s}
+@keyframes rise{from{opacity:0;transform:translateY(calc(34vh + 28px))}to{opacity:1;transform:translateY(34vh)}}
+@keyframes settle{from{transform:translateY(34vh)}to{transform:translateY(0)}}
+@keyframes fade{from{opacity:0}}
+@keyframes fade-up{from{opacity:0;transform:translateY(22px)}}
 .sheet.invert .btn-secondary{color:#000;border-color:#000}
 .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 6px;background:#fff;color:#000;border-radius:4px;vertical-align:middle;margin-left:8px}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
@@ -773,13 +786,13 @@ function macrosHTML(m) {
 // Shown full-screen on the first open (and from Plan → Edit afterwards). Ryan reads these on the client's page.
 function renderGoals() {
   const first = !CLIENT.goals_set_at, name = (CLIENT.name||'').split(' ')[0];
-  return `<header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">${first ? 'Welcome, '+esc(name) : 'Your goals'}</h1><p class="sub">${first ? 'Before anything else: what are you here for? Ryan reads this.' : 'Ryan sees these on your page.'}</p></header>
+  return `<div class="${first ? 'intro' : ''}"><header class="screen-head"><div class="brand">Rebuilt by Ryan</div><h1 class="display t1">${first ? 'Goal setting' : 'Your goals'}</h1><p class="sub">${first ? 'Welcome, '+esc(name)+'. Before anything else: what are you here for? Ryan reads this.' : 'Ryan sees these on your page.'}</p></header>
     <section class="tight">
       <div class="field"><label for="g-short">In the next 8 weeks</label><textarea id="g-short" placeholder="Drop 8 lb and bench 125 for 5">${esc(CLIENT.goal_short_term||'')}</textarea></div>
       <div class="field"><label for="g-long">This year</label><textarea id="g-long" placeholder="Feel strong at the wedding in June">${esc(CLIENT.goal_long_term||'')}</textarea></div>
       <div class="btn-row"><button type="button" class="btn btn-primary" data-act="goals-save">${first ? 'Start' : 'Save'}</button></div>
-      <p style="margin-top:16px;text-align:center"><button type="button" class="btn-text" data-act="goals-skip">${first ? 'Skip for now' : 'Cancel'}</button></p>
-    </section>`;
+      <p class="skip" style="margin-top:16px;text-align:center"><button type="button" class="btn-text" data-act="goals-skip">${first ? 'Skip for now' : 'Cancel'}</button></p>
+    </section></div>`;
 }
 async function saveGoals(skip) {
   const first = !CLIENT.goals_set_at;
