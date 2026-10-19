@@ -285,10 +285,13 @@ canvas{display:block;width:100%}
 <script>
 const SB_URL='https://emrtizvqzjkfrpgyrljn.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtcnRpenZxemprZnJwZ3lybGpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTA0NjAsImV4cCI6MjA5NzMyNjQ2MH0.n11s1EOwPRBP934TY4sZrMWuh-A7aUGLh3VZ0yZOtww';
+// The portal token travels as a header too: the database's row-level security reads it to decide which rows are this client's.
+let CLIENT_TOKEN = null;
+const tokenHeader = () => CLIENT_TOKEN ? { 'x-client-token': CLIENT_TOKEN } : {};
 
 async function sbFetch(path, opts={}) {
   const url = SB_URL + '/rest/v1/' + path;
-  const headers = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': opts.prefer || 'return=representation' };
+  const headers = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': opts.prefer || 'return=representation', ...tokenHeader() };
   let r;
   try {
     r = await fetch(url, { method: opts.method||'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
@@ -389,6 +392,7 @@ async function init() {
   // Remember the token so the installed home-screen app stays signed in even if it opens without ?t=
   const token = params.get('t') || lsGet('rc_token');
   if (!token) return showError();
+  CLIENT_TOKEN = token;
 
   const clients = await sb.select('clients', 'access_token=eq.'+encodeURIComponent(token));
   if (!clients || !clients.length) { if (params.get('t') && lsGet('rc_token') && params.get('t')!==lsGet('rc_token')) { /* bad pasted link; keep the stored good one */ } else lsSet('rc_token', null); return showError(); }
@@ -1116,7 +1120,7 @@ function renderInstallCard() {
 const PHOTO_BUCKET = 'progress-photos';
 const POSES = ['Front','Side','Back'];
 let PHOTO_DRAFT = {}, PHOTO_URLS = {}, PHOTO_URLS_AT = 0, COMPARE_POSE = 'Front';
-const storageHeaders = extra => Object.assign({ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, extra||{});
+const storageHeaders = extra => Object.assign({ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, tokenHeader(), extra||{});
 async function signPhotoUrls(paths) {
   if (Date.now() - PHOTO_URLS_AT > 50*60*1000) { PHOTO_URLS = {}; PHOTO_URLS_AT = Date.now(); }
   const need = [...new Set(paths)].filter(p=>!PHOTO_URLS[p]); if (!need.length) return;

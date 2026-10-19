@@ -14,16 +14,22 @@ This folder is an exact copy of the live site as of **2026-10-18** (Netlify depl
 
 | File | What it is |
 |---|---|
-| `index.html` | **Coach dashboard** (~105 KB). Every path serves it, via `_redirects`. Clients list, client detail tabs, program/meal/cardio builders, payments, messages, and the "Daily check-ins · today" roll-up. |
+| `index.html` | **Coach dashboard** (desktop). Every path serves it, via `_redirects`. Opens on a sign-in screen (Supabase Auth, email + password), then **Today**: a ring counting who has checked in, the daily and weekly check-in rows (weekly first on Sun/Mon, "Late" from Monday), a Message button on every row, unread messages ("Needs a reply", client suggestions tagged "Idea") and this week's wins. Then Clients (rows → client page with the week strip, today's row, the latest weekly check-in, personal bests, plan tabs), Programs, Cardio, Nutrition, Messages (unread first), Payments. Same look as the client app; `DESIGN.md` covers both. |
 | `client.html` | **Client app**, shown on screen as "Rebuilt by Ryan". Opened as `client.html?t=<access_token>`; the token comes from `clients.access_token`. Five tabs: **Today** (the day's checklist: session, morning weight, how you feel, steps, water, supplements, meal plan, and the weekly check-in when it's due), **Train** (one row per set: weight × reps × RPE, "Same as last time", finish-workout summary, personal-best sheet), **Plan** (what the coach wrote: macros, meals, supplements, cardio), **Progress** (personal bests, strength trends, weight, weekly check-in form, photos), **Messages** (with a "Suggest" toggle for app ideas). Installable as a PWA, and it saves the token in localStorage under `rc_token`. Titles use the self-hosted font in `fonts/`; the design system is in `DESIGN.md`, product context in `PRODUCT.md`. |
 | `manifest.webmanifest`, `sw.js`, `icons/` | PWA install. The manifest deliberately has **no `start_url`**, so the installed app keeps its `?t=` token. `sw.js` is network-first and only touches same-origin requests. |
 | `_redirects` | `/*  /index.html  200` |
 | `_headers` | Security headers, plus the manifest content type. |
 | `supabase/schema.sql` | Full DB schema (structure only, no client data). Run it on a fresh Supabase project to get a sandbox. |
-| `supabase/migrations/` | Schema changes made after the snapshot, one file each, in date order. Run each one in the SQL editor on the test project first, then on the live project when the matching app change goes live. `2026-10-19-per-set-logs.sql` adds `exercise_logs.set_index` and `rpe` for the new Train tab. |
+| `supabase/migrations/` | Schema changes made after the snapshot, one file each, in date order. Run each one in the SQL editor on the test project first, then on the live project when the matching app change goes live. `2026-10-19-per-set-logs.sql` adds `exercise_logs.set_index` and `rpe` for the new Train tab. `2026-10-19-row-level-security.sql` turns on RLS everywhere (see "Security" below); create the coach's login **before** running it. |
+| `supabase/test-rls.sh` | Applies the schema and every migration to a throwaway local Postgres and checks the RLS policies (a client sees only their rows, forged writes fail, no token sees nothing). Run it after any schema change. |
 | `supabase/functions/steps/` | Edge function for Apple Health step sync. Built but **dormant**: Ryan chose not to roll it out. |
 
-Backend: Supabase project `emrtizvqzjkfrpgyrljn`. `SB_URL` / `SB_KEY` are near the top of each HTML file's `<script>` (index.html ~line 215, client.html ~line 187). The key is the **anon** key; no service-role key appears anywhere in this code.
+Backend: Supabase project `emrtizvqzjkfrpgyrljn`. `SB_URL` / `SB_KEY` are near the top of each HTML file's `<script>`. The key is the **anon** key; no service-role key appears anywhere in this code.
+
+### Security
+- **Coach:** signs in on the dashboard with Supabase Auth (email + password). The session is kept in localStorage (`rc_coach_session`), refreshed a minute before it expires, and its access token replaces the anon key on every request, so the database sees the `authenticated` role. Create the login in the Supabase dashboard: Authentication → Users → Add user → email + password → tick "Auto confirm user". Only Ryan needs one.
+- **Clients:** never sign in. The client app sends the portal token as an `x-client-token` header on every request (and on photo uploads), and the RLS policies match it against `clients.access_token` (`current_client_id()` in the migration). A client can read their own plan and write their own logs, check-ins, messages and photos, nothing else; inactive clients get nothing.
+- Until `2026-10-19-row-level-security.sql` has been run on a project, that project is still wide open to the anon key, login screen or not.
 
 ### Running it locally
 ```bash
@@ -31,23 +37,17 @@ npx serve .
 ```
 Then open `http://localhost:3000/` for the coach view, or `http://localhost:3000/client.html?t=<token>` for a client.
 
-> ⚠️ **As shipped, the HTML points at the LIVE database with real client data.** Before you change anything, create your own free Supabase project, run `supabase/schema.sql` in it, and swap `SB_URL`/`SB_KEY` in both files to your project's values. Add a test client with the insert at the bottom of the schema file.
+> ⚠️ **As shipped, the HTML points at the LIVE database with real client data.** Before you change anything, create your own free Supabase project, run `supabase/schema.sql` and the files in `supabase/migrations/` in it, add a coach user (Authentication → Users), and swap `SB_URL`/`SB_KEY` in both files to your project's values. Add a test client with the insert at the bottom of the schema file.
 
 ---
 
 ## Known problems, worst first
 
-### 1. 🔴 No database security (RLS is off on all 19 tables)
-Row Level Security is disabled and the anon key is public, because it sits in the page source. **Anyone who views the source can read, edit or delete every client's data**, including payments, messages and personal notes, without a token. The client `?t=` token only hides data in the UI; it doesn't protect anything.
+### 1. ✅ Database security (fixed Oct 2026, once the migration is run)
+Until October 2026, RLS was off on all 19 tables and the anon key is in the page source, so anyone could read or change every client's data. `supabase/migrations/2026-10-19-row-level-security.sql` plus the coach login fix this; see "Security" above. **The live project is still open until that migration has been run there.**
 
-Turning RLS on without policies would break the app instantly, because every query runs as `anon`. Realistic fixes:
-- **(a)** Put Supabase Auth on the coach dashboard, give the coach's user full-access policies, and route client reads/writes through `security definer` RPCs that take `p_token` and check it (the same pattern `log_steps()` already uses).
-- **(b)** Move all DB access behind Netlify Functions that hold the service-role key and check the token or coach session server-side.
-
-The storage policies for `progress-photos` are a bit better (scoped to folders named after real tokens), but they still accept any valid token from anyone.
-
-### 2. 🔴 The coach dashboard has no login
-`https://rundycoaching.netlify.app/` (and any path on the site) opens the full coach view with every client. This gets fixed as part of #1.
+### 2. ✅ Coach login (fixed Oct 2026)
+The dashboard now opens on a sign-in screen. The coach's user has to exist in Supabase Auth first (see "Security").
 
 ### 3. 🟠 No version control or deploy process
 Deploys were manual drag-and-drops, and each one **replaces the whole site**. That already caused one silent regression (an Aug 4 drop wiped two days of work, which had to be recovered by 3-way merging old deploys). From now on, this folder/repo is the source of truth: connect it to Netlify via Git so deploys come from commits.
