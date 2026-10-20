@@ -4,7 +4,7 @@ Live: https://rundycoaching.netlify.app · Owner: Ryan Rundhawa (@ryan.rundy)
 
 A coaching portal for Ryan's online/in-person clients: the coach builds programs, meal plans, cardio and supplements, and the client logs workouts, steps, water, daily check-ins, weekly check-ins and progress photos.
 
-This folder is an exact copy of the live site as of **2026-10-18** (Netlify deploy `6ac70580f3aaf598aac2acfd`). The only changes: the comment and meta tags Netlify injects into served pages were removed, and the files Netlify doesn't serve back (`_redirects`, `_headers`, the DB schema, the edge function) were rebuilt by hand.
+Since **2026-10-20** the live site deploys from this repo's `main` branch (Netlify, no build step). Work on a branch, open a pull request, and the merge is the deploy. Database changes go in `supabase/migrations/` with a file name that sorts after the existing ones, and are run in the SQL editor on the test project first, then on live when the matching app change goes live.
 
 ---
 
@@ -50,11 +50,8 @@ Until October 2026, RLS was off on all 19 tables and the anon key is in the page
 ### 2. ✅ Coach login (fixed Oct 2026)
 The dashboard now opens on a sign-in screen. The coach's user has to exist in Supabase Auth first (see "Security").
 
-### 3. 🟠 No version control or deploy process
-Deploys were manual drag-and-drops, and each one **replaces the whole site**. That already caused one silent regression (an Aug 4 drop wiped two days of work, which had to be recovered by 3-way merging old deploys). From now on, this folder/repo is the source of truth: connect it to Netlify via Git so deploys come from commits.
-- If you ever deploy manually, include **every** file (`index.html`, `client.html`, `_redirects`, `_headers`, `manifest.webmanifest`, `sw.js`, `icons/`).
-- Netlify never serves `_redirects`/`_headers` back, so they can't be recovered from the live site. Keep them in the repo.
-
+### 3. ✅ Version control and deploys (fixed Oct 2026)
+Deploys used to be manual drag-and-drops that replaced the whole site, which once wiped two days of work. Netlify now deploys `main` from this repo; nothing is deployed by hand any more. `_redirects` and `_headers` live here, so they can't be lost.
 ### 4. 🟡 Unit mismatch: `weight_kg` columns hold pounds
 The UI shows **lbs**, but the columns are named `weight_kg` (clients, check_ins, exercise_logs, daily_logs). This was a deliberate relabel, not a conversion: each row holds whatever number the client typed. **Don't run a kg→lbs conversion on old rows.** Renaming the columns (e.g. to `weight`) would be a good cleanup, but it touches both HTML files. The client app has `const UNIT='lbs'` and `fmtW()` helpers.
 
